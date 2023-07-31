@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script&family=Playfair+Display&family=Raleway:wght@200&family=Roboto:wght@100;300&display=swap');
+
+body{
+   padding: 0;
+   margin: 0;
+   background: black;
+}
+.wrapper.two {
+   background-color: black;
+   font-size: 6rem;
+   font-family: 'Raleway', sans-serif;
+}
+.neon h3 {
+   margin: 0;
+   animation: neon 1s ease infinite;
+   height: 100vh;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+@keyframes neon {
+   0%,
+   100% {
+       text-shadow: 0 0 10px white, 0 0 5px white, 0 0 5px white, 0 0 5px white, 0 0 2px white, 2px 2px 2px white;
+       color: white;
+   }
+   50% {
+       text-shadow: 0 0 2px white, 0 0 5px white, 0 0 5px white, 0 0 5px white, 0 0 2px white, 4px 4px 2px white;
+       color: white;
+   }
+}
