@@ -15,7 +15,7 @@
             color: #333;
         }
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             background: #fff;
             padding: 20px;
@@ -35,17 +35,10 @@
             border-bottom: 1px solid #3498db;
             padding-bottom: 5px;
         }
-        h3 {
-            margin-top: 20px;
-        }
         p, li {
             font-size: 16px;
         }
-        ul {
-            list-style-type: disc;
-            margin-left: 20px;
-        }
-        ol {
+        ul, ol {
             margin-left: 20px;
         }
         /* Code Block Styles */
@@ -57,11 +50,11 @@
             overflow-x: auto;
             font-family: 'Courier New', monospace;
             font-size: 14px;
+            position: relative;
         }
         code {
             font-family: 'Courier New', monospace;
         }
-        /* Output Block Styles */
         .output {
             background: #e8ecef;
             padding: 10px;
@@ -69,6 +62,53 @@
             margin: 10px 0;
             font-family: 'Courier New', monospace;
             font-size: 14px;
+        }
+        /* Animation Styles */
+        .code-line {
+            transition: background-color 0.5s ease;
+        }
+        .highlight {
+            background-color: #3498db !important;
+            color: #fff !important;
+        }
+        .object-box {
+            border: 2px solid #2c3e50;
+            padding: 10px;
+            margin: 10px 0;
+            background: #ecf0f1;
+            border-radius: 5px;
+            display: inline-block;
+        }
+        .field-value {
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+        }
+        .param-arrow {
+            color: #e74c3c;
+            font-weight: bold;
+            animation: pulse 1s infinite;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        .animate-button {
+            background: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .animate-button:hover {
+            background: #2980b9;
         }
         /* Responsive Design */
         @media (max-width: 600px) {
@@ -78,6 +118,9 @@
             pre, .output {
                 font-size: 12px;
             }
+            .object-box {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -86,172 +129,160 @@
         <h1>Understanding Instance Methods, Constructors, and Method Overloading in Java</h1>
 
         <h2>Introduction</h2>
-        <p>This page provides a comprehensive explanation of three fundamental Java concepts: instance methods, constructors, and method overloading. Each topic is covered in depth, starting from basic definitions, followed by detailed characteristics, example programs, step-by-step tracing of execution, and expected outputs. The content is designed to be beginner-friendly, with clear explanations and practical examples to illustrate how these concepts work in Java.</p>
+        <p>This page explains three core Java concepts—instance methods, constructors, and method overloading—with visual animations to illustrate program execution. Each topic includes definitions, characteristics, example programs, step-by-step tracing, and outputs. Click the "Animate Execution" buttons to see how the code runs!</p>
 
         <h2>1. Instance Methods</h2>
         <h3>Definition</h3>
-        <p>An instance method in Java is a method defined within a class that operates on a specific instance (object) of that class. Unlike static methods, which belong to the class itself, instance methods are tied to an object and can access its instance variables (fields). They define the behavior of objects and are invoked using an object of the class.</p>
+        <p>An instance method is a method defined within a class that operates on a specific instance (object) of that class. Unlike static methods, instance methods are tied to an object and can access its instance variables. They define object behavior and are invoked using an object.</p>
 
         <h3>Characteristics</h3>
         <ul>
             <li><strong>Non-static</strong>: Declared without the <code>static</code> keyword.</li>
-            <li><strong>Object-specific</strong>: Requires an object to be invoked (e.g., <code>object.method()</code>).</li>
-            <li><strong>Access to instance variables</strong>: Can read and modify the object’s fields.</li>
-            <li><strong>Return type</strong>: Can return a value (e.g., <code>int</code>, <code>String</code>) or be <code>void</code> for procedures.</li>
-            <li><strong>Use of <code>this</code></strong>: Can use the <code>this</code> keyword to refer to the current object’s fields or methods.</li>
+            <li><strong>Object-specific</strong>: Requires an object (e.g., <code>object.method()</code>).</li>
+            <li><strong>Access to instance variables</strong>: Can read/modify fields.</li>
+            <li><strong>Return type</strong>: Can return a value or be <code>void</code>.</li>
+            <li><strong>Use of <code>this</code></strong>: Refers to the current object’s fields/methods.</li>
         </ul>
 
         <h3>Example Program</h3>
-        <pre>
-public class Student {
-    // Instance variables
-    private String name;
-    private int age;
-
-    // Instance method to set student details
-    public void setDetails(String name, int age) {
-        this.name = name;
-        this.age = age;
-    }
-
-    // Instance method to display student details
-    public void displayDetails() {
-        System.out.println("Name: " + name + ", Age: " + age);
-    }
-
-    // Main method to test instance methods
-    public static void main(String[] args) {
-        // Creating an object of Student class
-        Student student = new Student();
-        // Calling instance methods
-        student.setDetails("Alice", 20);
-        student.displayDetails();
-    }
-}
+        <button class="animate-button" onclick="animateInstanceMethod()">Animate Execution</button>
+        <pre id="instance-code">
+<span class="code-line">public class Student {</span>
+<span class="code-line">    private String name;</span>
+<span class="code-line">    private int age;</span>
+<span class="code-line"></span>
+<span class="code-line">    public void setDetails(String name, int age) {</span>
+<span class="code-line">        this.name = name;</span>
+<span class="code-line">        this.age = age;</span>
+<span class="code-line">    }</span>
+<span class="code-line"></span>
+<span class="code-line">    public void displayDetails() {</span>
+<span class="code-line">        System.out.println("Name: " + name + ", Age: " + age);</span>
+<span class="code-line">    }</span>
+<span class="code-line"></span>
+<span class="code-line">    public static void main(String[] args) {</span>
+<span class="code-line">        Student student = new Student();</span>
+<span class="code-line">        student.setDetails("Alice", 20);</span>
+<span class="code-line">        student.displayDetails();</span>
+<span class="code-line">    }</span>
+<span class="code-line">}</span>
         </pre>
+        <div class="object-box" id="student-box">
+            <strong>Student Object</strong><br>
+            name: <span class="field-value" id="student-name">null</span><br>
+            age: <span class="field-value" id="student-age">0</span>
+        </div>
 
         <h3>Tracing the Program</h3>
-        <p>Let’s trace the execution of the <code>main</code> method step by step:</p>
         <ol>
             <li><strong>Object Creation</strong>: <code>Student student = new Student();</code>
                 <ul>
                     <li>Creates a new <code>Student</code> object.</li>
-                    <li>Instance variables are initialized to default values: <code>name = null</code>, <code>age = 0</code>.</li>
+                    <li>Initializes: <code>name = null</code>, <code>age = 0</code>.</li>
                 </ul>
             </li>
             <li><strong>Calling setDetails</strong>: <code>student.setDetails("Alice", 20);</code>
                 <ul>
-                    <li>Invokes the <code>setDetails</code> method on the <code>student</code> object.</li>
-                    <li><code>this.name = name;</code> assigns <code>"Alice"</code> to the <code>name</code> field.</li>
-                    <li><code>this.age = age;</code> assigns <code>20</code> to the <code>age</code> field.</li>
+                    <li>Invokes <code>setDetails</code>.</li>
+                    <li><code>this.name = name;</code> sets <code>name</code> to <code>"Alice"</code>.</li>
+                    <li><code>this.age = age;</code> sets <code>age</code> to <code>20</code>.</li>
                 </ul>
             </li>
             <li><strong>Calling displayDetails</strong>: <code>student.displayDetails();</code>
                 <ul>
-                    <li>Invokes the <code>displayDetails</code> method.</li>
-                    <li><code>System.out.println("Name: " + name + ", Age: " + age);</code> prints: <code>Name: Alice, Age: 20</code>.</li>
+                    <li>Prints: <code>Name: Alice, Age: 20</code>.</li>
                 </ul>
             </li>
-            <li><strong>Program Termination</strong>: The <code>main</code> method ends, and the program terminates.</li>
+            <li><strong>Program Termination</strong>: The <code>main</code> method ends.</li>
         </ol>
 
         <h3>Output</h3>
-        <div class="output">
-            Name: Alice, Age: 20
-        </div>
+        <div class="output">Name: Alice, Age: 20</div>
 
         <h3>Key Points</h3>
         <ul>
-            <li>Instance methods are essential for defining object behavior.</li>
-            <li>The <code>this</code> keyword ensures the correct instance variable is accessed, avoiding confusion with method parameters.</li>
-            <li>Instance methods cannot be called without creating an object first.</li>
+            <li>Instance methods define object behavior.</li>
+            <li><code>this</code> avoids parameter/field ambiguity.</li>
+            <li>Requires an object to call.</li>
         </ul>
 
         <h2>2. Constructors</h2>
         <h3>Definition</h3>
-        <p>A constructor in Java is a special method used to initialize objects of a class. It is called automatically when an object is created using the <code>new</code> keyword. Constructors have the same name as the class and do not have a return type, not even <code>void</code>.</p>
+        <p>A constructor is a special method that initializes objects, called automatically with <code>new</code>. It has the same name as the class and no return type.</p>
 
         <h3>Characteristics</h3>
         <ul>
-            <li><strong>Name</strong>: Must match the class name exactly.</li>
+            <li><strong>Name</strong>: Matches the class name.</li>
             <li><strong>No return type</strong>: Not even <code>void</code>.</li>
-            <li><strong>Automatic invocation</strong>: Called when an object is instantiated.</li>
-            <li><strong>Overloadable</strong>: Multiple constructors can exist with different parameter lists.</li>
-            <li><strong>Default constructor</strong>: If no constructor is defined, Java provides a default no-argument constructor that initializes fields to default values (e.g., <code>null</code> for objects, <code>0</code> for numbers).</li>
+            <li><strong>Automatic invocation</strong>: Called during object creation.</li>
+            <li><strong>Overloadable</strong>: Multiple constructors with different parameters.</li>
+            <li><strong>Default constructor</strong>: Provided by Java if none defined.</li>
         </ul>
 
         <h3>Types of Constructors</h3>
         <ul>
-            <li><strong>Default Constructor</strong>: Automatically provided by Java if no constructor is defined. It sets instance variables to default values.</li>
-            <li><strong>No-Argument Constructor</strong>: Explicitly defined by the programmer, takes no parameters, and provides custom initialization.</li>
-            <li><strong>Parameterized Constructor</strong>: Takes parameters to initialize instance variables with specific values.</li>
+            <li><strong>Default Constructor</strong>: Sets fields to defaults.</li>
+            <li><strong>No-Argument Constructor</strong>: Custom initialization, no parameters.</li>
+            <li><strong>Parameterized Constructor</strong>: Initializes with specific values.</li>
         </ul>
 
         <h3>Example Program</h3>
-        <pre>
-public class Book {
-    // Instance variables
-    private String title;
-    private double price;
-
-    // No-argument constructor
-    public Book() {
-        this.title = "Unknown";
-        this.price = 0.0;
-    }
-
-    // Parameterized constructor
-    public Book(String title, double price) {
-        this.title = title;
-        this.price = price;
-    }
-
-    // Instance method to display book details
-    public void displayBook() {
-        System.out.println("Title: " + title + ", Price: $" + price);
-    }
-
-    // Main method to test constructors
-    public static void main(String[] args) {
-        // Using no-argument constructor
-        Book book1 = new Book();
-        book1.displayBook();
-
-        // Using parameterized constructor
-        Book book2 = new Book("Java Programming", 49.99);
-        book2.displayBook();
-    }
-}
+        <button class="animate-button" onclick="animateConstructor()">Animate Execution</button>
+        <pre id="constructor-code">
+<span class="code-line">public class Book {</span>
+<span class="code-line">    private String title;</span>
+<span class="code-line">    private double price;</span>
+<span class="code-line"></span>
+<span class="code-line">    public Book() {</span>
+<span class="code-line">        this.title = "Unknown";</span>
+<span class="code-line">        this.price = 0.0;</span>
+<span class="code-line">    }</span>
+<span class="code-line"></span>
+<span class="code-line">    public Book(String title, double price) {</span>
+<span class="code-line">        this.title = title;</span>
+<span class="code-line">        this.price = price;</span>
+<span class="code-line">    }</span>
+<span class="code-line"></span>
+<span class="code-line">    public void displayBook() {</span>
+<span class="code-line">        System.out.println("Title: " + title + ", Price: $" + price);</span>
+<span class="code-line">    }</span>
+<span class="code-line"></span>
+<span class="code-line">    public static void main(String[] args) {</span>
+<span class="code-line">        Book book1 = new Book();</span>
+<span class="code-line">        book1.displayBook();</span>
+<span class="code-line">        Book book2 = new Book("Java Programming", 49.99);</span>
+<span class="code-line">        book2.displayBook();</span>
+<span class="code-line">    }</span>
+<span class="code-line">}</span>
         </pre>
+        <div class="object-box" id="book1-box">
+            <strong>Book1 Object</strong><br>
+            title: <span class="field-value" id="book1-title">null</span><br>
+            price: <span class="field-value" id="book1-price">0</span>
+        </div>
+        <div class="object-box" id="book2-box">
+            <strong>Book2 Object</strong><br>
+            title: <span class="field-value" id="book2-title">null</span><br>
+            price: <span class="field-value" id="book2-price">0</span>
+        </div>
 
         <h3>Tracing the Program</h3>
-        <p>Let’s trace the execution of the <code>main</code> method:</p>
         <ol>
             <li><strong>Object Creation (book1)</strong>: <code>Book book1 = new Book();</code>
                 <ul>
-                    <li>Invokes the no-argument constructor.</li>
-                    <li><code>this.title = "Unknown";</code> sets <code>title</code> to <code>"Unknown"</code>.</li>
-                    <li><code>this.price = 0.0;</code> sets <code>price</code> to <code>0.0</code>.</li>
+                    <li>Invokes no-argument constructor.</li>
+                    <li>Sets <code>title</code> to <code>"Unknown"</code>, <code>price</code> to <code>0.0</code>.</li>
                 </ul>
             </li>
-            <li><strong>Calling displayBook for book1</strong>: <code>book1.displayBook();</code>
-                <ul>
-                    <li>Prints: <code>Title: Unknown, Price: $0.0</code>.</li>
-                </ul>
-            </li>
+            <li><strong>Calling displayBook for book1</strong>: Prints <code>Title: Unknown, Price: $0.0</code>.</li>
             <li><strong>Object Creation (book2)</strong>: <code>Book book2 = new Book("Java Programming", 49.99);</code>
                 <ul>
-                    <li>Invokes the parameterized constructor.</li>
-                    <li><code>this.title = title;</code> sets <code>title</code> to <code>"Java Programming"</code>.</li>
-                    <li><code>this.price = price;</code> sets <code>price</code> to <code>49.99</code>.</li>
+                    <li>Invokes parameterized constructor.</li>
+                    <li>Sets <code>title</code> to <code>"Java Programming"</code>, <code>price</code> to <code>49.99</code>.</li>
                 </ul>
             </li>
-            <li><strong>Calling displayBook for book2</strong>: <code>book2.displayBook();</code>
-                <ul>
-                    <li>Prints: <code>Title: Java Programming, Price: $49.99</code>.</li>
-                </ul>
-            </li>
-            <li><strong>Program Termination</strong>: The <code>main</code> method ends.</li>
+            <li><strong>Calling displayBook for book2</strong>: Prints <code>Title: Java Programming, Price: $49.99</code>.</li>
+            <li><strong>Program Termination</strong>.</li>
         </ol>
 
         <h3>Output</h3>
@@ -262,83 +293,78 @@ public class Book {
 
         <h3>Key Points</h3>
         <ul>
-            <li>Constructors initialize objects, ensuring they start in a valid state.</li>
-            <li>Overloading constructors allows flexibility in object creation.</li>
-            <li>If any constructor is defined, Java does not provide the default constructor.</li>
+            <li>Constructors initialize objects.</li>
+            <li>Overloading allows flexible object creation.</li>
+            <li>No default constructor if any is defined.</li>
         </ul>
 
         <h2>3. Method Overloading</h2>
         <h3>Definition</h3>
-        <p>Method overloading in Java allows a class to have multiple methods with the same name but different parameter lists (differing in number, type, or order of parameters). This provides flexibility in how methods are called, improving code readability and reusability.</p>
+        <p>Method overloading allows multiple methods with the same name but different parameter lists, improving flexibility and readability.</p>
 
         <h3>Characteristics</h3>
         <ul>
-            <li><strong>Same method name</strong>: All overloaded methods share the same name.</li>
-            <li><strong>Different signatures</strong>: Must differ in the number, type, or order of parameters.</li>
-            <li><strong>Return type</strong>: Not considered in overloading; only the parameter list matters.</li>
-            <li><strong>Compile-time resolution</strong>: The Java compiler determines which method to call based on the arguments provided.</li>
-            <li><strong>Access modifiers</strong>: Can vary (e.g., <code>public</code>, <code>private</code>), but this doesn’t affect overloading.</li>
+            <li><strong>Same method name</strong>.</li>
+            <li><strong>Different signatures</strong>: Vary in number, type, or order of parameters.</li>
+            <li><strong>Return type</strong>: Not considered for overloading.</li>
+            <li><strong>Compile-time resolution</strong>: Compiler selects based on arguments.</li>
+            <li><strong>Access modifiers</strong>: Can vary, but irrelevant to overloading.</li>
         </ul>
 
         <h3>Example Program</h3>
-        <pre>
-public class Calculator {
-    // Method to add two integers
-    public int add(int a, int b) {
-        return a + b;
-    }
-
-    // Overloaded method to add three integers
-    public int add(int a, int b, int c) {
-        return a + b + c;
-    }
-
-    // Overloaded method to add two doubles
-    public double add(double a, double b) {
-        return a + b;
-    }
-
-    // Main method to test method overloading
-    public static void main(String[] args) {
-        Calculator calc = new Calculator();
-        // Calling overloaded methods
-        System.out.println("Sum of 2 integers: " + calc.add(5, 10));
-        System.out.println("Sum of 3 integers: " + calc.add(5, 10, 15));
-        System.out.println("Sum of 2 doubles: " + calc.add(5.5, 10.5));
-    }
-}
+        <button class="animate-button" onclick="animateOverloading()">Animate Execution</button>
+        <pre id="overloading-code">
+<span class="code-line">public class Calculator {</span>
+<span class="code-line">    public int add(int a, int b) {</span>
+<span class="code-line">        return a + b;</span>
+<span class="code-line">    }</span>
+<span class="code-line"></span>
+<span class="code-line">    public int add(int a, int b, int c) {</span>
+<span class="code-line">        return a + b + c;</span>
+<span class="code-line">    }</span>
+<span class="code-line"></span>
+<span class="code-line">    public double add(double a, double b) {</span>
+<span class="code-line">        return a + b;</span>
+<span class="code-line">    }</span>
+<span class="code-line"></span>
+<span class="code-line">    public static void main(String[] args) {</span>
+<span class="code-line">        Calculator calc = new Calculator();</span>
+<span class="code-line">        System.out.println("Sum of 2 integers: " + calc.add(5, 10));</span>
+<span class="code-line">        System.out.println("Sum of 3 integers: " + calc.add(5, 10, 15));</span>
+<span class="code-line">        System.out.println("Sum of 2 doubles: " + calc.add(5.5, 10.5));</span>
+<span class="code-line">    }</span>
+<span class="code-line">}</span>
         </pre>
+        <div class="object-box" id="calc-box">
+            <strong>Calculator Object</strong><br>
+            <span id="calc-result">Result: <span class="field-value">0</span></span>
+        </div>
 
         <h3>Tracing the Program</h3>
-        <p>Let’s trace the execution of the <code>main</code> method:</p>
         <ol>
-            <li><strong>Object Creation</strong>: <code>Calculator calc = new Calculator();</code>
-                <ul>
-                    <li>Creates a new <code>Calculator</code> object.</li>
-                </ul>
-            </li>
+            <li><strong>Object Creation</strong>: <code>Calculator calc = new Calculator();</code></li>
             <li><strong>Calling add(int, int)</strong>: <code>calc.add(5, 10)</code>
                 <ul>
-                    <li>The compiler selects the <code>add(int, int)</code> method based on the argument types.</li>
-                    <li>Returns <code>5 + 10 = 15</code>.</li>
+                    <li>Selects <code>add(int, int)</code>.</li>
+                    <li>Returns <code>15</code>.</li>
                     <li>Prints: <code>Sum of 2 integers: 15</code>.</li>
                 </ul>
             </li>
             <li><strong>Calling add(int, int, int)</strong>: <code>calc.add(5, 10, 15)</code>
                 <ul>
-                    <li>The compiler selects the <code>add(int, int, int)</code> method.</li>
-                    <li>Returns <code>5 + 10 + 15 = 30</code>.</li>
+                    <li>Selects <code>add(int, int, int)</code>.</li>
+                    <li>Returns <code>30</code>.</li>
                     <li>Prints: <code>Sum of 3 integers: 30</code>.</li>
                 </ul>
             </li>
             <li><strong>Calling add(double, double)</strong>: <code>calc.add(5.5, 10.5)</code>
                 <ul>
-                    <li>The compiler selects the <code>add(double, double)</code> method.</li>
-                    <li>Returns <code>5.5 + 10.5 = 16.0</code>.</li>
+                    <li>Selects <code>add(double, double)</code>.</li>
+                    <li>Returns <code>16.0</code>.</li>
                     <li>Prints: <code>Sum of 2 doubles: 16.0</code>.</li>
                 </ul>
             </li>
-            <li><strong>Program Termination</strong>: The <code>main</code> method ends.</li>
+            <li><strong>Program Termination</strong>.</li>
         </ol>
 
         <h3>Output</h3>
@@ -350,13 +376,103 @@ public class Calculator {
 
         <h3>Key Points</h3>
         <ul>
-            <li>Method overloading allows multiple ways to call a method with the same name.</li>
-            <li>The compiler matches the method call to the correct method based on the argument list.</li>
-            <li>Overloading is resolved at compile time, not runtime.</li>
+            <li>Allows multiple methods with same name.</li>
+            <li>Compiler matches based on parameters.</li>
+            <li>Resolved at compile time.</li>
         </ul>
 
         <h2>Conclusion</h2>
-        <p>This page has covered three core Java concepts: instance methods, constructors, and method overloading. Each topic was explained with a clear definition, characteristics, a complete Java example program, step-by-step tracing of the program’s execution, and the expected output. These concepts are foundational to object-oriented programming in Java, enabling the creation of robust, reusable, and well-structured code.</p>
+        <p>This page covers instance methods, constructors, and method overloading with animations to visualize execution. Each topic includes definitions, example programs, tracing, and outputs, making Java’s object-oriented concepts clear and engaging.</p>
     </div>
+
+    <script>
+        function animateInstanceMethod() {
+            const lines = document.querySelectorAll('#instance-code .code-line');
+            const nameField = document.getElementById('student-name');
+            const ageField = document.getElementById('student-age');
+            let step = 0;
+
+            function highlightLine(index, delay, callback) {
+                setTimeout(() => {
+                    lines.forEach(l => l.classList.remove('highlight'));
+                    if (index < lines.length) lines[index].classList.add('highlight');
+                    if (callback) callback();
+                }, delay);
+            }
+
+            highlightLine(14, 0); // Student student = new Student();
+            highlightLine(15, 1000, () => { // setDetails
+                nameField.textContent = 'null';
+                ageField.textContent = '0';
+            });
+            highlightLine(5, 2000); // this.name = name;
+            highlightLine(6, 3000, () => { nameField.textContent = '"Alice"'; });
+            highlightLine(7, 4000, () => { ageField.textContent = '20'; });
+            highlightLine(16, 5000); // displayDetails
+            highlightLine(10, 6000); // println
+            highlightLine(11, 7000, () => {
+                lines.forEach(l => l.classList.remove('highlight'));
+            });
+        }
+
+        function animateConstructor() {
+            const lines = document.querySelectorAll('#constructor-code .code-line');
+            const book1Title = document.getElementById('book1-title');
+            const book1Price = document.getElementById('book1-price');
+            const book2Title = document.getElementById('book2-title');
+            const book2Price = document.getElementById('book2-price');
+            let step = 0;
+
+            function highlightLine(index, delay, callback) {
+                setTimeout(() => {
+                    lines.forEach(l => l.classList.remove('highlight'));
+                    if (index < lines.length) lines[index].classList.add('highlight');
+                    if (callback) callback();
+                }, delay);
+            }
+
+            highlightLine(18, 0); // Book book1 = new Book();
+            highlightLine(5, 1000); // no-arg constructor
+            highlightLine(6, 2000, () => { book1Title.textContent = '"Unknown"'; });
+            highlightLine(7, 3000, () => { book1Price.textContent = '0.0'; });
+            highlightLine(19, 4000); // displayBook
+            highlightLine(20, 5000); // Book book2 = new Book("Java Programming", 49.99);
+            highlightLine(10, 6000); // parameterized constructor
+            highlightLine(11, 7000, () => { book2Title.textContent = '"Java Programming"'; });
+            highlightLine(12, 8000, () => { book2Price.textContent = '49.99'; });
+            highlightLine(21, 9000); // displayBook
+            highlightLine(15, 10000, () => {
+                lines.forEach(l => l.classList.remove('highlight'));
+            });
+        }
+
+        function animateOverloading() {
+            const lines = document.querySelectorAll('#overloading-code .code-line');
+            const result = document.getElementById('calc-result').querySelector('.field-value');
+            let step = 0;
+
+            function highlightLine(index, delay, callback) {
+                setTimeout(() => {
+                    lines.forEach(l => l.classList.remove('highlight'));
+                    if (index < lines.length) lines[index].classList.add('highlight');
+                    if (callback) callback();
+                }, delay);
+            }
+
+            highlightLine(13, 0); // Calculator calc = new Calculator();
+            highlightLine(14, 1000); // add(5, 10)
+            highlightLine(2, 2000); // add(int, int)
+            highlightLine(3, 3000, () => { result.textContent = '15'; });
+            highlightLine(15, 4000); // add(5, 10, 15)
+            highlightLine(6, 5000); // add(int, int, int)
+            highlightLine(7, 6000, () => { result.textContent = '30'; });
+            highlightLine(16, 7000); // add(5.5, 10.5)
+            highlightLine(10, 8000); // add(double, double)
+            highlightLine(11, 9000, () => { result.textContent = '16.0'; });
+            highlightLine(17, 10000, () => {
+                lines.forEach(l => l.classList.remove('highlight'));
+            });
+        }
+    </script>
 </body>
 </html>
