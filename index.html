@@ -510,12 +510,12 @@
           
           {/* Navigation */}
           <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0a]/80 backdrop-blur-md border-b border-cyan-500/20">
-            <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-3 sm:gap-0">
               <div className="flex items-center gap-2 text-cyan-400">
                 <TerminalIcon />
                 <span className="text-sm font-bold">~/hamza</span>
               </div>
-              <div className="flex gap-6 text-sm">
+              <div className="flex flex-wrap gap-3 sm:gap-6 text-xs sm:text-sm justify-center sm:justify-end">
                 {['home', 'about', 'projects', 'skills', 'contact'].map(section => (
                   <button
                     key={section}
@@ -538,7 +538,7 @@
                 <span className="text-gray-500">$ </span>whoami
               </div>
               
-              <h1 className="text-6xl md:text-8xl font-bold mb-6 opacity-0 animate-fadeIn" 
+              <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold mb-6 opacity-0 animate-fadeIn" 
                   style={{ 
                     animationDelay: '0.5s', 
                     animationFillMode: 'forwards',
@@ -548,7 +548,7 @@
                 <span className="text-cyan-400">.</span>
               </h1>
               
-              <div className="text-xl md:text-2xl mb-8 text-gray-300 h-8 opacity-0 animate-fadeIn" style={{ animationDelay: '0.8s', animationFillMode: 'forwards' }}>
+              <div className="text-lg sm:text-xl md:text-2xl mb-8 text-gray-300 h-8 opacity-0 animate-fadeIn" style={{ animationDelay: '0.8s', animationFillMode: 'forwards' }}>
                 <TerminalText 
                   texts={[
                     'Software Engineer',
@@ -589,7 +589,7 @@
           {/* About Section */}
           <section id="about" className="relative min-h-screen flex items-center px-6 py-20">
             <div className="max-w-4xl mx-auto z-10">
-              <h2 className="text-4xl md:text-5xl font-bold mb-12 flex items-center gap-4">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 flex items-center gap-4">
                 <span className="text-gray-500 text-2xl">01.</span>
                 <span className="text-cyan-400">About</span>
                 <div className="flex-1 h-px bg-gradient-to-r from-cyan-500/50 to-transparent"></div>
@@ -648,7 +648,7 @@
           {/* Projects Section */}
           <section id="projects" className="relative min-h-screen px-6 py-20">
             <div className="max-w-6xl mx-auto z-10">
-              <h2 className="text-4xl md:text-5xl font-bold mb-12 flex items-center gap-4">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 flex items-center gap-4">
                 <span className="text-gray-500 text-2xl">02.</span>
                 <span className="text-cyan-400">Projects</span>
                 <div className="flex-1 h-px bg-gradient-to-r from-cyan-500/50 to-transparent"></div>
@@ -706,7 +706,7 @@
           {/* Skills Section */}
           <section id="skills" className="relative min-h-screen px-6 py-20">
             <div className="max-w-6xl mx-auto z-10">
-              <h2 className="text-4xl md:text-5xl font-bold mb-12 flex items-center gap-4">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 flex items-center gap-4">
                 <span className="text-gray-500 text-2xl">03.</span>
                 <span className="text-cyan-400">Skills</span>
                 <div className="flex-1 h-px bg-gradient-to-r from-cyan-500/50 to-transparent"></div>
@@ -780,7 +780,7 @@
           {/* Contact Section */}
           <section id="contact" className="relative min-h-screen flex items-center px-6 py-20">
             <div className="max-w-4xl mx-auto z-10 text-center">
-              <h2 className="text-4xl md:text-5xl font-bold mb-12 flex items-center justify-center gap-4">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 flex items-center justify-center gap-4">
                 <span className="text-gray-500 text-2xl">04.</span>
                 <span className="text-cyan-400">Get In Touch</span>
               </h2>
