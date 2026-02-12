@@ -201,100 +201,143 @@
       </svg>
     );
 
-    // Particle background component
+    // Starry, parallax, mouse-reactive background
     const ParticleBackground = () => {
       const canvasRef = useRef(null);
-      
+
       useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
-        
+
         const ctx = canvas.getContext('2d');
         let animationFrameId;
         let particles = [];
-        
-        const resizeCanvas = () => {
+
+        const mouse = {
+          x: window.innerWidth / 2,
+          y: window.innerHeight / 2
+        };
+
+        const handleMouseMove = (e) => {
+          mouse.x = e.clientX;
+          mouse.y = e.clientY;
+        };
+
+        const init = () => {
           canvas.width = window.innerWidth;
           canvas.height = window.innerHeight;
-        };
-        
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        
-        class Particle {
-          constructor() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.size = Math.random() * 2;
-            this.speedX = Math.random() * 0.5 - 0.25;
-            this.speedY = Math.random() * 0.5 - 0.25;
-            this.opacity = Math.random() * 0.5 + 0.2;
-          }
-          
-          update() {
-            this.x += this.speedX;
-            this.y += this.speedY;
-            
-            if (this.x > canvas.width) this.x = 0;
-            if (this.x < 0) this.x = canvas.width;
-            if (this.y > canvas.height) this.y = 0;
-            if (this.y < 0) this.y = canvas.height;
-          }
-          
-          draw() {
-            ctx.fillStyle = `rgba(100, 200, 255, ${this.opacity})`;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
-          }
-        }
-        
-        const init = () => {
           particles = [];
-          const particleCount = Math.floor((canvas.width * canvas.height) / 15000);
+
+          // More particles on larger screens, but with limits
+          const particleCount = Math.max(
+            80,
+            Math.min(250, Math.floor((canvas.width * canvas.height) / 10000))
+          );
+
+          class Particle {
+            constructor() {
+              this.x = Math.random() * canvas.width;
+              this.y = Math.random() * canvas.height;
+              // depth controls parallax & speed (0.5 = far, 2 = close)
+              this.depth = Math.random() * 1.5 + 0.5;
+              this.size = Math.random() * 1.5 * this.depth;
+              this.speedX = (Math.random() - 0.5) * 0.2 * this.depth;
+              this.speedY = (Math.random() - 0.5) * 0.2 * this.depth;
+            }
+
+            update() {
+              this.x += this.speedX;
+              this.y += this.speedY;
+
+              // Wrap around edges
+              if (this.x > canvas.width) this.x = 0;
+              if (this.x < 0) this.x = canvas.width;
+              if (this.y > canvas.height) this.y = 0;
+              if (this.y < 0) this.y = canvas.height;
+            }
+
+            draw(parallaxX, parallaxY) {
+              const drawX = this.x + parallaxX * this.depth;
+              const drawY = this.y + parallaxY * this.depth;
+
+              const alpha = 0.3 + this.depth * 0.3;
+              ctx.fillStyle = `rgba(200, 230, 255, ${alpha})`;
+              ctx.beginPath();
+              ctx.arc(drawX, drawY, this.size, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          }
+
           for (let i = 0; i < particleCount; i++) {
             particles.push(new Particle());
           }
         };
-        
+
         const animate = () => {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          
-          particles.forEach(particle => {
-            particle.update();
-            particle.draw();
+          // Space-y dark background
+          ctx.fillStyle = 'rgba(5, 10, 20, 0.9)';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          const parallaxStrength = 25;
+          const normX =
+            ((mouse.x ?? canvas.width / 2) - canvas.width / 2) / (canvas.width / 2);
+          const normY =
+            ((mouse.y ?? canvas.height / 2) - canvas.height / 2) / (canvas.height / 2);
+
+          const parallaxX = normX * parallaxStrength;
+          const parallaxY = normY * parallaxStrength;
+
+          // Draw and update particles
+          particles.forEach((p) => {
+            p.update();
+            p.draw(parallaxX, parallaxY);
           });
-          
-          // Connect nearby particles
-          particles.forEach((a, i) => {
-            particles.slice(i + 1).forEach(b => {
-              const dx = a.x - b.x;
-              const dy = a.y - b.y;
+
+          // Connect close stars with faint lines
+          for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+              const a = particles[i];
+              const b = particles[j];
+
+              const ax = a.x + parallaxX * a.depth;
+              const ay = a.y + parallaxY * a.depth;
+              const bx = b.x + parallaxX * b.depth;
+              const by = b.y + parallaxY * b.depth;
+
+              const dx = ax - bx;
+              const dy = ay - by;
               const distance = Math.sqrt(dx * dx + dy * dy);
-              
-              if (distance < 120) {
-                ctx.strokeStyle = `rgba(100, 200, 255, ${0.15 * (1 - distance / 120)})`;
+
+              const maxDist = 110;
+              if (distance < maxDist) {
+                const t = 1 - distance / maxDist;
+                ctx.strokeStyle = `rgba(120, 200, 255, ${0.12 * t})`;
                 ctx.lineWidth = 0.5;
                 ctx.beginPath();
-                ctx.moveTo(a.x, a.y);
-                ctx.lineTo(b.x, b.y);
+                ctx.moveTo(ax, ay);
+                ctx.lineTo(bx, by);
                 ctx.stroke();
               }
-            });
-          });
-          
+            }
+          }
+
           animationFrameId = requestAnimationFrame(animate);
         };
-        
+
+        // Init and start
         init();
         animate();
-        
+
+        window.addEventListener('resize', init);
+        window.addEventListener('mousemove', handleMouseMove);
+
         return () => {
-          window.removeEventListener('resize', resizeCanvas);
+          window.removeEventListener('resize', init);
+          window.removeEventListener('mousemove', handleMouseMove);
           cancelAnimationFrame(animationFrameId);
         };
       }, []);
-      
+
       return (
         <canvas
           ref={canvasRef}
@@ -346,6 +389,55 @@
       );
     };
 
+    // Tilt Card Component
+    const TiltCard = ({ children, className = "", style = {}, hoverScale = 1.03 }) => {
+      const [tilt, setTilt] = useState({ x: 0, y: 0 });
+      const [isHovered, setIsHovered] = useState(false);
+      const cardRef = useRef(null);
+      
+      const handleMouseMove = (e) => {
+        if (!cardRef.current) return;
+        
+        const rect = cardRef.current.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        
+        const mouseX = e.clientX - centerX;
+        const mouseY = e.clientY - centerY;
+        
+        const maxTilt = 15; // Maximum tilt angle in degrees
+        const tiltX = (mouseY / (rect.height / 2)) * -maxTilt;
+        const tiltY = (mouseX / (rect.width / 2)) * maxTilt;
+        
+        setTilt({ x: tiltX, y: tiltY });
+      };
+      
+      const handleMouseLeave = () => {
+        setTilt({ x: 0, y: 0 });
+        setIsHovered(false);
+      };
+
+      const scale = isHovered ? hoverScale : 1;
+      
+      return (
+        <div
+          ref={cardRef}
+          onMouseMove={handleMouseMove}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={handleMouseLeave}
+          className={className}
+          style={{
+            ...style,
+            transform: `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale3d(${scale}, ${scale}, ${scale})`,
+            transformStyle: 'preserve-3d',
+            transition: 'transform 0.15s ease-out'
+          }}
+        >
+          {children}
+        </div>
+      );
+    };
+
     // Main Portfolio Component
     const Portfolio = () => {
       const [activeSection, setActiveSection] = useState('home');
@@ -378,7 +470,7 @@
         languages: ['Python', 'JavaScript', 'HTML/CSS', 'Bash'],
         frameworks: ['Django', 'Tailwind CSS'],
         security: ['Burp Suite', 'Nmap', 'Wireshark', 'Metasploit', 'John The Ripper', 'Hydra'],
-        tools: ['Git/GitHub', 'Linux', 'MySQL', 'VS Code', 'Kali Linux', 'Arch Linux']
+        tools: ['Git/GitHub', 'Linux', 'Arch Linux', 'MySQL', 'VS Code', 'Kali Linux', 'Arch Linux']
       };
       
       useEffect(() => {
@@ -523,7 +615,7 @@
                   </p>
                 </div>
                 
-                <div className="relative group">
+                <TiltCard className="relative group">
                   <div className="absolute inset-0 bg-cyan-500/20 blur-2xl group-hover:bg-cyan-500/30 transition-all"></div>
                   <div className="relative border border-cyan-500/30 p-8 rounded-lg bg-[#0f0f0f]/50 backdrop-blur">
                     <div className="flex items-center gap-3 mb-6 text-cyan-400">
@@ -548,7 +640,7 @@
                       </li>
                     </ul>
                   </div>
-                </div>
+                </TiltCard>
               </div>
             </div>
           </section>
@@ -564,9 +656,9 @@
               
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {projects.map((project, index) => (
-                  <div 
+                  <TiltCard
                     key={index}
-                    className="group relative border border-cyan-500/20 rounded-lg p-6 bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-all hover:transform hover:scale-105"
+                    className="group relative border border-cyan-500/20 rounded-lg p-6 bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-colors"
                     style={{
                       animation: `fadeInUp 0.6s ease-out ${index * 0.1}s forwards`,
                       opacity: 0
@@ -605,7 +697,7 @@
                         </span>
                       ))}
                     </div>
-                  </div>
+                  </TiltCard>
                 ))}
               </div>
             </div>
@@ -621,7 +713,7 @@
               </h2>
               
               <div className="grid md:grid-cols-2 gap-8">
-                <div className="border border-cyan-500/20 rounded-lg p-8 bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-all">
+                <TiltCard className="border border-cyan-500/20 rounded-lg p-8 bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-all">
                   <div className="flex items-center gap-3 mb-6 text-cyan-400">
                     <CodeIcon />
                     <h3 className="text-xl font-bold">Languages & Frameworks</h3>
@@ -652,9 +744,9 @@
                       </div>
                     </div>
                   </div>
-                </div>
+                </TiltCard>
                 
-                <div className="border border-cyan-500/20 rounded-lg p-8 bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-all">
+                <TiltCard className="border border-cyan-500/20 rounded-lg p-8 bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-all">
                   <div className="flex items-center gap-3 mb-6 text-cyan-400">
                     <ShieldIcon />
                     <h3 className="text-xl font-bold">Security Tools</h3>
@@ -666,9 +758,9 @@
                       </span>
                     ))}
                   </div>
-                </div>
+                </TiltCard>
                 
-                <div className="border border-cyan-500/20 rounded-lg p-8 bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-all md:col-span-2">
+                <TiltCard className="border border-cyan-500/20 rounded-lg p-8 bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-all md:col-span-2">
                   <div className="flex items-center gap-3 mb-6 text-cyan-400">
                     <ServerIcon />
                     <h3 className="text-xl font-bold">Tools & Technologies</h3>
@@ -680,7 +772,7 @@
                       </span>
                     ))}
                   </div>
-                </div>
+                </TiltCard>
               </div>
             </div>
           </section>
