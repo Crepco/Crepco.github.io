@@ -1,478 +1,729 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="background: #0a0a0a;">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Understanding Instance Methods, Constructors, and Method Overloading in Java</title>
-    <style>
-        /* General Styles */
-        body {
-            font-family: 'Arial', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1, h2, h3 {
-            color: #2c3e50;
-        }
-        h1 {
-            text-align: center;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
-        }
-        h2 {
-            margin-top: 30px;
-            border-bottom: 1px solid #3498db;
-            padding-bottom: 5px;
-        }
-        p, li {
-            font-size: 16px;
-        }
-        ul, ol {
-            margin-left: 20px;
-        }
-        /* Code Block Styles */
-        pre {
-            background: #1e1e1e;
-            color: #d4d4d4;
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            position: relative;
-        }
-        code {
-            font-family: 'Courier New', monospace;
-        }
-        .output {
-            background: #e8ecef;
-            padding: 10px;
-            border-left: 4px solid #3498db;
-            margin: 10px 0;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-        }
-        /* Animation Styles */
-        .code-line {
-            transition: background-color 0.5s ease;
-        }
-        .highlight {
-            background-color: #3498db !important;
-            color: #fff !important;
-        }
-        .object-box {
-            border: 2px solid #2c3e50;
-            padding: 10px;
-            margin: 10px 0;
-            background: #ecf0f1;
-            border-radius: 5px;
-            display: inline-block;
-        }
-        .field-value {
-            opacity: 0;
-            animation: fadeIn 1s forwards;
-        }
-        .param-arrow {
-            color: #e74c3c;
-            font-weight: bold;
-            animation: pulse 1s infinite;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-        .animate-button {
-            background: #3498db;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 10px 0;
-            font-size: 16px;
-        }
-        .animate-button:hover {
-            background: #2980b9;
-        }
-        /* Responsive Design */
-        @media (max-width: 600px) {
-            .container {
-                padding: 10px;
-            }
-            pre, .output {
-                font-size: 12px;
-            }
-            .object-box {
-                width: 100%;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hamza - Software Engineer & Cybersecurity Enthusiast</title>
+  <meta name="description" content="Portfolio of Hamza - CSE Student, Cybersecurity Enthusiast, and Linux Advocate">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html {
+      scroll-behavior: smooth;
+      background: #0a0a0a !important;
+    }
+    
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: #0a0a0a !important;
+      color: #e5e5e5;
+      overflow-x: hidden;
+    }
+    
+    #root {
+      background: #0a0a0a;
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: #0a0a0a;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: rgba(100, 200, 255, 0.3);
+      border-radius: 5px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(100, 200, 255, 0.5);
+    }
+    
+    /* Loading animation */
+    .loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #0a0a0a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s;
+    }
+    
+    .loader.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .terminal-loader {
+      font-family: 'JetBrains Mono', monospace;
+      color: #64c8ff;
+      font-size: 18px;
+    }
+    
+    .cursor {
+      animation: blink 1s infinite;
+    }
+    
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes scroll {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(8px); }
+      100% { transform: translateY(0); }
+    }
+    
+    .animate-fadeIn {
+      animation: fadeIn 0.8s ease-out;
+    }
+    
+    .animate-scroll {
+      animation: scroll 1.5s ease-in-out infinite;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Understanding Instance Methods, Constructors, and Method Overloading in Java</h1>
-
-        <h2>Introduction</h2>
-        <p>This page explains three core Java concepts—instance methods, constructors, and method overloading—with visual animations to illustrate program execution. Each topic includes definitions, characteristics, example programs, step-by-step tracing, and outputs. Click the "Animate Execution" buttons to see how the code runs!</p>
-
-        <h2>1. Instance Methods</h2>
-        <h3>Definition</h3>
-        <p>An instance method is a method defined within a class that operates on a specific instance (object) of that class. Unlike static methods, instance methods are tied to an object and can access its instance variables. They define object behavior and are invoked using an object.</p>
-
-        <h3>Characteristics</h3>
-        <ul>
-            <li><strong>Non-static</strong>: Declared without the <code>static</code> keyword.</li>
-            <li><strong>Object-specific</strong>: Requires an object (e.g., <code>object.method()</code>).</li>
-            <li><strong>Access to instance variables</strong>: Can read/modify fields.</li>
-            <li><strong>Return type</strong>: Can return a value or be <code>void</code>.</li>
-            <li><strong>Use of <code>this</code></strong>: Refers to the current object’s fields/methods.</li>
-        </ul>
-
-        <h3>Example Program</h3>
-        <button class="animate-button" onclick="animateInstanceMethod()">Animate Execution</button>
-        <pre id="instance-code">
-<span class="code-line">public class Student {</span>
-<span class="code-line">    private String name;</span>
-<span class="code-line">    private int age;</span>
-<span class="code-line"></span>
-<span class="code-line">    public void setDetails(String name, int age) {</span>
-<span class="code-line">        this.name = name;</span>
-<span class="code-line">        this.age = age;</span>
-<span class="code-line">    }</span>
-<span class="code-line"></span>
-<span class="code-line">    public void displayDetails() {</span>
-<span class="code-line">        System.out.println("Name: " + name + ", Age: " + age);</span>
-<span class="code-line">    }</span>
-<span class="code-line"></span>
-<span class="code-line">    public static void main(String[] args) {</span>
-<span class="code-line">        Student student = new Student();</span>
-<span class="code-line">        student.setDetails("Alice", 20);</span>
-<span class="code-line">        student.displayDetails();</span>
-<span class="code-line">    }</span>
-<span class="code-line">}</span>
-        </pre>
-        <div class="object-box" id="student-box">
-            <strong>Student Object</strong><br>
-            name: <span class="field-value" id="student-name">null</span><br>
-            age: <span class="field-value" id="student-age">0</span>
-        </div>
-
-        <h3>Tracing the Program</h3>
-        <ol>
-            <li><strong>Object Creation</strong>: <code>Student student = new Student();</code>
-                <ul>
-                    <li>Creates a new <code>Student</code> object.</li>
-                    <li>Initializes: <code>name = null</code>, <code>age = 0</code>.</li>
-                </ul>
-            </li>
-            <li><strong>Calling setDetails</strong>: <code>student.setDetails("Alice", 20);</code>
-                <ul>
-                    <li>Invokes <code>setDetails</code>.</li>
-                    <li><code>this.name = name;</code> sets <code>name</code> to <code>"Alice"</code>.</li>
-                    <li><code>this.age = age;</code> sets <code>age</code> to <code>20</code>.</li>
-                </ul>
-            </li>
-            <li><strong>Calling displayDetails</strong>: <code>student.displayDetails();</code>
-                <ul>
-                    <li>Prints: <code>Name: Alice, Age: 20</code>.</li>
-                </ul>
-            </li>
-            <li><strong>Program Termination</strong>: The <code>main</code> method ends.</li>
-        </ol>
-
-        <h3>Output</h3>
-        <div class="output">Name: Alice, Age: 20</div>
-
-        <h3>Key Points</h3>
-        <ul>
-            <li>Instance methods define object behavior.</li>
-            <li><code>this</code> avoids parameter/field ambiguity.</li>
-            <li>Requires an object to call.</li>
-        </ul>
-
-        <h2>2. Constructors</h2>
-        <h3>Definition</h3>
-        <p>A constructor is a special method that initializes objects, called automatically with <code>new</code>. It has the same name as the class and no return type.</p>
-
-        <h3>Characteristics</h3>
-        <ul>
-            <li><strong>Name</strong>: Matches the class name.</li>
-            <li><strong>No return type</strong>: Not even <code>void</code>.</li>
-            <li><strong>Automatic invocation</strong>: Called during object creation.</li>
-            <li><strong>Overloadable</strong>: Multiple constructors with different parameters.</li>
-            <li><strong>Default constructor</strong>: Provided by Java if none defined.</li>
-        </ul>
-
-        <h3>Types of Constructors</h3>
-        <ul>
-            <li><strong>Default Constructor</strong>: Sets fields to defaults.</li>
-            <li><strong>No-Argument Constructor</strong>: Custom initialization, no parameters.</li>
-            <li><strong>Parameterized Constructor</strong>: Initializes with specific values.</li>
-        </ul>
-
-        <h3>Example Program</h3>
-        <button class="animate-button" onclick="animateConstructor()">Animate Execution</button>
-        <pre id="constructor-code">
-<span class="code-line">public class Book {</span>
-<span class="code-line">    private String title;</span>
-<span class="code-line">    private double price;</span>
-<span class="code-line"></span>
-<span class="code-line">    public Book() {</span>
-<span class="code-line">        this.title = "Unknown";</span>
-<span class="code-line">        this.price = 0.0;</span>
-<span class="code-line">    }</span>
-<span class="code-line"></span>
-<span class="code-line">    public Book(String title, double price) {</span>
-<span class="code-line">        this.title = title;</span>
-<span class="code-line">        this.price = price;</span>
-<span class="code-line">    }</span>
-<span class="code-line"></span>
-<span class="code-line">    public void displayBook() {</span>
-<span class="code-line">        System.out.println("Title: " + title + ", Price: $" + price);</span>
-<span class="code-line">    }</span>
-<span class="code-line"></span>
-<span class="code-line">    public static void main(String[] args) {</span>
-<span class="code-line">        Book book1 = new Book();</span>
-<span class="code-line">        book1.displayBook();</span>
-<span class="code-line">        Book book2 = new Book("Java Programming", 49.99);</span>
-<span class="code-line">        book2.displayBook();</span>
-<span class="code-line">    }</span>
-<span class="code-line">}</span>
-        </pre>
-        <div class="object-box" id="book1-box">
-            <strong>Book1 Object</strong><br>
-            title: <span class="field-value" id="book1-title">null</span><br>
-            price: <span class="field-value" id="book1-price">0</span>
-        </div>
-        <div class="object-box" id="book2-box">
-            <strong>Book2 Object</strong><br>
-            title: <span class="field-value" id="book2-title">null</span><br>
-            price: <span class="field-value" id="book2-price">0</span>
-        </div>
-
-        <h3>Tracing the Program</h3>
-        <ol>
-            <li><strong>Object Creation (book1)</strong>: <code>Book book1 = new Book();</code>
-                <ul>
-                    <li>Invokes no-argument constructor.</li>
-                    <li>Sets <code>title</code> to <code>"Unknown"</code>, <code>price</code> to <code>0.0</code>.</li>
-                </ul>
-            </li>
-            <li><strong>Calling displayBook for book1</strong>: Prints <code>Title: Unknown, Price: $0.0</code>.</li>
-            <li><strong>Object Creation (book2)</strong>: <code>Book book2 = new Book("Java Programming", 49.99);</code>
-                <ul>
-                    <li>Invokes parameterized constructor.</li>
-                    <li>Sets <code>title</code> to <code>"Java Programming"</code>, <code>price</code> to <code>49.99</code>.</li>
-                </ul>
-            </li>
-            <li><strong>Calling displayBook for book2</strong>: Prints <code>Title: Java Programming, Price: $49.99</code>.</li>
-            <li><strong>Program Termination</strong>.</li>
-        </ol>
-
-        <h3>Output</h3>
-        <div class="output">
-            Title: Unknown, Price: $0.0
-            Title: Java Programming, Price: $49.99
-        </div>
-
-        <h3>Key Points</h3>
-        <ul>
-            <li>Constructors initialize objects.</li>
-            <li>Overloading allows flexible object creation.</li>
-            <li>No default constructor if any is defined.</li>
-        </ul>
-
-        <h2>3. Method Overloading</h2>
-        <h3>Definition</h3>
-        <p>Method overloading allows multiple methods with the same name but different parameter lists, improving flexibility and readability.</p>
-
-        <h3>Characteristics</h3>
-        <ul>
-            <li><strong>Same method name</strong>.</li>
-            <li><strong>Different signatures</strong>: Vary in number, type, or order of parameters.</li>
-            <li><strong>Return type</strong>: Not considered for overloading.</li>
-            <li><strong>Compile-time resolution</strong>: Compiler selects based on arguments.</li>
-            <li><strong>Access modifiers</strong>: Can vary, but irrelevant to overloading.</li>
-        </ul>
-
-        <h3>Example Program</h3>
-        <button class="animate-button" onclick="animateOverloading()">Animate Execution</button>
-        <pre id="overloading-code">
-<span class="code-line">public class Calculator {</span>
-<span class="code-line">    public int add(int a, int b) {</span>
-<span class="code-line">        return a + b;</span>
-<span class="code-line">    }</span>
-<span class="code-line"></span>
-<span class="code-line">    public int add(int a, int b, int c) {</span>
-<span class="code-line">        return a + b + c;</span>
-<span class="code-line">    }</span>
-<span class="code-line"></span>
-<span class="code-line">    public double add(double a, double b) {</span>
-<span class="code-line">        return a + b;</span>
-<span class="code-line">    }</span>
-<span class="code-line"></span>
-<span class="code-line">    public static void main(String[] args) {</span>
-<span class="code-line">        Calculator calc = new Calculator();</span>
-<span class="code-line">        System.out.println("Sum of 2 integers: " + calc.add(5, 10));</span>
-<span class="code-line">        System.out.println("Sum of 3 integers: " + calc.add(5, 10, 15));</span>
-<span class="code-line">        System.out.println("Sum of 2 doubles: " + calc.add(5.5, 10.5));</span>
-<span class="code-line">    }</span>
-<span class="code-line">}</span>
-        </pre>
-        <div class="object-box" id="calc-box">
-            <strong>Calculator Object</strong><br>
-            <span id="calc-result">Result: <span class="field-value">0</span></span>
-        </div>
-
-        <h3>Tracing the Program</h3>
-        <ol>
-            <li><strong>Object Creation</strong>: <code>Calculator calc = new Calculator();</code></li>
-            <li><strong>Calling add(int, int)</strong>: <code>calc.add(5, 10)</code>
-                <ul>
-                    <li>Selects <code>add(int, int)</code>.</li>
-                    <li>Returns <code>15</code>.</li>
-                    <li>Prints: <code>Sum of 2 integers: 15</code>.</li>
-                </ul>
-            </li>
-            <li><strong>Calling add(int, int, int)</strong>: <code>calc.add(5, 10, 15)</code>
-                <ul>
-                    <li>Selects <code>add(int, int, int)</code>.</li>
-                    <li>Returns <code>30</code>.</li>
-                    <li>Prints: <code>Sum of 3 integers: 30</code>.</li>
-                </ul>
-            </li>
-            <li><strong>Calling add(double, double)</strong>: <code>calc.add(5.5, 10.5)</code>
-                <ul>
-                    <li>Selects <code>add(double, double)</code>.</li>
-                    <li>Returns <code>16.0</code>.</li>
-                    <li>Prints: <code>Sum of 2 doubles: 16.0</code>.</li>
-                </ul>
-            </li>
-            <li><strong>Program Termination</strong>.</li>
-        </ol>
-
-        <h3>Output</h3>
-        <div class="output">
-            Sum of 2 integers: 15
-            Sum of 3 integers: 30
-            Sum of 2 doubles: 16.0
-        </div>
-
-        <h3>Key Points</h3>
-        <ul>
-            <li>Allows multiple methods with same name.</li>
-            <li>Compiler matches based on parameters.</li>
-            <li>Resolved at compile time.</li>
-        </ul>
-
-        <h2>Conclusion</h2>
-        <p>This page covers instance methods, constructors, and method overloading with animations to visualize execution. Each topic includes definitions, example programs, tracing, and outputs, making Java’s object-oriented concepts clear and engaging.</p>
+  <!-- Loading Screen -->
+  <div class="loader" id="loader">
+    <div class="terminal-loader">
+      <div>$ initializing portfolio...</div>
+      <div>$ loading components...</div>
+      <div>$ executing hamza.sh<span class="cursor">_</span></div>
     </div>
+  </div>
 
-    <script>
-        function animateInstanceMethod() {
-            const lines = document.querySelectorAll('#instance-code .code-line');
-            const nameField = document.getElementById('student-name');
-            const ageField = document.getElementById('student-age');
-            let step = 0;
+  <!-- React Root -->
+  <div id="root"></div>
 
-            function highlightLine(index, delay, callback) {
-                setTimeout(() => {
-                    lines.forEach(l => l.classList.remove('highlight'));
-                    if (index < lines.length) lines[index].classList.add('highlight');
-                    if (callback) callback();
-                }, delay);
-            }
+  <!-- Portfolio Component -->
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
 
-            highlightLine(14, 0); // Student student = new Student();
-            highlightLine(15, 1000, () => { // setDetails
-                nameField.textContent = 'null';
-                ageField.textContent = '0';
-            });
-            highlightLine(5, 2000); // this.name = name;
-            highlightLine(6, 3000, () => { nameField.textContent = '"Alice"'; });
-            highlightLine(7, 4000, () => { ageField.textContent = '20'; });
-            highlightLine(16, 5000); // displayDetails
-            highlightLine(10, 6000); // println
-            highlightLine(11, 7000, () => {
-                lines.forEach(l => l.classList.remove('highlight'));
-            });
+    // Simple SVG Icons
+    const GithubIcon = () => (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+      </svg>
+    );
+
+    const MailIcon = () => (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+        <polyline points="22,6 12,13 2,6"></polyline>
+      </svg>
+    );
+
+    const LinkedinIcon = () => (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+        <rect x="2" y="9" width="4" height="12"></rect>
+        <circle cx="4" cy="4" r="2"></circle>
+      </svg>
+    );
+
+    const TerminalIcon = () => (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="4 17 10 11 4 5"></polyline>
+        <line x1="12" y1="19" x2="20" y2="19"></line>
+      </svg>
+    );
+
+    const ShieldIcon = () => (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+      </svg>
+    );
+
+    const CodeIcon = () => (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="16 18 22 12 16 6"></polyline>
+        <polyline points="8 6 2 12 8 18"></polyline>
+      </svg>
+    );
+
+    const ServerIcon = () => (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+        <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+        <line x1="6" y1="6" x2="6.01" y2="6"></line>
+        <line x1="6" y1="18" x2="6.01" y2="18"></line>
+      </svg>
+    );
+
+    const ExternalLinkIcon = () => (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+        <polyline points="15 3 21 3 21 9"></polyline>
+        <line x1="10" y1="14" x2="21" y2="3"></line>
+      </svg>
+    );
+
+    // Particle background component
+    const ParticleBackground = () => {
+      const canvasRef = useRef(null);
+      
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        let animationFrameId;
+        let particles = [];
+        
+        const resizeCanvas = () => {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+        };
+        
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        class Particle {
+          constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 2;
+            this.speedX = Math.random() * 0.5 - 0.25;
+            this.speedY = Math.random() * 0.5 - 0.25;
+            this.opacity = Math.random() * 0.5 + 0.2;
+          }
+          
+          update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            
+            if (this.x > canvas.width) this.x = 0;
+            if (this.x < 0) this.x = canvas.width;
+            if (this.y > canvas.height) this.y = 0;
+            if (this.y < 0) this.y = canvas.height;
+          }
+          
+          draw() {
+            ctx.fillStyle = `rgba(100, 200, 255, ${this.opacity})`;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+          }
         }
-
-        function animateConstructor() {
-            const lines = document.querySelectorAll('#constructor-code .code-line');
-            const book1Title = document.getElementById('book1-title');
-            const book1Price = document.getElementById('book1-price');
-            const book2Title = document.getElementById('book2-title');
-            const book2Price = document.getElementById('book2-price');
-            let step = 0;
-
-            function highlightLine(index, delay, callback) {
-                setTimeout(() => {
-                    lines.forEach(l => l.classList.remove('highlight'));
-                    if (index < lines.length) lines[index].classList.add('highlight');
-                    if (callback) callback();
-                }, delay);
-            }
-
-            highlightLine(18, 0); // Book book1 = new Book();
-            highlightLine(5, 1000); // no-arg constructor
-            highlightLine(6, 2000, () => { book1Title.textContent = '"Unknown"'; });
-            highlightLine(7, 3000, () => { book1Price.textContent = '0.0'; });
-            highlightLine(19, 4000); // displayBook
-            highlightLine(20, 5000); // Book book2 = new Book("Java Programming", 49.99);
-            highlightLine(10, 6000); // parameterized constructor
-            highlightLine(11, 7000, () => { book2Title.textContent = '"Java Programming"'; });
-            highlightLine(12, 8000, () => { book2Price.textContent = '49.99'; });
-            highlightLine(21, 9000); // displayBook
-            highlightLine(15, 10000, () => {
-                lines.forEach(l => l.classList.remove('highlight'));
+        
+        const init = () => {
+          particles = [];
+          const particleCount = Math.floor((canvas.width * canvas.height) / 15000);
+          for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+          }
+        };
+        
+        const animate = () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          
+          particles.forEach(particle => {
+            particle.update();
+            particle.draw();
+          });
+          
+          // Connect nearby particles
+          particles.forEach((a, i) => {
+            particles.slice(i + 1).forEach(b => {
+              const dx = a.x - b.x;
+              const dy = a.y - b.y;
+              const distance = Math.sqrt(dx * dx + dy * dy);
+              
+              if (distance < 120) {
+                ctx.strokeStyle = `rgba(100, 200, 255, ${0.15 * (1 - distance / 120)})`;
+                ctx.lineWidth = 0.5;
+                ctx.beginPath();
+                ctx.moveTo(a.x, a.y);
+                ctx.lineTo(b.x, b.y);
+                ctx.stroke();
+              }
             });
-        }
+          });
+          
+          animationFrameId = requestAnimationFrame(animate);
+        };
+        
+        init();
+        animate();
+        
+        return () => {
+          window.removeEventListener('resize', resizeCanvas);
+          cancelAnimationFrame(animationFrameId);
+        };
+      }, []);
+      
+      return (
+        <canvas
+          ref={canvasRef}
+          className="fixed top-0 left-0 w-full h-full pointer-events-none"
+          style={{ zIndex: 0 }}
+        />
+      );
+    };
 
-        function animateOverloading() {
-            const lines = document.querySelectorAll('#overloading-code .code-line');
-            const result = document.getElementById('calc-result').querySelector('.field-value');
-            let step = 0;
-
-            function highlightLine(index, delay, callback) {
-                setTimeout(() => {
-                    lines.forEach(l => l.classList.remove('highlight'));
-                    if (index < lines.length) lines[index].classList.add('highlight');
-                    if (callback) callback();
-                }, delay);
+    // Terminal typing effect
+    const TerminalText = ({ texts, speed = 100 }) => {
+      const [displayText, setDisplayText] = useState('');
+      const [currentIndex, setCurrentIndex] = useState(0);
+      const [charIndex, setCharIndex] = useState(0);
+      const [isDeleting, setIsDeleting] = useState(false);
+      
+      useEffect(() => {
+        if (currentIndex >= texts.length) return;
+        
+        const currentText = texts[currentIndex];
+        
+        const timeout = setTimeout(() => {
+          if (!isDeleting) {
+            if (charIndex < currentText.length) {
+              setDisplayText(currentText.substring(0, charIndex + 1));
+              setCharIndex(charIndex + 1);
+            } else {
+              setTimeout(() => setIsDeleting(true), 2000);
             }
+          } else {
+            if (charIndex > 0) {
+              setDisplayText(currentText.substring(0, charIndex - 1));
+              setCharIndex(charIndex - 1);
+            } else {
+              setIsDeleting(false);
+              setCurrentIndex((currentIndex + 1) % texts.length);
+            }
+          }
+        }, isDeleting ? speed / 2 : speed);
+        
+        return () => clearTimeout(timeout);
+      }, [charIndex, currentIndex, isDeleting, texts, speed]);
+      
+      return (
+        <span>
+          {displayText}
+          <span className="animate-pulse">_</span>
+        </span>
+      );
+    };
 
-            highlightLine(13, 0); // Calculator calc = new Calculator();
-            highlightLine(14, 1000); // add(5, 10)
-            highlightLine(2, 2000); // add(int, int)
-            highlightLine(3, 3000, () => { result.textContent = '15'; });
-            highlightLine(15, 4000); // add(5, 10, 15)
-            highlightLine(6, 5000); // add(int, int, int)
-            highlightLine(7, 6000, () => { result.textContent = '30'; });
-            highlightLine(16, 7000); // add(5.5, 10.5)
-            highlightLine(10, 8000); // add(double, double)
-            highlightLine(11, 9000, () => { result.textContent = '16.0'; });
-            highlightLine(17, 10000, () => {
-                lines.forEach(l => l.classList.remove('highlight'));
-            });
+    // Main Portfolio Component
+    const Portfolio = () => {
+      const [activeSection, setActiveSection] = useState('home');
+      
+      const projects = [
+        {
+          name: 'Spotify Playlist Downloader',
+          description: 'A tool to download your Spotify playlists with ease. Built with Python and modern web technologies.',
+          tech: ['Python', 'CSS', 'Web APIs'],
+          github: 'https://github.com/Crepco/spotify-playlist-downlaod',
+          stars: 10
+        },
+        {
+          name: 'Steganography Tool',
+          description: 'Hide secret messages within images using advanced steganographic techniques for secure communication.',
+          tech: ['Python', 'Image Processing', 'Cryptography'],
+          github: 'https://github.com/Crepco/Steganography-',
+          stars: 4
+        },
+        {
+          name: 'Password Manager',
+          description: 'Secure password management system with encryption to keep your credentials safe.',
+          tech: ['Python', 'Encryption', 'Security'],
+          github: 'https://github.com/Crepco/Password_Manager',
+          stars: 2
         }
-    </script>
+      ];
+      
+      const skills = {
+        languages: ['Python', 'JavaScript', 'HTML/CSS', 'Bash'],
+        frameworks: ['Django', 'Tailwind CSS'],
+        security: ['Burp Suite', 'Nmap', 'Wireshark', 'Metasploit', 'John The Ripper', 'Hydra'],
+        tools: ['Git/GitHub', 'Linux', 'MySQL', 'VS Code', 'Kali Linux']
+      };
+      
+      useEffect(() => {
+        // Hide loader after component mounts
+        setTimeout(() => {
+          const loader = document.getElementById('loader');
+          if (loader) loader.classList.add('hidden');
+        }, 1500);
+
+        const handleScroll = () => {
+          const sections = ['home', 'about', 'projects', 'skills', 'contact'];
+          const scrollPosition = window.scrollY + window.innerHeight / 2;
+          
+          for (const section of sections) {
+            const element = document.getElementById(section);
+            if (element) {
+              const { offsetTop, offsetHeight } = element;
+              if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+                setActiveSection(section);
+                break;
+              }
+            }
+          }
+        };
+        
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+      }, []);
+      
+      const scrollToSection = (id) => {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      };
+      
+      return (
+        <div className="min-h-screen bg-[#0a0a0a] text-gray-200 overflow-x-hidden">
+          <ParticleBackground />
+          
+          {/* Navigation */}
+          <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0a]/80 backdrop-blur-md border-b border-cyan-500/20">
+            <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+              <div className="flex items-center gap-2 text-cyan-400">
+                <TerminalIcon />
+                <span className="text-sm font-bold">~/hamza</span>
+              </div>
+              <div className="flex gap-6 text-sm">
+                {['home', 'about', 'projects', 'skills', 'contact'].map(section => (
+                  <button
+                    key={section}
+                    onClick={() => scrollToSection(section)}
+                    className={`transition-all hover:text-cyan-400 ${
+                      activeSection === section ? 'text-cyan-400' : 'text-gray-400'
+                    }`}
+                  >
+                    ./{section}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </nav>
+          
+          {/* Hero Section */}
+          <section id="home" className="relative min-h-screen flex items-center justify-center px-6">
+            <div className="max-w-4xl mx-auto text-center z-10">
+              <div className="mb-8 text-cyan-400 text-sm opacity-0 animate-fadeIn" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
+                <span className="text-gray-500">$ </span>whoami
+              </div>
+              
+              <h1 className="text-6xl md:text-8xl font-bold mb-6 opacity-0 animate-fadeIn" 
+                  style={{ 
+                    animationDelay: '0.5s', 
+                    animationFillMode: 'forwards',
+                    textShadow: '0 0 20px rgba(100, 200, 255, 0.3)'
+                  }}>
+                <span className="text-white">Hamza</span>
+                <span className="text-cyan-400">.</span>
+              </h1>
+              
+              <div className="text-xl md:text-2xl mb-8 text-gray-300 h-8 opacity-0 animate-fadeIn" style={{ animationDelay: '0.8s', animationFillMode: 'forwards' }}>
+                <TerminalText 
+                  texts={[
+                    'Software Engineer',
+                    'Cybersecurity Enthusiast',
+                    'Linux Advocate',
+                    'Ethical Hacker'
+                  ]} 
+                  speed={80}
+                />
+              </div>
+              
+              <p className="text-gray-400 max-w-2xl mx-auto mb-12 leading-relaxed opacity-0 animate-fadeIn" style={{ animationDelay: '1.1s', animationFillMode: 'forwards' }}>
+                21-year-old CSE student from India. Passionate about building secure systems, 
+                breaking things ethically, and exploring the depths of Linux and networking.
+              </p>
+              
+              <div className="flex gap-6 justify-center opacity-0 animate-fadeIn" style={{ animationDelay: '1.4s', animationFillMode: 'forwards' }}>
+                {/* GitHub */}
+                <a href="https://github.com/crepco" target="_blank" rel="noopener noreferrer" 
+                   className="p-3 border border-cyan-500/30 rounded-lg hover:bg-cyan-500/10 hover:border-cyan-400 transition-all hover:scale-110">
+                  <GithubIcon />
+                </a>
+                {/* Gmail */}
+                <a href="mailto:hamza0jeelani@gmail.com" 
+                   className="p-3 border border-cyan-500/30 rounded-lg hover:bg-cyan-500/10 hover:border-cyan-400 transition-all hover:scale-110">
+                  <MailIcon />
+                </a>
+              </div>
+            </div>
+            
+            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+              <div className="w-6 h-10 border-2 border-cyan-400/50 rounded-full p-1">
+                <div className="w-1.5 h-3 bg-cyan-400 rounded-full animate-scroll"></div>
+              </div>
+            </div>
+          </section>
+          
+          {/* About Section */}
+          <section id="about" className="relative min-h-screen flex items-center px-6 py-20">
+            <div className="max-w-4xl mx-auto z-10">
+              <h2 className="text-4xl md:text-5xl font-bold mb-12 flex items-center gap-4">
+                <span className="text-gray-500 text-2xl">01.</span>
+                <span className="text-cyan-400">About</span>
+                <div className="flex-1 h-px bg-gradient-to-r from-cyan-500/50 to-transparent"></div>
+              </h2>
+              
+              <div className="grid md:grid-cols-2 gap-12 items-center">
+                <div className="space-y-6 text-gray-300 leading-relaxed">
+                  <p>
+                    Hey there! I'm Hamza, a software engineering student with a deep passion for 
+                    <span className="text-cyan-400"> cybersecurity</span> and 
+                    <span className="text-cyan-400"> Linux systems</span>. I love the challenge of 
+                    understanding how things work—and how they can be broken and secured.
+                  </p>
+                  <p>
+                    When I'm not studying, you'll find me exploring penetration testing techniques, 
+                    writing automation scripts, or diving into CTF challenges. I believe in learning 
+                    by doing, and my projects reflect that hands-on approach.
+                  </p>
+                  <p>
+                    My goal? To build secure, efficient systems while continuously sharpening my skills 
+                    in ethical hacking and network security. Let's make the digital world a safer place, 
+                    one line of code at a time.
+                  </p>
+                </div>
+                
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-cyan-500/20 blur-2xl group-hover:bg-cyan-500/30 transition-all"></div>
+                  <div className="relative border border-cyan-500/30 p-8 rounded-lg bg-[#0f0f0f]/50 backdrop-blur">
+                    <div className="flex items-center gap-3 mb-6 text-cyan-400">
+                      <ShieldIcon />
+                      <span className="font-bold">Focus Areas</span>
+                    </div>
+                    <ul className="space-y-3 text-gray-300">
+                      <li className="flex items-center gap-2">
+                        <span className="text-cyan-400">▹</span> Penetration Testing
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-cyan-400">▹</span> Network Security
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-cyan-400">▹</span> Linux System Administration
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-cyan-400">▹</span> OSINT & Recon
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-cyan-400">▹</span> Full-Stack Development
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          
+          {/* Projects Section */}
+          <section id="projects" className="relative min-h-screen px-6 py-20">
+            <div className="max-w-6xl mx-auto z-10">
+              <h2 className="text-4xl md:text-5xl font-bold mb-12 flex items-center gap-4">
+                <span className="text-gray-500 text-2xl">02.</span>
+                <span className="text-cyan-400">Projects</span>
+                <div className="flex-1 h-px bg-gradient-to-r from-cyan-500/50 to-transparent"></div>
+              </h2>
+              
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {projects.map((project, index) => (
+                  <div 
+                    key={index}
+                    className="group relative border border-cyan-500/20 rounded-lg p-6 bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-all hover:transform hover:scale-105"
+                    style={{
+                      animation: `fadeInUp 0.6s ease-out ${index * 0.1}s forwards`,
+                      opacity: 0
+                    }}
+                  >
+                    <div className="absolute top-4 right-4">
+                      <a 
+                        href={project.github} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-gray-400 hover:text-cyan-400 transition-colors"
+                      >
+                        <ExternalLinkIcon />
+                      </a>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 mb-4 text-cyan-400">
+                      <CodeIcon />
+                      <span className="text-xs bg-cyan-500/10 px-2 py-1 rounded">
+                        ⭐ {project.stars}
+                      </span>
+                    </div>
+                    
+                    <h3 className="text-xl font-bold mb-3 text-white group-hover:text-cyan-400 transition-colors">
+                      {project.name}
+                    </h3>
+                    
+                    <p className="text-gray-400 text-sm mb-4 leading-relaxed">
+                      {project.description}
+                    </p>
+                    
+                    <div className="flex flex-wrap gap-2">
+                      {project.tech.map((tech, i) => (
+                        <span key={i} className="text-xs px-2 py-1 bg-cyan-500/10 text-cyan-400 rounded border border-cyan-500/20">
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+          
+          {/* Skills Section */}
+          <section id="skills" className="relative min-h-screen px-6 py-20">
+            <div className="max-w-6xl mx-auto z-10">
+              <h2 className="text-4xl md:text-5xl font-bold mb-12 flex items-center gap-4">
+                <span className="text-gray-500 text-2xl">03.</span>
+                <span className="text-cyan-400">Skills</span>
+                <div className="flex-1 h-px bg-gradient-to-r from-cyan-500/50 to-transparent"></div>
+              </h2>
+              
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="border border-cyan-500/20 rounded-lg p-8 bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-all">
+                  <div className="flex items-center gap-3 mb-6 text-cyan-400">
+                    <CodeIcon />
+                    <h3 className="text-xl font-bold">Languages & Frameworks</h3>
+                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex justify-between mb-2 text-sm">
+                        <span className="text-gray-300">Programming Languages</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {skills.languages.map((lang, i) => (
+                          <span key={i} className="px-3 py-1 bg-cyan-500/10 text-cyan-400 rounded text-sm border border-cyan-500/20">
+                            {lang}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex justify-between mb-2 text-sm">
+                        <span className="text-gray-300">Frameworks</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {skills.frameworks.map((fw, i) => (
+                          <span key={i} className="px-3 py-1 bg-cyan-500/10 text-cyan-400 rounded text-sm border border-cyan-500/20">
+                            {fw}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="border border-cyan-500/20 rounded-lg p-8 bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-all">
+                  <div className="flex items-center gap-3 mb-6 text-cyan-400">
+                    <ShieldIcon />
+                    <h3 className="text-xl font-bold">Security Tools</h3>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {skills.security.map((tool, i) => (
+                      <span key={i} className="px-3 py-1 bg-cyan-500/10 text-cyan-400 rounded text-sm border border-cyan-500/20">
+                        {tool}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                
+                <div className="border border-cyan-500/20 rounded-lg p-8 bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-all md:col-span-2">
+                  <div className="flex items-center gap-3 mb-6 text-cyan-400">
+                    <ServerIcon />
+                    <h3 className="text-xl font-bold">Tools & Technologies</h3>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {skills.tools.map((tool, i) => (
+                      <span key={i} className="px-3 py-1 bg-cyan-500/10 text-cyan-400 rounded text-sm border border-cyan-500/20">
+                        {tool}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          
+          {/* Contact Section */}
+          <section id="contact" className="relative min-h-screen flex items-center px-6 py-20">
+            <div className="max-w-4xl mx-auto z-10 text-center">
+              <h2 className="text-4xl md:text-5xl font-bold mb-12 flex items-center justify-center gap-4">
+                <span className="text-gray-500 text-2xl">04.</span>
+                <span className="text-cyan-400">Get In Touch</span>
+              </h2>
+              
+              <p className="text-gray-300 mb-12 text-lg leading-relaxed max-w-2xl mx-auto">
+                I'm always open to discussing new projects, creative ideas, or opportunities to be part 
+                of your vision. Whether it's about cybersecurity, development, or just tech in general—
+                let's connect!
+              </p>
+              
+              <a 
+                href="mailto:hamza0jeelani@gmail.com"
+                className="inline-flex items-center gap-2 px-8 py-4 border-2 border-cyan-400 text-cyan-400 rounded-lg hover:bg-cyan-400/10 transition-all text-lg font-semibold hover:scale-105"
+              >
+                <MailIcon />
+                Say Hello
+              </a>
+              
+              <div className="mt-16 pt-8 border-t border-cyan-500/20">
+                <p className="text-gray-500 text-sm">
+                  Built with React • Designed with passion • Deployed on GitHub Pages
+                </p>
+                <p className="text-gray-600 text-xs mt-2">
+                  © 2026 Hamza. All rights reserved.
+                </p>
+              </div>
+            </div>
+          </section>
+        </div>
+      );
+    };
+
+    // Render the app
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<Portfolio />);
+  </script>
 </body>
 </html>
