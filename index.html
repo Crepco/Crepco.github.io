@@ -29,6 +29,11 @@
       background: #0d0d0d !important;
       color: #d4d4d4;
       overflow-x: hidden;
+      cursor: none !important;
+    }
+    
+    * {
+      cursor: none !important;
     }
     
     #root {
@@ -346,6 +351,157 @@
       font-family: 'JetBrains Mono', monospace;
       font-style: italic;
     }
+    
+    /* Mouse trail */
+    .mouse-trail {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      mix-blend-mode: difference;
+    }
+    
+    /* Matrix rain effect */
+    .matrix-char {
+      position: absolute;
+      color: #a78bfa;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      opacity: 0.8;
+      animation: matrix-fall linear infinite;
+    }
+    
+    @keyframes matrix-fall {
+      to {
+        transform: translateY(100vh);
+        opacity: 0;
+      }
+    }
+    
+    /* Glitch effect */
+    .glitch-text {
+      position: relative;
+    }
+    
+    .glitch-text::before,
+    .glitch-text::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .glitch-text::before {
+      left: 2px;
+      text-shadow: -2px 0 #ff00c1;
+      clip: rect(44px, 450px, 56px, 0);
+      animation: glitch-anim 5s infinite linear alternate-reverse;
+    }
+    
+    .glitch-text::after {
+      left: -2px;
+      text-shadow: -2px 0 #00fff9, 2px 2px #ff00c1;
+      clip: rect(44px, 450px, 56px, 0);
+      animation: glitch-anim2 1s infinite linear alternate-reverse;
+    }
+    
+    @keyframes glitch-anim {
+      0% { clip: rect(31px, 9999px, 94px, 0); }
+      20% { clip: rect(33px, 9999px, 14px, 0); }
+      40% { clip: rect(26px, 9999px, 37px, 0); }
+      60% { clip: rect(40px, 9999px, 20px, 0); }
+      80% { clip: rect(2px, 9999px, 60px, 0); }
+      100% { clip: rect(90px, 9999px, 98px, 0); }
+    }
+    
+    @keyframes glitch-anim2 {
+      0% { clip: rect(65px, 9999px, 100px, 0); }
+      20% { clip: rect(79px, 9999px, 85px, 0); }
+      40% { clip: rect(66px, 9999px, 4px, 0); }
+      60% { clip: rect(96px, 9999px, 9px, 0); }
+      80% { clip: rect(10px, 9999px, 50px, 0); }
+      100% { clip: rect(2px, 9999px, 60px, 0); }
+    }
+    
+    /* Interactive code block */
+    .code-block {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .code-block::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.1), transparent);
+      animation: scan 3s infinite;
+    }
+    
+    @keyframes scan {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+    
+    /* Cursor follower */
+    .cursor-follower {
+      position: fixed;
+      width: 30px;
+      height: 30px;
+      border: 2px solid rgba(167, 139, 250, 0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9997;
+      transition: transform 0.1s ease;
+    }
+    
+    /* Easter egg styles */
+    .easter-egg {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10000;
+      background: rgba(13, 13, 13, 0.95);
+      border: 2px solid #a78bfa;
+      padding: 2rem;
+      border-radius: 10px;
+      display: none;
+    }
+    
+    .easter-egg.active {
+      display: block;
+      animation: fadeInScale 0.5s ease;
+    }
+    
+    /* 3D transform on scroll */
+    .parallax-3d {
+      transform-style: preserve-3d;
+      transition: transform 0.1s ease-out;
+    }
+    
+    /* Scroll progress bar */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #a78bfa, #c084fc, #e879f9);
+      z-index: 10000;
+      transition: width 0.1s ease;
+    }
+    
+    /* Text selection color */
+    ::selection {
+      background: rgba(167, 139, 250, 0.3);
+      color: #fff;
+    }
   </style>
 </head>
 <body>
@@ -436,8 +592,246 @@
       </svg>
     );
 
+    // Mouse Trail Component
+    const MouseTrail = () => {
+      const trailRef = useRef([]);
+      const [trails, setTrails] = useState([]);
+
+      useEffect(() => {
+        const handleMouseMove = (e) => {
+          const trail = {
+            id: Date.now(),
+            x: e.clientX,
+            y: e.clientY,
+            opacity: 1
+          };
+          
+          setTrails(prev => [...prev.slice(-10), trail]);
+          
+          setTimeout(() => {
+            setTrails(prev => prev.filter(t => t.id !== trail.id));
+          }, 1000);
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove);
+      }, []);
+
+      return (
+        <>
+          {trails.map((trail, i) => (
+            <div
+              key={trail.id}
+              className="mouse-trail"
+              style={{
+                left: trail.x - 10,
+                top: trail.y - 10,
+                background: `radial-gradient(circle, rgba(167, 139, 250, ${0.3 - i * 0.03}) 0%, transparent 70%)`,
+                transform: `scale(${1 - i * 0.1})`,
+                transition: 'opacity 0.3s ease'
+              }}
+            />
+          ))}
+        </>
+      );
+    };
+
+    // Cursor Follower
+    const CursorFollower = () => {
+      const [position, setPosition] = useState({ x: 0, y: 0 });
+      const [isVisible, setIsVisible] = useState(true);
+
+      useEffect(() => {
+        const handleMouseMove = (e) => {
+          setPosition({ x: e.clientX, y: e.clientY });
+        };
+
+        const handleMouseEnter = () => setIsVisible(true);
+        const handleMouseLeave = () => setIsVisible(false);
+
+        window.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseenter', handleMouseEnter);
+        document.addEventListener('mouseleave', handleMouseLeave);
+
+        return () => {
+          window.removeEventListener('mousemove', handleMouseMove);
+          document.removeEventListener('mouseenter', handleMouseEnter);
+          document.removeEventListener('mouseleave', handleMouseLeave);
+        };
+      }, []);
+
+      if (!isVisible) return null;
+
+      return (
+        <div
+          className="cursor-follower"
+          style={{
+            left: position.x - 15,
+            top: position.y - 15,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          {/* Small solid circle in the middle */}
+          <div
+            style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              background: 'rgba(167, 139, 250, 0.8)',
+              position: 'absolute'
+            }}
+          />
+        </div>
+      );
+    };
+
+    // Matrix Rain Effect
+    const MatrixRain = ({ active }) => {
+      const canvasRef = useRef(null);
+      const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+      const fontSize = 14;
+      const columns = [];
+
+      useEffect(() => {
+        if (!active) return;
+        
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const columnCount = Math.floor(canvas.width / fontSize);
+        for (let i = 0; i < columnCount; i++) {
+          columns[i] = Math.random() * canvas.height;
+        }
+
+        const draw = () => {
+          ctx.fillStyle = 'rgba(13, 13, 13, 0.05)';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          ctx.fillStyle = '#a78bfa';
+          ctx.font = `${fontSize}px JetBrains Mono`;
+
+          for (let i = 0; i < columns.length; i++) {
+            const text = chars[Math.floor(Math.random() * chars.length)];
+            const x = i * fontSize;
+            const y = columns[i];
+
+            ctx.fillText(text, x, y);
+
+            if (y > canvas.height && Math.random() > 0.98) {
+              columns[i] = 0;
+            }
+            columns[i] += fontSize;
+          }
+        };
+
+        const interval = setInterval(draw, 50);
+        return () => clearInterval(interval);
+      }, [active, chars]);
+
+      if (!active) return null;
+
+      return (
+        <canvas
+          ref={canvasRef}
+          className="fixed top-0 left-0 w-full h-full pointer-events-none"
+          style={{ zIndex: 1, opacity: 0.3 }}
+        />
+      );
+    };
+
+    // Konami Code Easter Egg
+    const KonamiCode = () => {
+      const [showEasterEgg, setShowEasterEgg] = useState(false);
+      const sequenceRef = useRef([]);
+      const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+
+      useEffect(() => {
+        const handleKeyDown = (e) => {
+          sequenceRef.current.push(e.key);
+          if (sequenceRef.current.length > konamiCode.length) {
+            sequenceRef.current.shift();
+          }
+
+          if (sequenceRef.current.length === konamiCode.length &&
+              sequenceRef.current.every((key, i) => key === konamiCode[i])) {
+            setShowEasterEgg(true);
+            sequenceRef.current = [];
+            setTimeout(() => setShowEasterEgg(false), 5000);
+          }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+      }, []);
+
+      return (
+        <div className={`easter-egg ${showEasterEgg ? 'active' : ''}`}>
+          <div className="text-center">
+            <div className="text-4xl mb-4">🎉</div>
+            <h2 className="text-2xl font-bold text-purple-400 mb-2">you found the easter egg!</h2>
+            <p className="text-gray-300 mb-4">congrats, you're one of the cool kids now</p>
+            <p className="text-sm text-gray-500">(this does nothing but you tried)</p>
+          </div>
+        </div>
+      );
+    };
+
+    // Interactive Code Editor
+    const InteractiveCodeEditor = ({ initialCode, language = 'python' }) => {
+      const [code, setCode] = useState(initialCode);
+      const [output, setOutput] = useState('');
+      const [isRunning, setIsRunning] = useState(false);
+
+      const runCode = () => {
+        setIsRunning(true);
+        // Simulate code execution
+        setTimeout(() => {
+          setOutput('> code executed (this is a demo, not a real interpreter)\n> output: [42, "hello", true]\n> execution time: 0.001s');
+          setIsRunning(false);
+        }, 1000);
+      };
+
+      return (
+        <div className="border border-purple-500/20 rounded-lg overflow-hidden bg-[#0d0d0d] mt-4">
+          <div className="flex items-center justify-between px-4 py-2 bg-purple-500/10 border-b border-purple-500/20">
+            <div className="flex items-center gap-2">
+              <CodeIcon />
+              <span className="text-purple-400 text-sm">{language} editor</span>
+            </div>
+            <button
+              onClick={runCode}
+              disabled={isRunning}
+              className="text-xs px-3 py-1 bg-purple-500/20 text-purple-400 rounded hover:bg-purple-500/30 transition-colors disabled:opacity-50"
+            >
+              {isRunning ? 'running...' : 'run code'}
+            </button>
+          </div>
+          <div className="code-block">
+            <textarea
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              className="w-full p-4 bg-[#0d0d0d] text-gray-300 font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+              rows={8}
+              spellCheck={false}
+            />
+          </div>
+          {output && (
+            <div className="px-4 py-2 bg-[#0f0f0f] border-t border-purple-500/20">
+              <pre className="text-xs text-gray-400 font-mono whitespace-pre-wrap">{output}</pre>
+            </div>
+          )}
+        </div>
+      );
+    };
+
     // Interactive Terminal Component
-    const InteractiveTerminal = () => {
+    const InteractiveTerminal = ({ onMatrixToggle }) => {
       const [commandHistory, setCommandHistory] = useState([
         { command: 'whoami', output: 'hamza (probably)' },
         { command: 'pwd', output: '/home/hamza/portfolio' },
@@ -449,13 +843,19 @@
       const terminalRef = useRef(null);
 
       const commands = {
-        'help': 'try: whoami, coffee, skills, projects, contact, sudo rm -rf / (jk dont), clear',
+        'help': 'try: whoami, coffee, skills, projects, contact, matrix, easter, sudo rm -rf / (jk dont), clear',
         'whoami': 'hamza - just a guy who likes breaking things (ethically)',
         'coffee': '☕ currently: 3 cups today (it\'s fine, i\'m fine)',
         'skills': 'Python, JavaScript, breaking things, fixing things, Linux, too much coffee',
         'projects': 'scroll down or type "ls projects/" (jk just scroll)',
         'contact': 'hamza0jeelani@gmail.com (or just yell really loud)',
+        'matrix': 'try typing "matrix" to toggle the matrix effect (or just scroll)',
+        'easter': 'hint: try the konami code (↑↑↓↓←→←→BA)',
         'sudo rm -rf /': 'nice try. but no.',
+        'ls': 'about.md  projects/  skills/  contact.md  coffee.cup  secrets/',
+        'cat secrets/': 'you found a secret! but there\'s nothing here... yet 👀',
+        'neofetch': 'hamza@portfolio ~\nOS: Arch Linux (btw)\nShell: zsh\nEditor: vim (obviously)\nTheme: dark (always)',
+        'fortune': 'you will find a bug in your code at 3am',
         'clear': () => {
           setCommandHistory([]);
           return '';
@@ -468,7 +868,11 @@
         
         let output = `command not found: ${trimmedCmd}. try 'help' or just scroll down idk`;
         
-        if (commands[trimmedCmd]) {
+        // Handle matrix toggle
+        if (trimmedCmd === 'matrix' && onMatrixToggle) {
+          onMatrixToggle();
+          output = 'matrix rain toggled (check the button in top right)';
+        } else if (commands[trimmedCmd]) {
           if (typeof commands[trimmedCmd] === 'function') {
             output = commands[trimmedCmd]();
           } else {
@@ -706,11 +1110,17 @@
                 </div>
               )}
               {project.codeSnippet && (
-                <CodeSnippet 
-                  code={project.codeSnippet} 
-                  language="python"
-                  title={project.name}
-                />
+                <>
+                  <CodeSnippet 
+                    code={project.codeSnippet} 
+                    language="python"
+                    title={project.name}
+                  />
+                  <InteractiveCodeEditor 
+                    initialCode={project.codeSnippet}
+                    language="python"
+                  />
+                </>
               )}
             </div>
           )}
@@ -718,7 +1128,7 @@
       );
     };
 
-    // Starry, parallax, mouse-reactive background
+    // Starry, parallax, mouse-reactive background with click effects
     const ParticleBackground = () => {
       const canvasRef = useRef(null);
 
@@ -729,6 +1139,7 @@
         const ctx = canvas.getContext('2d');
         let animationFrameId;
         let particles = [];
+        let explosions = [];
 
         const mouse = {
           x: window.innerWidth / 2,
@@ -738,6 +1149,20 @@
         const handleMouseMove = (e) => {
           mouse.x = e.clientX;
           mouse.y = e.clientY;
+        };
+
+        const handleClick = (e) => {
+          // Create explosion effect on click
+          for (let i = 0; i < 15; i++) {
+            explosions.push({
+              x: e.clientX,
+              y: e.clientY,
+              vx: (Math.random() - 0.5) * 10,
+              vy: (Math.random() - 0.5) * 10,
+              life: 1,
+              size: Math.random() * 3 + 2
+            });
+          }
         };
 
         const init = () => {
@@ -821,6 +1246,24 @@
             p.draw(parallaxX, parallaxY);
           });
 
+          // Update and draw explosions
+          explosions = explosions.filter(exp => {
+            exp.x += exp.vx;
+            exp.y += exp.vy;
+            exp.life -= 0.02;
+            exp.vx *= 0.98;
+            exp.vy *= 0.98;
+
+            if (exp.life > 0) {
+              ctx.fillStyle = `rgba(167, 139, 250, ${exp.life})`;
+              ctx.beginPath();
+              ctx.arc(exp.x, exp.y, exp.size, 0, Math.PI * 2);
+              ctx.fill();
+              return true;
+            }
+            return false;
+          });
+
           // Connect close stars with faint lines
           for (let i = 0; i < particles.length; i++) {
             for (let j = i + 1; j < particles.length; j++) {
@@ -858,10 +1301,12 @@
 
         window.addEventListener('resize', init);
         window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('click', handleClick);
 
         return () => {
           window.removeEventListener('resize', init);
           window.removeEventListener('mousemove', handleMouseMove);
+          window.removeEventListener('click', handleClick);
           cancelAnimationFrame(animationFrameId);
         };
       }, []);
@@ -971,9 +1416,35 @@
       );
     };
 
+    // Scroll Progress Indicator
+    const ScrollProgress = () => {
+      const [scrollProgress, setScrollProgress] = useState(0);
+
+      useEffect(() => {
+        const handleScroll = () => {
+          const windowHeight = window.innerHeight;
+          const documentHeight = document.documentElement.scrollHeight;
+          const scrollTop = window.scrollY;
+          const progress = (scrollTop / (documentHeight - windowHeight)) * 100;
+          setScrollProgress(progress);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+      }, []);
+
+      return (
+        <div 
+          className="scroll-progress"
+          style={{ width: `${scrollProgress}%` }}
+        />
+      );
+    };
+
     // Main Portfolio Component
     const Portfolio = () => {
       const [activeSection, setActiveSection] = useState('home');
+      const [matrixActive, setMatrixActive] = useState(false);
       
       const projects = [
         {
@@ -1133,8 +1604,22 @@ print(f"Username: {cred.username}")
       
       return (
         <div className="min-h-screen bg-[#0d0d0d] text-gray-200 overflow-x-hidden">
+          <ScrollProgress />
           <ParticleBackground />
-          <InteractiveTerminal />
+          <MouseTrail />
+          <CursorFollower />
+          <MatrixRain active={matrixActive} />
+          <KonamiCode />
+          <InteractiveTerminal onMatrixToggle={() => setMatrixActive(!matrixActive)} />
+          
+          {/* Matrix Toggle Button */}
+          <button
+            onClick={() => setMatrixActive(!matrixActive)}
+            className="fixed top-20 right-6 z-50 px-3 py-2 bg-purple-500/10 border border-purple-500/30 rounded-lg text-purple-400 text-xs hover:bg-purple-500/20 transition-all duration-300 hover:scale-110"
+            title="Toggle Matrix Rain"
+          >
+            {matrixActive ? 'matrix: on' : 'matrix: off'}
+          </button>
           
           {/* Navigation */}
           <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0d0d0d]/80 backdrop-blur-md border-b border-purple-500/20">
@@ -1173,12 +1658,20 @@ print(f"Username: {cred.username}")
                 <span className="text-gray-500">$ </span>whoami
               </div>
               
-              <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold mb-6 opacity-0 animate-fadeIn" 
-                  style={{ 
-                    animationDelay: '0.5s', 
-                    animationFillMode: 'forwards',
-                    textShadow: '0 0 20px rgba(167, 139, 250, 0.3)'
-                  }}>
+              <h1 
+                className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold mb-6" 
+                style={{ 
+                  opacity: 0,
+                  animation: 'fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.5s forwards',
+                  textShadow: '0 0 20px rgba(167, 139, 250, 0.3)'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.animation = 'glitch 0.3s';
+                  setTimeout(() => {
+                    e.target.style.animation = 'fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.5s forwards';
+                  }, 300);
+                }}
+              >
                 <span className="text-white inline-block hover:scale-105 transition-transform duration-300">hamza</span>
                 <span className="text-purple-400 inline-block animate-pulse-slow">.</span>
               </h1>
