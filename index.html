@@ -102,11 +102,44 @@
     @keyframes fadeInUp {
       from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(40px);
       }
       to {
         opacity: 1;
         transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    @keyframes fadeInRight {
+      from {
+        opacity: 0;
+        transform: translateX(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    @keyframes fadeInScale {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
       }
     }
     
@@ -116,12 +149,125 @@
       100% { transform: translateY(0); }
     }
     
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.8;
+        transform: scale(1.05);
+      }
+    }
+    
+    @keyframes shimmer {
+      0% {
+        background-position: -1000px 0;
+      }
+      100% {
+        background-position: 1000px 0;
+      }
+    }
+    
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+    
+    @keyframes glow {
+      0%, 100% {
+        box-shadow: 0 0 20px rgba(100, 200, 255, 0.3);
+      }
+      50% {
+        box-shadow: 0 0 30px rgba(100, 200, 255, 0.6);
+      }
+    }
+    
     .animate-fadeIn {
-      animation: fadeIn 0.8s ease-out;
+      animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .animate-fadeInUp {
+      animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .animate-fadeInLeft {
+      animation: fadeInLeft 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .animate-fadeInRight {
+      animation: fadeInRight 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .animate-fadeInScale {
+      animation: fadeInScale 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
     .animate-scroll {
       animation: scroll 1.5s ease-in-out infinite;
+    }
+    
+    .animate-pulse-slow {
+      animation: pulse 3s ease-in-out infinite;
+    }
+    
+    .animate-float {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .animate-glow {
+      animation: glow 2s ease-in-out infinite;
+    }
+    
+    /* Scroll reveal animation */
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(50px);
+      transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                  transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .scroll-reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* Smooth transitions */
+    * {
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Enhanced hover effects */
+    .hover-lift {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .hover-lift:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(100, 200, 255, 0.2);
+    }
+    
+    /* Gradient text animation */
+    @keyframes gradient-shift {
+      0%, 100% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+    }
+    
+    .gradient-text {
+      background: linear-gradient(90deg, #64c8ff, #00d4ff, #64c8ff);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradient-shift 3s ease infinite;
     }
   </style>
 </head>
@@ -261,10 +407,21 @@
               const drawY = this.y + parallaxY * this.depth;
 
               const alpha = 0.3 + this.depth * 0.3;
+              
+              // Add glow effect for larger particles
+              if (this.size > 1) {
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = `rgba(100, 200, 255, ${alpha * 0.5})`;
+              } else {
+                ctx.shadowBlur = 0;
+              }
+              
               ctx.fillStyle = `rgba(200, 230, 255, ${alpha})`;
               ctx.beginPath();
               ctx.arc(drawX, drawY, this.size, 0, Math.PI * 2);
               ctx.fill();
+              
+              ctx.shadowBlur = 0;
             }
           }
 
@@ -382,15 +539,15 @@
       }, [charIndex, currentIndex, isDeleting, texts, speed]);
       
       return (
-        <span>
+        <span className="inline-block">
           {displayText}
-          <span className="animate-pulse">_</span>
+          <span className="inline-block animate-pulse ml-1 text-cyan-400">_</span>
         </span>
       );
     };
 
-    // Tilt Card Component
-    const TiltCard = ({ children, className = "", style = {}, hoverScale = 1.03 }) => {
+    // Tilt Card Component with enhanced animations
+    const TiltCard = ({ children, className = "", style = {}, hoverScale = 1.05 }) => {
       const [tilt, setTilt] = useState({ x: 0, y: 0 });
       const [isHovered, setIsHovered] = useState(false);
       const cardRef = useRef(null);
@@ -405,11 +562,15 @@
         const mouseX = e.clientX - centerX;
         const mouseY = e.clientY - centerY;
         
-        const maxTilt = 15; // Maximum tilt angle in degrees
+        const maxTilt = 8; // Reduced for smoother effect
         const tiltX = (mouseY / (rect.height / 2)) * -maxTilt;
         const tiltY = (mouseX / (rect.width / 2)) * maxTilt;
         
-        setTilt({ x: tiltX, y: tiltY });
+        // Smooth interpolation
+        setTilt(prev => ({
+          x: prev.x + (tiltX - prev.x) * 0.1,
+          y: prev.y + (tiltY - prev.y) * 0.1
+        }));
       };
       
       const handleMouseLeave = () => {
@@ -430,7 +591,8 @@
             ...style,
             transform: `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale3d(${scale}, ${scale}, ${scale})`,
             transformStyle: 'preserve-3d',
-            transition: 'transform 0.15s ease-out'
+            transition: isHovered ? 'transform 0.1s ease-out' : 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            willChange: 'transform'
           }}
         >
           {children}
@@ -474,11 +636,47 @@
       };
       
       useEffect(() => {
+        // Enhanced loader animation
+        const loader = document.getElementById('loader');
+        const loaderLines = loader?.querySelectorAll('div');
+        
+        if (loaderLines) {
+          loaderLines.forEach((line, index) => {
+            line.style.opacity = '0';
+            line.style.transform = 'translateY(10px)';
+            setTimeout(() => {
+              line.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+              line.style.opacity = '1';
+              line.style.transform = 'translateY(0)';
+            }, index * 200);
+          });
+        }
+        
         // Hide loader after component mounts
         setTimeout(() => {
-          const loader = document.getElementById('loader');
-          if (loader) loader.classList.add('hidden');
-        }, 1500);
+          if (loader) {
+            loader.style.transition = 'opacity 0.8s ease-out';
+            loader.classList.add('hidden');
+          }
+        }, 2000);
+
+        // Scroll reveal observer
+        const observerOptions = {
+          threshold: 0.1,
+          rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('revealed');
+            }
+          });
+        }, observerOptions);
+        
+        // Observe all scroll-reveal elements
+        const revealElements = document.querySelectorAll('.scroll-reveal');
+        revealElements.forEach(el => observer.observe(el));
 
         const handleScroll = () => {
           const sections = ['home', 'about', 'projects', 'skills', 'contact'];
@@ -497,7 +695,12 @@
         };
         
         window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
+        handleScroll(); // Initial check
+        
+        return () => {
+          window.removeEventListener('scroll', handleScroll);
+          observer.disconnect();
+        };
       }, []);
       
       const scrollToSection = (id) => {
@@ -516,15 +719,21 @@
                 <span className="text-sm font-bold">~/hamza</span>
               </div>
               <div className="flex flex-wrap gap-3 sm:gap-6 text-xs sm:text-sm justify-center sm:justify-end">
-                {['home', 'about', 'projects', 'skills', 'contact'].map(section => (
+                {['home', 'about', 'projects', 'skills', 'contact'].map((section, index) => (
                   <button
                     key={section}
                     onClick={() => scrollToSection(section)}
-                    className={`transition-all hover:text-cyan-400 ${
+                    className={`transition-all duration-300 hover:text-cyan-400 hover:scale-110 relative group ${
                       activeSection === section ? 'text-cyan-400' : 'text-gray-400'
                     }`}
+                    style={{
+                      animation: `fadeIn 0.6s ease-out ${0.2 + index * 0.1}s both`
+                    }}
                   >
-                    ./{section}
+                    <span className="relative z-10">./{section}</span>
+                    {activeSection === section && (
+                      <span className="absolute bottom-0 left-0 w-full h-0.5 bg-cyan-400 animate-fadeIn"></span>
+                    )}
                   </button>
                 ))}
               </div>
@@ -544,8 +753,8 @@
                     animationFillMode: 'forwards',
                     textShadow: '0 0 20px rgba(100, 200, 255, 0.3)'
                   }}>
-                <span className="text-white">Hamza</span>
-                <span className="text-cyan-400">.</span>
+                <span className="text-white inline-block hover:scale-105 transition-transform duration-300">Hamza</span>
+                <span className="text-cyan-400 inline-block animate-pulse-slow">.</span>
               </h1>
               
               <div className="text-lg sm:text-xl md:text-2xl mb-8 text-gray-300 h-8 opacity-0 animate-fadeIn" style={{ animationDelay: '0.8s', animationFillMode: 'forwards' }}>
@@ -568,20 +777,26 @@
               <div className="flex gap-6 justify-center opacity-0 animate-fadeIn" style={{ animationDelay: '1.4s', animationFillMode: 'forwards' }}>
                 {/* GitHub */}
                 <a href="https://github.com/crepco" target="_blank" rel="noopener noreferrer" 
-                   className="p-3 border border-cyan-500/30 rounded-lg hover:bg-cyan-500/10 hover:border-cyan-400 transition-all hover:scale-110">
+                   className="p-3 border border-cyan-500/30 rounded-lg hover:bg-cyan-500/10 hover:border-cyan-400 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-cyan-400/20 group relative">
                   <GithubIcon />
+                  <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                    GitHub
+                  </span>
                 </a>
                 {/* Gmail */}
                 <a href="mailto:hamza0jeelani@gmail.com" 
-                   className="p-3 border border-cyan-500/30 rounded-lg hover:bg-cyan-500/10 hover:border-cyan-400 transition-all hover:scale-110">
+                   className="p-3 border border-cyan-500/30 rounded-lg hover:bg-cyan-500/10 hover:border-cyan-400 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-cyan-400/20 group relative">
                   <MailIcon />
+                  <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                    Email
+                  </span>
                 </a>
               </div>
             </div>
             
-            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
-              <div className="w-6 h-10 border-2 border-cyan-400/50 rounded-full p-1">
-                <div className="w-1.5 h-3 bg-cyan-400 rounded-full animate-scroll"></div>
+            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-float opacity-0 animate-fadeIn" style={{ animationDelay: '1.7s', animationFillMode: 'forwards' }}>
+              <div className="w-6 h-10 border-2 border-cyan-400/50 rounded-full p-1 hover:border-cyan-400 transition-colors duration-300 cursor-pointer group">
+                <div className="w-1.5 h-3 bg-cyan-400 rounded-full animate-scroll group-hover:bg-cyan-300 transition-colors duration-300"></div>
               </div>
             </div>
           </section>
@@ -589,55 +804,45 @@
           {/* About Section */}
           <section id="about" className="relative min-h-screen flex items-center px-6 py-20">
             <div className="max-w-4xl mx-auto z-10">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 flex items-center gap-4">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 flex items-center gap-4 scroll-reveal">
                 <span className="text-gray-500 text-2xl">01.</span>
                 <span className="text-cyan-400">About</span>
                 <div className="flex-1 h-px bg-gradient-to-r from-cyan-500/50 to-transparent"></div>
               </h2>
               
               <div className="grid md:grid-cols-2 gap-12 items-center">
-                <div className="space-y-6 text-gray-300 leading-relaxed">
-                  <p>
+                <div className="space-y-6 text-gray-300 leading-relaxed scroll-reveal">
+                  <p className="opacity-0 animate-fadeInLeft" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
                     Hey there! I'm Hamza, a software engineering student with a deep passion for 
                     <span className="text-cyan-400"> cybersecurity</span> and 
                     <span className="text-cyan-400"> Linux systems</span>. I love the challenge of 
                     understanding how things work—and how they can be broken and secured.
                   </p>
-                  <p>
+                  <p className="opacity-0 animate-fadeInLeft" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
                     When I'm not studying, you'll find me exploring penetration testing techniques, 
                     writing automation scripts, or diving into CTF challenges. I believe in learning 
                     by doing, and my projects reflect that hands-on approach.
                   </p>
-                  <p>
+                  <p className="opacity-0 animate-fadeInLeft" style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}>
                     My goal? To build secure, efficient systems while continuously sharpening my skills 
                     in ethical hacking and network security. Let's make the digital world a safer place, 
                     one line of code at a time.
                   </p>
                 </div>
                 
-                <TiltCard className="relative group">
-                  <div className="absolute inset-0 bg-cyan-500/20 blur-2xl group-hover:bg-cyan-500/30 transition-all"></div>
-                  <div className="relative border border-cyan-500/30 p-8 rounded-lg bg-[#0f0f0f]/50 backdrop-blur">
+                <TiltCard className="relative group scroll-reveal">
+                  <div className="absolute inset-0 bg-cyan-500/20 blur-2xl group-hover:bg-cyan-500/30 transition-all duration-500"></div>
+                  <div className="relative border border-cyan-500/30 p-8 rounded-lg bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-all duration-300">
                     <div className="flex items-center gap-3 mb-6 text-cyan-400">
                       <ShieldIcon />
                       <span className="font-bold">Focus Areas</span>
                     </div>
                     <ul className="space-y-3 text-gray-300">
-                      <li className="flex items-center gap-2">
-                        <span className="text-cyan-400">▹</span> Penetration Testing
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <span className="text-cyan-400">▹</span> Network Security
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <span className="text-cyan-400">▹</span> Linux System Administration
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <span className="text-cyan-400">▹</span> OSINT & Recon
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <span className="text-cyan-400">▹</span> Full-Stack Development
-                      </li>
+                      {['Penetration Testing', 'Network Security', 'Linux System Administration', 'OSINT & Recon', 'Full-Stack Development'].map((item, i) => (
+                        <li key={i} className="flex items-center gap-2 opacity-0 animate-fadeInLeft" style={{ animationDelay: `${0.7 + i * 0.1}s`, animationFillMode: 'forwards' }}>
+                          <span className="text-cyan-400">▹</span> {item}
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 </TiltCard>
@@ -648,7 +853,7 @@
           {/* Projects Section */}
           <section id="projects" className="relative min-h-screen px-6 py-20">
             <div className="max-w-6xl mx-auto z-10">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 flex items-center gap-4">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 flex items-center gap-4 scroll-reveal">
                 <span className="text-gray-500 text-2xl">02.</span>
                 <span className="text-cyan-400">Projects</span>
                 <div className="flex-1 h-px bg-gradient-to-r from-cyan-500/50 to-transparent"></div>
@@ -658,18 +863,17 @@
                 {projects.map((project, index) => (
                   <TiltCard
                     key={index}
-                    className="group relative border border-cyan-500/20 rounded-lg p-6 bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-colors"
+                    className="group relative border border-cyan-500/20 rounded-lg p-6 bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-all duration-300 hover-lift scroll-reveal"
                     style={{
-                      animation: `fadeInUp 0.6s ease-out ${index * 0.1}s forwards`,
-                      opacity: 0
+                      animationDelay: `${index * 0.15}s`
                     }}
                   >
-                    <div className="absolute top-4 right-4">
+                    <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <a 
                         href={project.github} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-gray-400 hover:text-cyan-400 transition-colors"
+                        className="text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:scale-110 inline-block"
                       >
                         <ExternalLinkIcon />
                       </a>
@@ -677,12 +881,12 @@
                     
                     <div className="flex items-center gap-2 mb-4 text-cyan-400">
                       <CodeIcon />
-                      <span className="text-xs bg-cyan-500/10 px-2 py-1 rounded">
+                      <span className="text-xs bg-cyan-500/10 px-2 py-1 rounded border border-cyan-500/20">
                         ⭐ {project.stars}
                       </span>
                     </div>
                     
-                    <h3 className="text-xl font-bold mb-3 text-white group-hover:text-cyan-400 transition-colors">
+                    <h3 className="text-xl font-bold mb-3 text-white group-hover:text-cyan-400 transition-colors duration-300">
                       {project.name}
                     </h3>
                     
@@ -692,7 +896,13 @@
                     
                     <div className="flex flex-wrap gap-2">
                       {project.tech.map((tech, i) => (
-                        <span key={i} className="text-xs px-2 py-1 bg-cyan-500/10 text-cyan-400 rounded border border-cyan-500/20">
+                        <span 
+                          key={i} 
+                          className="text-xs px-2 py-1 bg-cyan-500/10 text-cyan-400 rounded border border-cyan-500/20 hover:bg-cyan-500/20 hover:border-cyan-400/40 transition-all duration-300 cursor-default"
+                          style={{
+                            animation: `fadeInScale 0.4s ease-out ${0.3 + i * 0.05}s both`
+                          }}
+                        >
                           {tech}
                         </span>
                       ))}
@@ -706,14 +916,14 @@
           {/* Skills Section */}
           <section id="skills" className="relative min-h-screen px-6 py-20">
             <div className="max-w-6xl mx-auto z-10">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 flex items-center gap-4">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 flex items-center gap-4 scroll-reveal">
                 <span className="text-gray-500 text-2xl">03.</span>
                 <span className="text-cyan-400">Skills</span>
                 <div className="flex-1 h-px bg-gradient-to-r from-cyan-500/50 to-transparent"></div>
               </h2>
               
               <div className="grid md:grid-cols-2 gap-8">
-                <TiltCard className="border border-cyan-500/20 rounded-lg p-8 bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-all">
+                <TiltCard className="border border-cyan-500/20 rounded-lg p-8 bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-all hover-lift scroll-reveal">
                   <div className="flex items-center gap-3 mb-6 text-cyan-400">
                     <CodeIcon />
                     <h3 className="text-xl font-bold">Languages & Frameworks</h3>
@@ -725,7 +935,13 @@
                       </div>
                       <div className="flex flex-wrap gap-2">
                         {skills.languages.map((lang, i) => (
-                          <span key={i} className="px-3 py-1 bg-cyan-500/10 text-cyan-400 rounded text-sm border border-cyan-500/20">
+                          <span 
+                            key={i} 
+                            className="px-3 py-1 bg-cyan-500/10 text-cyan-400 rounded text-sm border border-cyan-500/20 hover:bg-cyan-500/20 hover:border-cyan-400/40 hover:scale-105 transition-all duration-300 cursor-default"
+                            style={{
+                              animation: `fadeInScale 0.4s ease-out ${i * 0.05}s both`
+                            }}
+                          >
                             {lang}
                           </span>
                         ))}
@@ -737,7 +953,13 @@
                       </div>
                       <div className="flex flex-wrap gap-2">
                         {skills.frameworks.map((fw, i) => (
-                          <span key={i} className="px-3 py-1 bg-cyan-500/10 text-cyan-400 rounded text-sm border border-cyan-500/20">
+                          <span 
+                            key={i} 
+                            className="px-3 py-1 bg-cyan-500/10 text-cyan-400 rounded text-sm border border-cyan-500/20 hover:bg-cyan-500/20 hover:border-cyan-400/40 hover:scale-105 transition-all duration-300 cursor-default"
+                            style={{
+                              animation: `fadeInScale 0.4s ease-out ${0.3 + i * 0.05}s both`
+                            }}
+                          >
                             {fw}
                           </span>
                         ))}
@@ -746,28 +968,40 @@
                   </div>
                 </TiltCard>
                 
-                <TiltCard className="border border-cyan-500/20 rounded-lg p-8 bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-all">
+                <TiltCard className="border border-cyan-500/20 rounded-lg p-8 bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-all hover-lift scroll-reveal">
                   <div className="flex items-center gap-3 mb-6 text-cyan-400">
                     <ShieldIcon />
                     <h3 className="text-xl font-bold">Security Tools</h3>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {skills.security.map((tool, i) => (
-                      <span key={i} className="px-3 py-1 bg-cyan-500/10 text-cyan-400 rounded text-sm border border-cyan-500/20">
+                      <span 
+                        key={i} 
+                        className="px-3 py-1 bg-cyan-500/10 text-cyan-400 rounded text-sm border border-cyan-500/20 hover:bg-cyan-500/20 hover:border-cyan-400/40 hover:scale-105 transition-all duration-300 cursor-default"
+                        style={{
+                          animation: `fadeInScale 0.4s ease-out ${i * 0.05}s both`
+                        }}
+                      >
                         {tool}
                       </span>
                     ))}
                   </div>
                 </TiltCard>
                 
-                <TiltCard className="border border-cyan-500/20 rounded-lg p-8 bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-all md:col-span-2">
+                <TiltCard className="border border-cyan-500/20 rounded-lg p-8 bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-all hover-lift md:col-span-2 scroll-reveal">
                   <div className="flex items-center gap-3 mb-6 text-cyan-400">
                     <ServerIcon />
                     <h3 className="text-xl font-bold">Tools & Technologies</h3>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {skills.tools.map((tool, i) => (
-                      <span key={i} className="px-3 py-1 bg-cyan-500/10 text-cyan-400 rounded text-sm border border-cyan-500/20">
+                      <span 
+                        key={i} 
+                        className="px-3 py-1 bg-cyan-500/10 text-cyan-400 rounded text-sm border border-cyan-500/20 hover:bg-cyan-500/20 hover:border-cyan-400/40 hover:scale-105 transition-all duration-300 cursor-default"
+                        style={{
+                          animation: `fadeInScale 0.4s ease-out ${i * 0.05}s both`
+                        }}
+                      >
                         {tool}
                       </span>
                     ))}
@@ -780,12 +1014,12 @@
           {/* Contact Section */}
           <section id="contact" className="relative min-h-screen flex items-center px-6 py-20">
             <div className="max-w-4xl mx-auto z-10 text-center">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 flex items-center justify-center gap-4">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 flex items-center justify-center gap-4 scroll-reveal">
                 <span className="text-gray-500 text-2xl">04.</span>
                 <span className="text-cyan-400">Get In Touch</span>
               </h2>
               
-              <p className="text-gray-300 mb-12 text-lg leading-relaxed max-w-2xl mx-auto">
+              <p className="text-gray-300 mb-12 text-lg leading-relaxed max-w-2xl mx-auto scroll-reveal">
                 I'm always open to discussing new projects, creative ideas, or opportunities to be part 
                 of your vision. Whether it's about cybersecurity, development, or just tech in general—
                 let's connect!
@@ -793,13 +1027,13 @@
               
               <a 
                 href="mailto:hamza0jeelani@gmail.com"
-                className="inline-flex items-center gap-2 px-8 py-4 border-2 border-cyan-400 text-cyan-400 rounded-lg hover:bg-cyan-400/10 transition-all text-lg font-semibold hover:scale-105"
+                className="inline-flex items-center gap-2 px-8 py-4 border-2 border-cyan-400 text-cyan-400 rounded-lg hover:bg-cyan-400/10 transition-all duration-300 text-lg font-semibold hover:scale-110 hover:shadow-lg hover:shadow-cyan-400/20 scroll-reveal"
               >
                 <MailIcon />
                 Say Hello
               </a>
               
-              <div className="mt-16 pt-8 border-t border-cyan-500/20">
+              <div className="mt-16 pt-8 border-t border-cyan-500/20 scroll-reveal">
                 <p className="text-gray-500 text-sm">
                   Built with React • Designed with passion • Deployed on GitHub Pages
                 </p>
