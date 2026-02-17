@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" style="background: #0a0a0a;">
+<html lang="en" style="background: #0d0d0d;">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hamza - Software Engineer & Cybersecurity Enthusiast</title>
-  <meta name="description" content="Portfolio of Hamza - CSE Student, Cybersecurity Enthusiast, and Linux Advocate">
+  <title>hamza's corner of the internet</title>
+  <meta name="description" content="just a guy who likes breaking things (ethically) and putting them back together">
   <script src="https://cdn.tailwindcss.com"></script>
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -21,18 +21,18 @@
     
     html {
       scroll-behavior: smooth;
-      background: #0a0a0a !important;
+      background: #0d0d0d !important;
     }
     
     body {
       font-family: 'JetBrains Mono', monospace;
-      background: #0a0a0a !important;
-      color: #e5e5e5;
+      background: #0d0d0d !important;
+      color: #d4d4d4;
       overflow-x: hidden;
     }
     
     #root {
-      background: #0a0a0a;
+      background: #0d0d0d;
     }
     
     /* Custom scrollbar */
@@ -41,16 +41,16 @@
     }
     
     ::-webkit-scrollbar-track {
-      background: #0a0a0a;
+      background: #0d0d0d;
     }
     
     ::-webkit-scrollbar-thumb {
-      background: rgba(100, 200, 255, 0.3);
+      background: rgba(139, 92, 246, 0.4);
       border-radius: 5px;
     }
     
     ::-webkit-scrollbar-thumb:hover {
-      background: rgba(100, 200, 255, 0.5);
+      background: rgba(167, 139, 250, 0.6);
     }
     
     /* Loading animation */
@@ -60,7 +60,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: #0a0a0a;
+      background: #0d0d0d;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -75,7 +75,7 @@
     
     .terminal-loader {
       font-family: 'JetBrains Mono', monospace;
-      color: #64c8ff;
+      color: #a78bfa;
       font-size: 18px;
     }
     
@@ -262,12 +262,41 @@
     }
     
     .gradient-text {
-      background: linear-gradient(90deg, #64c8ff, #00d4ff, #64c8ff);
+      background: linear-gradient(90deg, #a78bfa, #c084fc, #e879f9, #a78bfa);
       background-size: 200% auto;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      animation: gradient-shift 3s ease infinite;
+      animation: gradient-shift 4s ease infinite;
+    }
+    
+    /* Quirky animations */
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-2deg); }
+      75% { transform: rotate(2deg); }
+    }
+    
+    @keyframes glitch {
+      0%, 100% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(-2px, -2px); }
+      60% { transform: translate(2px, 2px); }
+      80% { transform: translate(2px, -2px); }
+    }
+    
+    .animate-wiggle {
+      animation: wiggle 0.5s ease-in-out;
+    }
+    
+    .animate-glitch {
+      animation: glitch 0.3s;
+    }
+    
+    /* Hand-drawn style borders */
+    .sketchy-border {
+      border: 2px solid;
+      border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
     }
 
     /* Terminal scrollbar */
@@ -276,16 +305,16 @@
     }
     
     .scrollbar-thin::-webkit-scrollbar-track {
-      background: #0a0a0a;
+      background: #0d0d0d;
     }
     
     .scrollbar-thin::-webkit-scrollbar-thumb {
-      background: rgba(100, 200, 255, 0.3);
+      background: rgba(139, 92, 246, 0.4);
       border-radius: 3px;
     }
     
     .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-      background: rgba(100, 200, 255, 0.5);
+      background: rgba(167, 139, 250, 0.6);
     }
 
     /* Code snippet styling */
@@ -300,7 +329,22 @@
     }
     
     .card-glow:hover {
-      box-shadow: 0 0 30px rgba(100, 200, 255, 0.2);
+      box-shadow: 0 0 30px rgba(167, 139, 250, 0.3);
+    }
+    
+    /* Less perfect, more human */
+    .imperfect {
+      transform: rotate(-0.5deg);
+    }
+    
+    .imperfect-alt {
+      transform: rotate(0.3deg);
+    }
+    
+    /* Personal touches */
+    .handwritten {
+      font-family: 'JetBrains Mono', monospace;
+      font-style: italic;
     }
   </style>
 </head>
@@ -308,9 +352,9 @@
   <!-- Loading Screen -->
   <div class="loader" id="loader">
     <div class="terminal-loader">
-      <div>$ initializing portfolio...</div>
-      <div>$ loading components...</div>
-      <div>$ executing hamza.sh<span class="cursor">_</span></div>
+      <div>$ coffee.exe --status: brewing</div>
+      <div>$ loading brain.exe...</div>
+      <div>$ cat ~/hamza.txt<span class="cursor">_</span></div>
     </div>
   </div>
 
@@ -395,20 +439,23 @@
     // Interactive Terminal Component
     const InteractiveTerminal = () => {
       const [commandHistory, setCommandHistory] = useState([
-        { command: 'whoami', output: 'hamza' },
+        { command: 'whoami', output: 'hamza (probably)' },
         { command: 'pwd', output: '/home/hamza/portfolio' },
-        { command: 'ls -la', output: 'about.md  projects/  skills/  contact.md' }
+        { command: 'ls -la', output: 'about.md  projects/  skills/  contact.md  coffee.cup' },
+        { command: 'cat coffee.cup', output: 'empty (need more)' }
       ]);
       const [currentCommand, setCurrentCommand] = useState('');
       const [isVisible, setIsVisible] = useState(false);
       const terminalRef = useRef(null);
 
       const commands = {
-        'help': 'Available commands: help, whoami, skills, projects, contact, clear',
-        'whoami': 'hamza - Software Engineer & Cybersecurity Enthusiast',
-        'skills': 'Python, JavaScript, Security Tools, Linux, Networking',
-        'projects': 'Check out my projects section below!',
-        'contact': 'hamza0jeelani@gmail.com',
+        'help': 'try: whoami, coffee, skills, projects, contact, sudo rm -rf / (jk dont), clear',
+        'whoami': 'hamza - just a guy who likes breaking things (ethically)',
+        'coffee': '☕ currently: 3 cups today (it\'s fine, i\'m fine)',
+        'skills': 'Python, JavaScript, breaking things, fixing things, Linux, too much coffee',
+        'projects': 'scroll down or type "ls projects/" (jk just scroll)',
+        'contact': 'hamza0jeelani@gmail.com (or just yell really loud)',
+        'sudo rm -rf /': 'nice try. but no.',
         'clear': () => {
           setCommandHistory([]);
           return '';
@@ -419,7 +466,7 @@
         const trimmedCmd = cmd.trim().toLowerCase();
         if (trimmedCmd === '') return;
         
-        let output = `Command not found: ${trimmedCmd}. Type 'help' for available commands.`;
+        let output = `command not found: ${trimmedCmd}. try 'help' or just scroll down idk`;
         
         if (commands[trimmedCmd]) {
           if (typeof commands[trimmedCmd] === 'function') {
@@ -442,14 +489,14 @@
       return (
         <div className="fixed bottom-6 right-6 z-40 w-96 max-w-[calc(100vw-3rem)]">
           <div className="bg-[#0f0f0f] border border-cyan-500/30 rounded-lg shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-2 bg-cyan-500/10 border-b border-cyan-500/20">
-              <div className="flex items-center gap-2 text-cyan-400 text-sm">
+            <div className="flex items-center justify-between px-4 py-2 bg-purple-500/10 border-b border-purple-500/20">
+              <div className="flex items-center gap-2 text-purple-400 text-sm">
                 <TerminalIcon />
-                <span>Terminal</span>
+                <span>terminal.exe</span>
               </div>
               <button
                 onClick={() => setIsVisible(!isVisible)}
-                className="text-gray-400 hover:text-cyan-400 transition-colors"
+                className="text-gray-400 hover:text-purple-400 transition-colors"
               >
                 {isVisible ? <ChevronDownIcon /> : <ChevronUpIcon />}
               </button>
@@ -461,10 +508,10 @@
                   className="h-64 overflow-y-auto font-mono text-sm space-y-2 mb-4 scrollbar-thin"
                   style={{ maxHeight: '16rem' }}
                 >
-                  <div className="text-gray-500 text-xs mb-2">Type 'help' to see available commands</div>
+                  <div className="text-gray-500 text-xs mb-2">type 'help' for commands (or just explore idk)</div>
                   {commandHistory.map((item, idx) => (
                     <div key={idx} className="space-y-1">
-                      <div className="text-cyan-400">
+                      <div className="text-purple-400">
                         <span className="text-gray-500">$ </span>{item.command}
                       </div>
                       {item.output && (
@@ -472,7 +519,7 @@
                       )}
                     </div>
                   ))}
-                  <div className="flex items-center text-cyan-400">
+                  <div className="flex items-center text-purple-400">
                     <span className="text-gray-500">$ </span>
                     <input
                       type="text"
@@ -483,7 +530,7 @@
                           handleCommand(currentCommand);
                         }
                       }}
-                      className="flex-1 bg-transparent border-none outline-none text-cyan-400 ml-1"
+                      className="flex-1 bg-transparent border-none outline-none text-purple-400 ml-1"
                       autoFocus
                       placeholder="Enter command..."
                     />
@@ -515,23 +562,24 @@
       }, []);
 
       const colorMap = {
-        cyan: 'from-cyan-500 to-cyan-400',
-        blue: 'from-blue-500 to-blue-400',
-        green: 'from-green-500 to-green-400'
+        cyan: 'from-purple-500 to-purple-400',
+        blue: 'from-violet-500 to-violet-400',
+        green: 'from-fuchsia-500 to-fuchsia-400',
+        purple: 'from-purple-500 to-purple-400'
       };
 
       return (
         <div ref={barRef} className="mb-4">
           <div className="flex justify-between items-center mb-2">
             <span className="text-gray-300 text-sm">{skill}</span>
-            <span className="text-cyan-400 text-xs">{level}%</span>
+            <span className="text-purple-400 text-xs">{level}%</span>
           </div>
           <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
             <div
               className={`h-full bg-gradient-to-r ${colorMap[color] || colorMap.cyan} rounded-full transition-all duration-1000 ease-out`}
               style={{
                 width: isVisible ? `${level}%` : '0%',
-                boxShadow: isVisible ? `0 0 10px rgba(100, 200, 255, 0.5)` : 'none'
+                boxShadow: isVisible ? `0 0 10px rgba(167, 139, 250, 0.5)` : 'none'
               }}
             />
           </div>
@@ -551,17 +599,17 @@
       };
 
       return (
-        <div className="border border-cyan-500/20 rounded-lg overflow-hidden bg-[#0a0a0a]">
-          <div className="flex items-center justify-between px-4 py-2 bg-cyan-500/10 border-b border-cyan-500/20">
+        <div className="border border-purple-500/20 rounded-lg overflow-hidden bg-[#0d0d0d]">
+          <div className="flex items-center justify-between px-4 py-2 bg-purple-500/10 border-b border-purple-500/20">
             <div className="flex items-center gap-2">
               <CodeIcon />
-              <span className="text-cyan-400 text-sm">{title || language}</span>
+              <span className="text-purple-400 text-sm">{title || language}</span>
             </div>
             <button
               onClick={handleCopy}
-              className="text-xs text-gray-400 hover:text-cyan-400 transition-colors"
+              className="text-xs text-gray-400 hover:text-purple-400 transition-colors"
             >
-              {copied ? 'Copied!' : 'Copy'}
+              {copied ? 'copied!' : 'copy'}
             </button>
           </div>
           <div className={`overflow-hidden transition-all duration-300 ${isExpanded ? 'max-h-none' : 'max-h-32'}`}>
@@ -571,9 +619,9 @@
           </div>
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="w-full py-2 text-xs text-cyan-400 hover:bg-cyan-500/10 transition-colors flex items-center justify-center gap-1"
+            className="w-full py-2 text-xs text-purple-400 hover:bg-purple-500/10 transition-colors flex items-center justify-center gap-1"
           >
-            {isExpanded ? 'Show Less' : 'Show More'}
+            {isExpanded ? 'show less' : 'show more'}
             {isExpanded ? <ChevronUpIcon /> : <ChevronDownIcon />}
           </button>
         </div>
@@ -586,7 +634,7 @@
 
       return (
         <TiltCard
-          className="group relative border border-cyan-500/20 rounded-lg p-6 bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-all duration-300 hover-lift scroll-reveal"
+          className="group relative border border-purple-500/20 rounded-lg p-6 bg-[#0f0f0f]/50 backdrop-blur hover:border-purple-400/50 transition-all duration-300 hover-lift scroll-reveal"
           style={{
             animationDelay: `${index * 0.15}s`
           }}
@@ -596,26 +644,26 @@
               href={project.github} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:scale-110 inline-block opacity-0 group-hover:opacity-100"
+              className="text-gray-400 hover:text-purple-400 transition-all duration-300 hover:scale-110 inline-block opacity-0 group-hover:opacity-100"
             >
               <ExternalLinkIcon />
             </a>
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="text-gray-400 hover:text-cyan-400 transition-all duration-300 opacity-0 group-hover:opacity-100"
+              className="text-gray-400 hover:text-purple-400 transition-all duration-300 opacity-0 group-hover:opacity-100"
             >
               {isExpanded ? <ChevronUpIcon /> : <ChevronDownIcon />}
             </button>
           </div>
           
-          <div className="flex items-center gap-2 mb-4 text-cyan-400">
+          <div className="flex items-center gap-2 mb-4 text-purple-400">
             <CodeIcon />
-            <span className="text-xs bg-cyan-500/10 px-2 py-1 rounded border border-cyan-500/20">
-              ⭐ {project.stars}
+            <span className="text-xs bg-purple-500/10 px-2 py-1 rounded border border-purple-500/20">
+              ⭐ {project.stars} stars (thanks!)
             </span>
           </div>
           
-          <h3 className="text-xl font-bold mb-3 text-white group-hover:text-cyan-400 transition-colors duration-300">
+          <h3 className="text-xl font-bold mb-3 text-white group-hover:text-purple-400 transition-colors duration-300">
             {project.name}
           </h3>
           
@@ -627,7 +675,7 @@
             {project.tech.map((tech, i) => (
               <span 
                 key={i} 
-                className="text-xs px-2 py-1 bg-cyan-500/10 text-cyan-400 rounded border border-cyan-500/20 hover:bg-cyan-500/20 hover:border-cyan-400/40 transition-all duration-300 cursor-default"
+                className="text-xs px-2 py-1 bg-purple-500/10 text-purple-400 rounded border border-purple-500/20 hover:bg-purple-500/20 hover:border-purple-400/40 transition-all duration-300 cursor-default"
                 style={{
                   animation: `fadeInScale 0.4s ease-out ${0.3 + i * 0.05}s both`
                 }}
@@ -638,20 +686,20 @@
           </div>
 
           {isExpanded && (
-            <div className="mt-4 pt-4 border-t border-cyan-500/20 space-y-4 animate-fadeIn">
+            <div className="mt-4 pt-4 border-t border-purple-500/20 space-y-4 animate-fadeIn">
               {project.details && (
                 <div>
-                  <h4 className="text-cyan-400 text-sm font-bold mb-2">Details</h4>
+                  <h4 className="text-purple-400 text-sm font-bold mb-2">what it does</h4>
                   <p className="text-gray-300 text-sm leading-relaxed">{project.details}</p>
                 </div>
               )}
               {project.features && (
                 <div>
-                  <h4 className="text-cyan-400 text-sm font-bold mb-2">Features</h4>
+                  <h4 className="text-purple-400 text-sm font-bold mb-2">cool stuff</h4>
                   <ul className="space-y-1">
                     {project.features.map((feature, i) => (
                       <li key={i} className="text-gray-300 text-sm flex items-center gap-2">
-                        <span className="text-cyan-400">▹</span> {feature}
+                        <span className="text-purple-400">→</span> {feature}
                       </li>
                     ))}
                   </ul>
@@ -734,12 +782,12 @@
               // Add glow effect for larger particles
               if (this.size > 1) {
                 ctx.shadowBlur = 10;
-                ctx.shadowColor = `rgba(100, 200, 255, ${alpha * 0.5})`;
+                ctx.shadowColor = `rgba(167, 139, 250, ${alpha * 0.5})`;
               } else {
                 ctx.shadowBlur = 0;
               }
               
-              ctx.fillStyle = `rgba(200, 230, 255, ${alpha})`;
+              ctx.fillStyle = `rgba(196, 181, 253, ${alpha})`;
               ctx.beginPath();
               ctx.arc(drawX, drawY, this.size, 0, Math.PI * 2);
               ctx.fill();
@@ -791,7 +839,7 @@
               const maxDist = 110;
               if (distance < maxDist) {
                 const t = 1 - distance / maxDist;
-                ctx.strokeStyle = `rgba(120, 200, 255, ${0.12 * t})`;
+                ctx.strokeStyle = `rgba(167, 139, 250, ${0.15 * t})`;
                 ctx.lineWidth = 0.5;
                 ctx.beginPath();
                 ctx.moveTo(ax, ay);
@@ -864,7 +912,7 @@
       return (
         <span className="inline-block">
           {displayText}
-          <span className="inline-block animate-pulse ml-1 text-cyan-400">_</span>
+          <span className="inline-block animate-pulse ml-1 text-purple-400">_</span>
         </span>
       );
     };
@@ -930,50 +978,55 @@
       const projects = [
         {
           name: 'Spotify Playlist Downloader',
-          description: 'A tool to download your Spotify playlists with ease. Built with Python and modern web technologies.',
+          description: 'because spotify premium is expensive and i wanted my music offline. built with python because why not.',
           tech: ['Python', 'CSS', 'Web APIs'],
           github: 'https://github.com/Crepco/spotify-playlist-downlaod',
           stars: 10,
-          details: 'A comprehensive tool that allows users to download entire Spotify playlists. Features include batch downloading, metadata preservation, and support for various audio formats. Built with Python for backend processing and modern web APIs for playlist access.',
-          codeSnippet: `# Example usage
+          details: 'so basically i got tired of spotify\'s limitations and built this. it downloads entire playlists, keeps metadata (because organization matters), and supports different formats. it\'s not perfect but it works (most of the time).',
+          codeSnippet: `# how i use it
 import spotify_downloader
 
 playlist = spotify_downloader.get_playlist(playlist_id)
-spotify_downloader.download(playlist, output_dir='./music')`,
-          features: ['Batch Download', 'Metadata Preservation', 'Format Support', 'Progress Tracking']
+spotify_downloader.download(playlist, output_dir='./music')
+# then i listen to music offline like a rebel`,
+          features: ['batch download', 'metadata preservation', 'format support', 'progress tracking (so you know it\'s working)']
         },
         {
           name: 'Steganography Tool',
-          description: 'Hide secret messages within images using advanced steganographic techniques for secure communication.',
+          description: 'hide messages in images because sometimes you need to be sneaky. built for ctf challenges mostly.',
           tech: ['Python', 'Image Processing', 'Cryptography'],
           github: 'https://github.com/Crepco/Steganography-',
           stars: 4,
-          details: 'Advanced steganographic tool that embeds secret messages into images using LSB (Least Significant Bit) techniques. Features include encryption before embedding, support for multiple image formats, and extraction capabilities.',
-          codeSnippet: `# Encode message
+          details: 'this was built after i got frustrated with ctf steganography challenges. it uses lsb (least significant bit) to hide messages in images. you can encrypt before embedding too, because why not add layers?',
+          codeSnippet: `# hide a message
 from steganography import Steganography
 
 steg = Steganography()
 steg.encode('image.png', 'secret_message.txt', 'output.png')
+# now your image has secrets
 
-# Decode message
-message = steg.decode('output.png')`,
-          features: ['LSB Encoding', 'Encryption', 'Multi-format Support', 'Message Extraction']
+# get the message back
+message = steg.decode('output.png')
+# reveal the secrets`,
+          features: ['lsb encoding', 'encryption support', 'multi-format', 'message extraction']
         },
         {
           name: 'Password Manager',
-          description: 'Secure password management system with encryption to keep your credentials safe.',
+          description: 'because remembering passwords is hard and i don\'t trust cloud services with my credentials.',
           tech: ['Python', 'Encryption', 'Security'],
           github: 'https://github.com/Crepco/Password_Manager',
           stars: 2,
-          details: 'A secure password management system with AES-256 encryption. Features include master password protection, secure credential storage, password generation, and encrypted backup/restore functionality.',
-          codeSnippet: `# Add credentials
+          details: 'built this because i got tired of forgetting passwords and didn\'t want to use cloud-based managers. uses aes-256 encryption, has a master password, and can generate secure passwords. it\'s local, it\'s mine, and it works.',
+          codeSnippet: `# add a credential
 manager = PasswordManager()
 manager.add_credential('github.com', 'username', 'password')
+# now i don't have to remember it
 
-# Retrieve credentials
+# get it back
 cred = manager.get_credential('github.com')
-print(f"Username: {cred.username}")`,
-          features: ['AES-256 Encryption', 'Master Password', 'Password Generator', 'Backup/Restore']
+print(f"Username: {cred.username}")
+# easy`,
+          features: ['aes-256 encryption', 'master password', 'password generator', 'backup/restore']
         }
       ];
       
@@ -1079,24 +1132,25 @@ print(f"Username: {cred.username}")`,
       };
       
       return (
-        <div className="min-h-screen bg-[#0a0a0a] text-gray-200 overflow-x-hidden">
+        <div className="min-h-screen bg-[#0d0d0d] text-gray-200 overflow-x-hidden">
           <ParticleBackground />
           <InteractiveTerminal />
           
           {/* Navigation */}
-          <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0a]/80 backdrop-blur-md border-b border-cyan-500/20">
+          <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0d0d0d]/80 backdrop-blur-md border-b border-purple-500/20">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-3 sm:gap-0">
-              <div className="flex items-center gap-2 text-cyan-400">
+              <div className="flex items-center gap-2 text-purple-400">
                 <TerminalIcon />
                 <span className="text-sm font-bold">~/hamza</span>
+                <span className="text-xs text-gray-500">(probably)</span>
               </div>
               <div className="flex flex-wrap gap-3 sm:gap-6 text-xs sm:text-sm justify-center sm:justify-end">
                 {['home', 'about', 'projects', 'skills', 'contact'].map((section, index) => (
                   <button
                     key={section}
                     onClick={() => scrollToSection(section)}
-                    className={`transition-all duration-300 hover:text-cyan-400 hover:scale-110 relative group ${
-                      activeSection === section ? 'text-cyan-400' : 'text-gray-400'
+                    className={`transition-all duration-300 hover:text-purple-400 hover:scale-110 relative group ${
+                      activeSection === section ? 'text-purple-400' : 'text-gray-400'
                     }`}
                     style={{
                       animation: `fadeIn 0.6s ease-out ${0.2 + index * 0.1}s both`
@@ -1104,7 +1158,7 @@ print(f"Username: {cred.username}")`,
                   >
                     <span className="relative z-10">./{section}</span>
                     {activeSection === section && (
-                      <span className="absolute bottom-0 left-0 w-full h-0.5 bg-cyan-400 animate-fadeIn"></span>
+                      <span className="absolute bottom-0 left-0 w-full h-0.5 bg-purple-400 animate-fadeIn"></span>
                     )}
                   </button>
                 ))}
@@ -1115,7 +1169,7 @@ print(f"Username: {cred.username}")`,
           {/* Hero Section */}
           <section id="home" className="relative min-h-screen flex items-center justify-center px-6">
             <div className="max-w-4xl mx-auto text-center z-10">
-              <div className="mb-8 text-cyan-400 text-sm opacity-0 animate-fadeIn" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
+              <div className="mb-8 text-purple-400 text-sm opacity-0 animate-fadeIn" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
                 <span className="text-gray-500">$ </span>whoami
               </div>
               
@@ -1123,52 +1177,55 @@ print(f"Username: {cred.username}")`,
                   style={{ 
                     animationDelay: '0.5s', 
                     animationFillMode: 'forwards',
-                    textShadow: '0 0 20px rgba(100, 200, 255, 0.3)'
+                    textShadow: '0 0 20px rgba(167, 139, 250, 0.3)'
                   }}>
-                <span className="text-white inline-block hover:scale-105 transition-transform duration-300">Hamza</span>
-                <span className="text-cyan-400 inline-block animate-pulse-slow">.</span>
+                <span className="text-white inline-block hover:scale-105 transition-transform duration-300">hamza</span>
+                <span className="text-purple-400 inline-block animate-pulse-slow">.</span>
               </h1>
               
               <div className="text-lg sm:text-xl md:text-2xl mb-8 text-gray-300 h-8 opacity-0 animate-fadeIn" style={{ animationDelay: '0.8s', animationFillMode: 'forwards' }}>
                 <TerminalText 
                   texts={[
-                    'Software Engineer',
-                    'Cybersecurity Enthusiast',
-                    'Linux Advocate',
-                    'Ethical Hacker'
+                    'breaks things (ethically)',
+                    'fixes things (sometimes)',
+                    'linux enjoyer',
+                    'coffee addict',
+                    'ctf enthusiast'
                   ]} 
                   speed={80}
                 />
               </div>
               
               <p className="text-gray-400 max-w-2xl mx-auto mb-12 leading-relaxed opacity-0 animate-fadeIn" style={{ animationDelay: '1.1s', animationFillMode: 'forwards' }}>
-                21-year-old CSE student from India. Passionate about building secure systems, 
-                breaking things ethically, and exploring the depths of Linux and networking.
+                21, from india. i like breaking things and putting them back together. 
+                currently studying cse, spending too much time in terminals, and probably drinking too much coffee.
+                <br /><br />
+                <span className="text-purple-400/70 text-sm">(this website is still a work in progress, like most of my projects)</span>
               </p>
               
               <div className="flex gap-6 justify-center opacity-0 animate-fadeIn" style={{ animationDelay: '1.4s', animationFillMode: 'forwards' }}>
                 {/* GitHub */}
                 <a href="https://github.com/crepco" target="_blank" rel="noopener noreferrer" 
-                   className="p-3 border border-cyan-500/30 rounded-lg hover:bg-cyan-500/10 hover:border-cyan-400 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-cyan-400/20 group relative">
+                   className="p-3 border border-purple-500/30 rounded-lg hover:bg-purple-500/10 hover:border-purple-400 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-purple-400/20 group relative">
                   <GithubIcon />
-                  <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-                    GitHub
+                  <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                    github
                   </span>
                 </a>
                 {/* Gmail */}
                 <a href="mailto:hamza0jeelani@gmail.com" 
-                   className="p-3 border border-cyan-500/30 rounded-lg hover:bg-cyan-500/10 hover:border-cyan-400 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-cyan-400/20 group relative">
+                   className="p-3 border border-purple-500/30 rounded-lg hover:bg-purple-500/10 hover:border-purple-400 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-purple-400/20 group relative">
                   <MailIcon />
-                  <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-                    Email
+                  <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                    email
                   </span>
                 </a>
               </div>
             </div>
             
             <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-float opacity-0 animate-fadeIn" style={{ animationDelay: '1.7s', animationFillMode: 'forwards' }}>
-              <div className="w-6 h-10 border-2 border-cyan-400/50 rounded-full p-1 hover:border-cyan-400 transition-colors duration-300 cursor-pointer group">
-                <div className="w-1.5 h-3 bg-cyan-400 rounded-full animate-scroll group-hover:bg-cyan-300 transition-colors duration-300"></div>
+              <div className="w-6 h-10 border-2 border-purple-400/50 rounded-full p-1 hover:border-purple-400 transition-colors duration-300 cursor-pointer group">
+                <div className="w-1.5 h-3 bg-purple-400 rounded-full animate-scroll group-hover:bg-purple-300 transition-colors duration-300"></div>
               </div>
             </div>
           </section>
@@ -1178,41 +1235,43 @@ print(f"Username: {cred.username}")`,
             <div className="max-w-4xl mx-auto z-10">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 flex items-center gap-4 scroll-reveal">
                 <span className="text-gray-500 text-2xl">01.</span>
-                <span className="text-cyan-400">About</span>
-                <div className="flex-1 h-px bg-gradient-to-r from-cyan-500/50 to-transparent"></div>
+                <span className="text-purple-400">about me (i guess)</span>
+                <div className="flex-1 h-px bg-gradient-to-r from-purple-500/50 to-transparent"></div>
               </h2>
               
               <div className="grid md:grid-cols-2 gap-12 items-center">
                 <div className="space-y-6 text-gray-300 leading-relaxed scroll-reveal">
                   <p className="opacity-0 animate-fadeInLeft" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
-                    Hey there! I'm Hamza, a software engineering student with a deep passion for 
-                    <span className="text-cyan-400"> cybersecurity</span> and 
-                    <span className="text-cyan-400"> Linux systems</span>. I love the challenge of 
-                    understanding how things work—and how they can be broken and secured.
+                    hey! so i'm hamza. i'm a cse student who got way too into 
+                    <span className="text-purple-400"> cybersecurity</span> and 
+                    <span className="text-purple-400"> linux</span> and now i can't stop. 
+                    i like understanding how things work by... well, breaking them first. 
+                    (ethically, of course. mostly.)
                   </p>
                   <p className="opacity-0 animate-fadeInLeft" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
-                    When I'm not studying, you'll find me exploring penetration testing techniques, 
-                    writing automation scripts, or diving into CTF challenges. I believe in learning 
-                    by doing, and my projects reflect that hands-on approach.
+                    when i'm not procrastinating on assignments, you'll find me doing ctf challenges, 
+                    writing scripts that probably have too many bugs, or just messing around with 
+                    arch linux (yes, i use arch btw). i learn by breaking things and then frantically 
+                    googling how to fix them.
                   </p>
                   <p className="opacity-0 animate-fadeInLeft" style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}>
-                    My goal? To build secure, efficient systems while continuously sharpening my skills 
-                    in ethical hacking and network security. Let's make the digital world a safer place, 
-                    one line of code at a time.
+                    my goal? honestly, just keep learning and building cool stuff. maybe make the 
+                    internet slightly more secure, one broken thing at a time. also trying to drink 
+                    less coffee but that's not going well.
                   </p>
                 </div>
                 
                 <TiltCard className="relative group scroll-reveal">
-                  <div className="absolute inset-0 bg-cyan-500/20 blur-2xl group-hover:bg-cyan-500/30 transition-all duration-500"></div>
-                  <div className="relative border border-cyan-500/30 p-8 rounded-lg bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-all duration-300">
-                    <div className="flex items-center gap-3 mb-6 text-cyan-400">
+                  <div className="absolute inset-0 bg-purple-500/20 blur-2xl group-hover:bg-purple-500/30 transition-all duration-500"></div>
+                  <div className="relative border border-purple-500/30 p-8 rounded-lg bg-[#0f0f0f]/50 backdrop-blur hover:border-purple-400/50 transition-all duration-300">
+                    <div className="flex items-center gap-3 mb-6 text-purple-400">
                       <ShieldIcon />
-                      <span className="font-bold">Focus Areas</span>
+                      <span className="font-bold">things i do</span>
                     </div>
                     <ul className="space-y-3 text-gray-300">
-                      {['Penetration Testing', 'Network Security', 'Linux System Administration', 'OSINT & Recon', 'Full-Stack Development'].map((item, i) => (
+                      {['penetration testing (legally)', 'network security stuff', 'linux sysadmin things', 'osint & recon', 'full-stack dev (when i feel like it)'].map((item, i) => (
                         <li key={i} className="flex items-center gap-2 opacity-0 animate-fadeInLeft" style={{ animationDelay: `${0.7 + i * 0.1}s`, animationFillMode: 'forwards' }}>
-                          <span className="text-cyan-400">▹</span> {item}
+                          <span className="text-purple-400">→</span> {item}
                         </li>
                       ))}
                     </ul>
@@ -1227,8 +1286,8 @@ print(f"Username: {cred.username}")`,
             <div className="max-w-6xl mx-auto z-10">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 flex items-center gap-4 scroll-reveal">
                 <span className="text-gray-500 text-2xl">02.</span>
-                <span className="text-cyan-400">Projects</span>
-                <div className="flex-1 h-px bg-gradient-to-r from-cyan-500/50 to-transparent"></div>
+                <span className="text-purple-400">stuff i built</span>
+                <div className="flex-1 h-px bg-gradient-to-r from-purple-500/50 to-transparent"></div>
               </h2>
               
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1244,15 +1303,15 @@ print(f"Username: {cred.username}")`,
             <div className="max-w-6xl mx-auto z-10">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 flex items-center gap-4 scroll-reveal">
                 <span className="text-gray-500 text-2xl">03.</span>
-                <span className="text-cyan-400">Skills</span>
-                <div className="flex-1 h-px bg-gradient-to-r from-cyan-500/50 to-transparent"></div>
+                <span className="text-purple-400">things i know (kinda)</span>
+                <div className="flex-1 h-px bg-gradient-to-r from-purple-500/50 to-transparent"></div>
               </h2>
               
               <div className="grid md:grid-cols-2 gap-8">
-                <TiltCard className="border border-cyan-500/20 rounded-lg p-8 bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-all hover-lift scroll-reveal">
-                  <div className="flex items-center gap-3 mb-6 text-cyan-400">
+                <TiltCard className="border border-purple-500/20 rounded-lg p-8 bg-[#0f0f0f]/50 backdrop-blur hover:border-purple-400/50 transition-all hover-lift scroll-reveal">
+                  <div className="flex items-center gap-3 mb-6 text-purple-400">
                     <CodeIcon />
-                    <h3 className="text-xl font-bold">Languages & Frameworks</h3>
+                    <h3 className="text-xl font-bold">languages & frameworks</h3>
                   </div>
                   <div className="space-y-4">
                     <div>
@@ -1278,10 +1337,10 @@ print(f"Username: {cred.username}")`,
                   </div>
                 </TiltCard>
                 
-                <TiltCard className="border border-cyan-500/20 rounded-lg p-8 bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-all hover-lift scroll-reveal">
-                  <div className="flex items-center gap-3 mb-6 text-cyan-400">
+                <TiltCard className="border border-purple-500/20 rounded-lg p-8 bg-[#0f0f0f]/50 backdrop-blur hover:border-purple-400/50 transition-all hover-lift scroll-reveal">
+                  <div className="flex items-center gap-3 mb-6 text-purple-400">
                     <ShieldIcon />
-                    <h3 className="text-xl font-bold">Security Tools</h3>
+                    <h3 className="text-xl font-bold">security tools</h3>
                   </div>
                   <div className="space-y-3">
                     {skills.security.map((tool, i) => (
@@ -1290,10 +1349,10 @@ print(f"Username: {cred.username}")`,
                   </div>
                 </TiltCard>
                 
-                <TiltCard className="border border-cyan-500/20 rounded-lg p-8 bg-[#0f0f0f]/50 backdrop-blur hover:border-cyan-400/50 transition-all hover-lift md:col-span-2 scroll-reveal">
-                  <div className="flex items-center gap-3 mb-6 text-cyan-400">
+                <TiltCard className="border border-purple-500/20 rounded-lg p-8 bg-[#0f0f0f]/50 backdrop-blur hover:border-purple-400/50 transition-all hover-lift md:col-span-2 scroll-reveal">
+                  <div className="flex items-center gap-3 mb-6 text-purple-400">
                     <ServerIcon />
-                    <h3 className="text-xl font-bold">Tools & Technologies</h3>
+                    <h3 className="text-xl font-bold">tools & other stuff</h3>
                   </div>
                   <div className="space-y-3">
                     {skills.tools.map((tool, i) => (
@@ -1310,29 +1369,33 @@ print(f"Username: {cred.username}")`,
             <div className="max-w-4xl mx-auto z-10 text-center">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 flex items-center justify-center gap-4 scroll-reveal">
                 <span className="text-gray-500 text-2xl">04.</span>
-                <span className="text-cyan-400">Get In Touch</span>
+                <span className="text-purple-400">let's talk (maybe)</span>
               </h2>
               
               <p className="text-gray-300 mb-12 text-lg leading-relaxed max-w-2xl mx-auto scroll-reveal">
-                I'm always open to discussing new projects, creative ideas, or opportunities to be part 
-                of your vision. Whether it's about cybersecurity, development, or just tech in general—
-                let's connect!
+                want to collaborate? have a cool project idea? just want to chat about tech? 
+                or maybe you found a bug in my code (please tell me). hit me up!
+                <br /><br />
+                <span className="text-purple-400/70 text-sm">(i usually respond within 24-48 hours, unless i'm in the middle of a ctf challenge)</span>
               </p>
               
               <a 
                 href="mailto:hamza0jeelani@gmail.com"
-                className="inline-flex items-center gap-2 px-8 py-4 border-2 border-cyan-400 text-cyan-400 rounded-lg hover:bg-cyan-400/10 transition-all duration-300 text-lg font-semibold hover:scale-110 hover:shadow-lg hover:shadow-cyan-400/20 scroll-reveal"
+                className="inline-flex items-center gap-2 px-8 py-4 border-2 border-purple-400 text-purple-400 rounded-lg hover:bg-purple-400/10 transition-all duration-300 text-lg font-semibold hover:scale-110 hover:shadow-lg hover:shadow-purple-400/20 scroll-reveal"
               >
                 <MailIcon />
                 hamza0jeelani@gmail.com
               </a>
               
-              <div className="mt-16 pt-8 border-t border-cyan-500/20 scroll-reveal">
+              <div className="mt-16 pt-8 border-t border-purple-500/20 scroll-reveal">
                 <p className="text-gray-500 text-sm">
-                  Built with React • Designed with passion • Deployed on GitHub Pages
+                  built with react • designed at 3am • deployed on github pages (free hosting ftw)
                 </p>
                 <p className="text-gray-600 text-xs mt-2">
-                  © 2026 Hamza. All rights reserved.
+                  © 2026 hamza. all rights reserved (probably).
+                </p>
+                <p className="text-gray-700 text-xs mt-1">
+                  ps: if you're reading this, you scrolled all the way down. respect.
                 </p>
               </div>
             </div>
