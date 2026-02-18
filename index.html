@@ -875,6 +875,31 @@ cred = manager.get('github.com')`,
     return <span>{txt}<span className="blink" style={{color:'#a78bfa'}}>_</span></span>;
   };
 
+  /* ══ Visit counter ═══════════════════════════════════════════ */
+  const VisitCounter = ({dark=false}) => {
+    const [count,setCount]=useState(0);
+    useEffect(()=>{
+      const key='site-visits';
+      const lastVisit=localStorage.getItem('last-visit-date');
+      const today=new Date().toDateString();
+      if(lastVisit!==today){
+        const current=parseInt(localStorage.getItem(key)||'0',10)+1;
+        localStorage.setItem(key,current.toString());
+        localStorage.setItem('last-visit-date',today);
+        setCount(current);
+      } else {
+        setCount(parseInt(localStorage.getItem(key)||'0',10));
+      }
+    },[]);
+    if(count===0) return null;
+    const color=dark?'#33334a':'#a08060';
+    return (
+      <span style={{color,fontSize:11,fontFamily:'Space Grotesk, sans-serif'}}>
+        {count.toLocaleString()} {count===1?'visit':'visits'}
+      </span>
+    );
+  };
+
   /* ══ Scroll progress ════════════════════════════════════════ */
   const ScrollProgress = ({color}) => {
     const [pct,setPct]=useState(0);
@@ -1397,7 +1422,11 @@ cred = manager.get('github.com')`,
                 </div>
             <div style={{marginTop:72,paddingTop:28,borderTop:'1px solid rgba(124,58,237,.12)'}}>
               <p style={{color:'#33334a',fontSize:12}}>Built with React · GitHub Pages · No template used</p>
-              <p style={{color:'#33334a',fontSize:11,marginTop:6}}>© 2026 Hamza Jeelani</p>
+              <p style={{color:'#33334a',fontSize:11,marginTop:6,display:'flex',alignItems:'center',justifyContent:'center',gap:8}}>
+                © 2026 Hamza Jeelani
+                <span style={{color:'#33334a',opacity:0.5}}>·</span>
+                <VisitCounter dark={true}/>
+              </p>
                 </div>
             </div>
         </div>
@@ -1944,7 +1973,11 @@ cred = manager.get('github.com')`,
             </div>
             <div style={{marginTop:72,paddingTop:28,borderTop:'1px solid rgba(180,83,9,.1)'}}>
               <p style={{color:'#a08060',fontSize:13}}>Built with React · No template · GitHub Pages</p>
-              <p style={{color:'#a08060',fontSize:12,marginTop:6}}>© 2026 Hamza Jeelani</p>
+              <p style={{color:'#a08060',fontSize:12,marginTop:6,display:'flex',alignItems:'center',justifyContent:'center',gap:8}}>
+                © 2026 Hamza Jeelani
+                <span style={{color:'#a08060',opacity:0.5}}>·</span>
+                <VisitCounter dark={false}/>
+              </p>
             </div>
               </div>
             </div>
