@@ -452,6 +452,177 @@
       top:-60px; pointer-events:none; z-index:2;
     }
     .scanwrap:hover::before { animation:scan 1.2s linear forwards; }
+
+    /* ══════════════════════════════════════════
+       RESPONSIVE — MOBILE & TABLET
+    ══════════════════════════════════════════ */
+
+    /* ── Hamburger button ───────────────────── */
+    .mob-menu-btn {
+      display: none;
+      background: none; border: none; cursor: pointer;
+      padding: 6px; flex-direction: column; gap: 5px;
+    }
+    .mob-menu-btn span {
+      display: block; width: 22px; height: 2px; border-radius: 2px;
+      transition: all .3s ease;
+    }
+    .mob-menu-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .mob-menu-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .mob-menu-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ── Light mobile nav drawer ─────────────── */
+    .l-mob-drawer {
+      position: fixed; top: 60px; left: 0; right: 0;
+      background: rgba(245,237,224,.98); backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(180,83,9,.15);
+      padding: 20px 28px 28px;
+      display: flex; flex-direction: column; gap: 4px;
+      z-index: 499;
+      transform: translateY(-110%);
+      transition: transform .35s cubic-bezier(.4,0,.2,1);
+    }
+    .l-mob-drawer.open { transform: translateY(0); }
+    .l-mob-link {
+      font-size: 16px; font-weight: 500; color: #78614a;
+      background: none; border: none; text-align: left;
+      padding: 12px 0; cursor: pointer;
+      font-family: 'Space Grotesk', sans-serif;
+      border-bottom: 1px solid rgba(180,83,9,.08);
+      transition: color .2s;
+    }
+    .l-mob-link:last-of-type { border-bottom: none; }
+    .l-mob-link:hover, .l-mob-link.active { color: #b45309; }
+    .l-mob-toggle {
+      margin-top: 12px; padding: 10px 0; text-align: center;
+      font-size: 14px; font-weight: 600; color: #b45309;
+      background: rgba(180,83,9,.08); border: 1.5px solid rgba(180,83,9,.25);
+      border-radius: 8px; cursor: pointer;
+      font-family: 'Space Grotesk', sans-serif;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: all .2s;
+    }
+
+    /* ── Dark mobile nav drawer ──────────────── */
+    .d-mob-drawer {
+      position: fixed; top: 54px; left: 0; right: 0;
+      background: rgba(5,5,13,.98); backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(124,58,237,.2);
+      padding: 20px 24px 28px;
+      display: flex; flex-direction: column; gap: 4px;
+      z-index: 499;
+      transform: translateY(-110%);
+      transition: transform .35s cubic-bezier(.4,0,.2,1);
+    }
+    .d-mob-drawer.open { transform: translateY(0); }
+    .d-mob-link {
+      font-size: 15px; color: #7777aa;
+      background: none; border: none; text-align: left;
+      padding: 12px 0; cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      border-bottom: 1px solid rgba(124,58,237,.1);
+      transition: color .2s;
+    }
+    .d-mob-link:last-of-type { border-bottom: none; }
+    .d-mob-link:hover, .d-mob-link.active { color: #a78bfa; }
+    .d-mob-toggle {
+      margin-top: 12px; padding: 10px 0; text-align: center;
+      font-size: 13px; color: #a78bfa;
+      background: rgba(124,58,237,.1); border: 1px solid rgba(124,58,237,.3);
+      border-radius: 6px; cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: all .2s;
+    }
+
+    /* ── Tablet (≤900px) ─────────────────────── */
+    @media (max-width: 900px) {
+      .d-nav-links, .l-nav-links { display: none !important; }
+      .mob-menu-btn { display: flex !important; }
+
+      /* Dark Hero: stack columns */
+      #d-home .hero-grid { grid-template-columns: 1fr !important; }
+      #d-home .hero-sys-card { display: none !important; }
+
+      /* Dark About: stack */
+      #d-about .about-grid { grid-template-columns: 1fr !important; }
+
+      /* Reduce section padding */
+      section { padding-top: 72px !important; padding-bottom: 72px !important; }
+
+      /* Dark terminal: hide on tablet/mobile */
+      .d-term { display: none !important; }
+    }
+
+    /* ── Mobile (≤640px) ─────────────────────── */
+    @media (max-width: 640px) {
+      /* Navs */
+      .l-nav-inner, .d-nav-inner { padding: 0 18px !important; }
+
+      /* Hero sections */
+      #l-home { padding: 100px 18px 60px !important; }
+      #d-home { padding: 80px 18px 40px !important; }
+
+      /* Section padding */
+      section { padding-left: 18px !important; padding-right: 18px !important; }
+      section > div { padding-left: 0 !important; padding-right: 0 !important; }
+
+      /* Light about: stack grid */
+      #l-about .about-2col { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
+
+      /* Sticky notes: no rotation on small screens */
+      .l-card { transform: none !important; }
+      .l-card:hover { transform: translateY(-4px) scale(1.01) !important; }
+
+      /* Contact email: shrink text */
+      .contact-email { font-size: 13px !important; padding: 12px 18px !important; }
+
+      /* Reduce heading sizes */
+      .d-section-title { font-size: clamp(1.6rem,7vw,2.4rem) !important; }
+      .l-section-title { font-size: clamp(1.6rem,7vw,2.4rem) !important; }
+    }
+
+    /* ── Small mobile (≤380px) ───────────────── */
+    @media (max-width: 380px) {
+      #l-home h1 { font-size: clamp(2.4rem,14vw,3.5rem) !important; }
+      .l-card::before { display: none; } /* hide tape on very small */
+    }
+
+    /* ── Dark hero: center on mobile ────────── */
+    @media (max-width: 900px) {
+      #d-home .hero-grid { grid-template-columns: 1fr !important; justify-items: center; }
+      #d-home .hero-grid > div:first-child { text-align: center; max-width: 560px; }
+      #d-home .hero-grid > div:first-child p { margin-left: auto; margin-right: auto; }
+      #d-home .hero-grid > div:first-child > div { justify-content: center; }
+
+      /* Dark about: single column */
+      #d-about .about-grid { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
+
+      /* Light about: single column */
+      #l-about .about-2col { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
+
+      /* Sections: reduce padding */
+      #l-home { padding-top: 100px !important; padding-bottom: 60px !important; }
+      #d-home { padding-top: 80px !important; padding-bottom: 40px !important; }
+      #l-about, #d-about, #d-timeline, #d-projects, #d-stack, #d-contact,
+      #l-projects, #l-skills, #l-contact { padding-top: 80px !important; padding-bottom: 80px !important; }
+
+      /* Contact email */
+      .contact-email { font-size: 13px !important; padding: 12px 20px !important; word-break: break-all; }
+    }
+
+    /* ── Mobile: horizontal padding ─────────── */
+    @media (max-width: 640px) {
+      #l-about { padding-left: 18px !important; padding-right: 18px !important; }
+      #d-about { padding-left: 18px !important; padding-right: 18px !important; }
+      #l-projects { padding-left: 18px !important; padding-right: 18px !important; }
+      #d-projects { padding-left: 18px !important; padding-right: 18px !important; }
+      #l-skills { padding-left: 18px !important; padding-right: 18px !important; }
+      #d-stack { padding-left: 18px !important; padding-right: 18px !important; }
+      #l-contact { padding-left: 18px !important; padding-right: 18px !important; }
+      #d-contact { padding-left: 18px !important; padding-right: 18px !important; }
+      #d-timeline { padding-left: 18px !important; padding-right: 18px !important; }
+    }
   </style>
 </head>
 <body>
@@ -861,12 +1032,17 @@ cred = manager.get('github.com')`,
   const DarkNav = ({active, onToggle}) => {
     const ids=['d-home','d-about','d-timeline','d-projects','d-stack','d-contact'];
     const labels=['home','about','log','projects','stack','contact'];
-      return (
+    const [open,setOpen]=useState(false);
+    const close=()=>setOpen(false);
+    const nav=(id)=>{goto(id);close();};
+    return (
+      <>
       <nav className="d-nav">
         <div className="d-nav-inner">
-          <button className="d-nav-brand" onClick={()=>goto('d-home')}>
+          <button className="d-nav-brand" onClick={()=>nav('d-home')}>
             hamza<span>.</span>
-              </button>
+          </button>
+          {/* Desktop links */}
           <div className="d-nav-links">
             {ids.map((id,i)=>(
               <button key={id} className={`d-nav-link ${active===id?'active':''}`} onClick={()=>goto(id)}>
@@ -874,16 +1050,34 @@ cred = manager.get('github.com')`,
               </button>
             ))}
             <button className="d-toggle" onClick={onToggle}><SunIcon s={13}/> &nbsp;light</button>
-            </div>
-                      </div>
+          </div>
+          {/* Hamburger */}
+          <button className={`mob-menu-btn ${open?'open':''}`} onClick={()=>setOpen(o=>!o)} aria-label="menu">
+            <span style={{background:'#7777aa'}}/>
+            <span style={{background:'#7777aa'}}/>
+            <span style={{background:'#7777aa'}}/>
+          </button>
+        </div>
       </nav>
+      {/* Mobile drawer */}
+      <div className={`d-mob-drawer ${open?'open':''}`}>
+        {ids.map((id,i)=>(
+          <button key={id} className={`d-mob-link ${active===id?'active':''}`} onClick={()=>nav(id)}>
+            ./{labels[i]}
+          </button>
+        ))}
+        <button className="d-mob-toggle" onClick={()=>{onToggle();close();}}>
+          <SunIcon s={14}/> switch to light mode
+        </button>
+      </div>
+      </>
     );
   };
 
   const DarkHero = ({loaded}) => (
     <section id="d-home" style={{minHeight:'100vh',display:'flex',alignItems:'center',padding:'80px 24px 40px',position:'relative',zIndex:10}}>
       <div style={{maxWidth:1080,margin:'0 auto',width:'100%'}}>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'4rem',alignItems:'center'}}>
+        <div className="hero-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'4rem',alignItems:'center'}}>
           {/* Left */}
           <div style={{opacity:loaded?1:0,transition:'opacity .9s ease .1s'}}>
             <div style={{marginBottom:18}}>
@@ -915,7 +1109,7 @@ cred = manager.get('github.com')`,
                   </div>
                 </div>
           {/* System Profile */}
-          <div style={{opacity:loaded?1:0,transition:'opacity .9s ease .3s'}}>
+          <div className="hero-sys-card" style={{opacity:loaded?1:0,transition:'opacity .9s ease .3s'}}>
             <TiltCard>
               <div className="sys-card scanwrap shimmer">
                 <div className="sys-card-bar">
@@ -962,7 +1156,7 @@ cred = manager.get('github.com')`,
         <div style={{maxWidth:1080,margin:'0 auto'}}>
           <div className="d-section-label">01 — about</div>
           <h2 className="d-section-title" style={{marginBottom:56}}><ScrambleHeading text="WHOIS hamza"/></h2>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'3.5rem',alignItems:'start'}}>
+          <div className="about-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'3.5rem',alignItems:'start'}}>
             {/* WHOIS block */}
             <div ref={r1} className={`sr ${v1?'in':''}`}>
               <div className="d-code">
@@ -1188,7 +1382,7 @@ cred = manager.get('github.com')`,
               Open to collaborating on security research, development projects,
               or anything technically interesting. Found a bug in my code? Please tell me.
             </p>
-            <a href="mailto:hamza0jeelani@gmail.com"
+            <a href="mailto:hamza0jeelani@gmail.com" className="contact-email"
               style={{display:'inline-flex',alignItems:'center',gap:10,padding:'14px 32px',border:'1px solid rgba(167,139,250,.5)',borderRadius:7,color:'#a78bfa',fontSize:14,textDecoration:'none',background:'rgba(124,58,237,.1)',transition:'all .25s',fontFamily:'JetBrains Mono'}}>
               <MailIcon s={17}/> hamza0jeelani@gmail.com
             </a>
@@ -1365,22 +1559,45 @@ cred = manager.get('github.com')`,
   const LightNav = ({active, onToggle}) => {
     const ids=['l-home','l-about','l-projects','l-skills','l-contact'];
     const labels=['Home','About','Projects','Skills','Contact'];
-      return (
+    const [open,setOpen]=useState(false);
+    const close=()=>setOpen(false);
+    const nav=(id)=>{goto(id);close();};
+    return (
+      <>
       <nav className="l-nav">
         <div className="l-nav-inner">
-          <button className="l-nav-brand" onClick={()=>goto('l-home')}>
+          <button className="l-nav-brand" onClick={()=>nav('l-home')}>
             Hamza<span>.</span>
           </button>
+          {/* Desktop links */}
           <div className="l-nav-links">
             {ids.map((id,i)=>(
               <button key={id} className={`l-nav-link ${active===id?'active':''}`} onClick={()=>goto(id)}>
                 {labels[i]}
-                  </button>
-                ))}
+              </button>
+            ))}
             <button className="l-toggle" onClick={onToggle}><MoonIcon s={13}/> &nbsp;dark</button>
-              </div>
-            </div>
-          </nav>
+          </div>
+          {/* Hamburger */}
+          <button className={`mob-menu-btn ${open?'open':''}`} onClick={()=>setOpen(o=>!o)} aria-label="menu">
+            <span style={{background:'#78614a'}}/>
+            <span style={{background:'#78614a'}}/>
+            <span style={{background:'#78614a'}}/>
+          </button>
+        </div>
+      </nav>
+      {/* Mobile drawer */}
+      <div className={`l-mob-drawer ${open?'open':''}`}>
+        {ids.map((id,i)=>(
+          <button key={id} className={`l-mob-link ${active===id?'active':''}`} onClick={()=>nav(id)}>
+            {labels[i]}
+          </button>
+        ))}
+        <button className="l-mob-toggle" onClick={()=>{onToggle();close();}}>
+          <MoonIcon s={14}/> switch to dark mode
+        </button>
+      </div>
+      </>
     );
   };
 
@@ -1519,7 +1736,7 @@ cred = manager.get('github.com')`,
     return (
       <section id="l-about" style={{padding:'100px 28px',background:'#f0e6d2'}}>
         <div style={{maxWidth:1080,margin:'0 auto'}}>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'5rem',alignItems:'start'}}>
+          <div className="about-2col" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'5rem',alignItems:'start'}}>
             <div ref={r1} className={`sr ${v1?'in':''}`}>
               <div className="l-section-label">About Me</div>
               <div className="l-accent-line"/>
@@ -1708,7 +1925,7 @@ cred = manager.get('github.com')`,
               discussing security topics, or just having a conversation
               about tech. Feel free to reach out.
             </p>
-            <a href="mailto:hamza0jeelani@gmail.com"
+            <a href="mailto:hamza0jeelani@gmail.com" className="contact-email"
               style={{display:'inline-flex',alignItems:'center',gap:10,padding:'14px 32px',background:'#b45309',color:'#fff',borderRadius:8,fontSize:15,fontWeight:600,textDecoration:'none',transition:'all .25s',fontFamily:'Space Grotesk',boxShadow:'0 4px 14px rgba(180,83,9,.3)'}}
               onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-2px)';e.currentTarget.style.boxShadow='0 8px 20px rgba(180,83,9,.4)';}}
               onMouseLeave={e=>{e.currentTarget.style.transform='translateY(0)';e.currentTarget.style.boxShadow='0 4px 14px rgba(180,83,9,.3)';}}>
