@@ -1,1905 +1,1821 @@
 <!DOCTYPE html>
-<html lang="en" style="background: #0d0d0d;">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>hamza's corner of the internet</title>
-  <meta name="description" content="just a guy who likes breaking things (ethically) and putting them back together">
+  <title>Hamza Jeelani</title>
+  <meta name="description" content="Security researcher and developer from India.">
   <script src="https://cdn.tailwindcss.com"></script>
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    html {
-      scroll-behavior: smooth;
-      background: #0d0d0d !important;
-    }
-    
-    body {
-      font-family: 'JetBrains Mono', monospace;
-      background: #0d0d0d !important;
-      color: #d4d4d4;
-      overflow-x: hidden;
-      cursor: none !important;
-    }
-    
-    * {
-      cursor: none !important;
-    }
-    
-    #root {
-      background: #0d0d0d;
-    }
-    
-    /* Custom scrollbar */
-    ::-webkit-scrollbar {
-      width: 10px;
-    }
-    
-    ::-webkit-scrollbar-track {
-      background: #0d0d0d;
-    }
-    
-    ::-webkit-scrollbar-thumb {
-      background: rgba(139, 92, 246, 0.4);
-      border-radius: 5px;
-    }
-    
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(167, 139, 250, 0.6);
-    }
-    
-    /* Loading animation */
-    .loader {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #0d0d0d;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    /* ── Loader ─────────────────────────────── */
+    #loader {
+      position: fixed; inset: 0;
+      background: #f5ede0;
+      display: flex; align-items: center; justify-content: center;
       z-index: 9999;
-      transition: opacity 0.5s;
+      transition: opacity 0.6s ease;
     }
-    
-    .loader.hidden {
-      opacity: 0;
-      pointer-events: none;
+    #loader.gone { opacity: 0; pointer-events: none; }
+    .ld-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700; font-size: 20px;
+      letter-spacing: .12em; color: #2c1f0e;
+      margin-bottom: 18px;
     }
-    
-    .terminal-loader {
-      font-family: 'JetBrains Mono', monospace;
-      color: #a78bfa;
-      font-size: 18px;
+    .ld-name span { color: #b45309; }
+    .ld-track { width: 220px; height: 3px; background: rgba(180,83,9,.15); border-radius: 3px; overflow: hidden; }
+    .ld-fill  { height: 100%; background: linear-gradient(90deg,#b45309,#d97706); border-radius: 3px; width: 0; transition: width .08s linear; }
+    .ld-text  { margin-top: 10px; font-family:'Space Grotesk',sans-serif; font-size: 11px; color: #78614a; letter-spacing: .08em; font-weight: 500; }
+
+    /* ── Grain (dark mode only) ─────────────── */
+    .grain-overlay {
+      position: fixed; inset: -50%;
+      width: 200%; height: 200%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: .026; pointer-events: none; z-index: 9990;
+      animation: grain 8s steps(10) infinite;
     }
-    
-    .cursor {
-      animation: blink 1s infinite;
-    }
-    
-    @keyframes blink {
-      0%, 50% { opacity: 1; }
-      51%, 100% { opacity: 0; }
+    @keyframes grain {
+      0%  {transform:translate(0,0)}   10%{transform:translate(-5%,-10%)}
+      20% {transform:translate(-15%,5%)} 30%{transform:translate(7%,-25%)}
+      40% {transform:translate(-5%,25%)} 50%{transform:translate(-15%,10%)}
+      60% {transform:translate(15%,0%)} 70%{transform:translate(0%,15%)}
+      80% {transform:translate(3%,35%)} 90%{transform:translate(-10%,10%)}
     }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    /* ── Theme-switch overlay ───────────────── */
+    #theme-switch-overlay {
+      position: fixed; inset: 0; z-index: 10000;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 18px;
+      pointer-events: none; opacity: 0;
+      transition: opacity .22s ease;
     }
-    
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(40px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    #theme-switch-overlay.show { opacity: 1; pointer-events: all; }
+    .tso-bar { width: 180px; height: 2px; border-radius: 2px; overflow: hidden; }
+    .tso-fill { height: 100%; width: 0%; border-radius: 2px; animation: tsoFill 1.2s ease-out forwards; }
+    @keyframes tsoFill { to { width: 100%; } }
+    .tso-label { font-family: 'Space Grotesk', sans-serif; font-size: 12px; letter-spacing: .1em; font-weight: 600; }
+
+    /* ── Page fade on theme switch ─────────── */
+    .page-fade { opacity: 0 !important; transition: opacity .28s ease !important; }
+    .page-show  { opacity: 1;  transition: opacity .28s ease; }
+
+    /* ── Scrollbars ─────────────────────────── */
+    .dark-scroll::-webkit-scrollbar { width: 5px; }
+    .dark-scroll::-webkit-scrollbar-track { background: #06060f; }
+    .dark-scroll::-webkit-scrollbar-thumb { background: rgba(124,58,237,.35); border-radius: 3px; }
+
+    /* ── Custom cursor (dark only) ──────────── */
+    .dark-cursor-mode, .dark-cursor-mode * { cursor: none !important; }
+    .cursor-dot {
+      position: fixed; width: 7px; height: 7px; border-radius: 50%;
+      background: #a78bfa; pointer-events: none; z-index: 9995; mix-blend-mode: difference;
     }
-    
-    @keyframes fadeInLeft {
-      from {
-        opacity: 0;
-        transform: translateX(-30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
+    .cursor-ring {
+      position: fixed; width: 26px; height: 26px;
+      border: 1.5px solid rgba(167,139,250,.4); border-radius: 50%;
+      pointer-events: none; z-index: 9994;
+      transition: width .18s ease, height .18s ease, border-color .18s ease;
     }
-    
-    @keyframes fadeInRight {
-      from {
-        opacity: 0;
-        transform: translateX(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-    
-    @keyframes fadeInScale {
-      from {
-        opacity: 0;
-        transform: scale(0.9);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-    
-    @keyframes scroll {
-      0% { transform: translateY(0); }
-      50% { transform: translateY(8px); }
-      100% { transform: translateY(0); }
-    }
-    
-    @keyframes pulse {
-      0%, 100% {
-        opacity: 1;
-        transform: scale(1);
-      }
-      50% {
-        opacity: 0.8;
-        transform: scale(1.05);
-      }
-    }
-    
-    @keyframes shimmer {
-      0% {
-        background-position: -1000px 0;
-      }
-      100% {
-        background-position: 1000px 0;
-      }
-    }
-    
-    @keyframes float {
-      0%, 100% {
-        transform: translateY(0px);
-      }
-      50% {
-        transform: translateY(-10px);
-      }
-    }
-    
-    @keyframes glow {
-      0%, 100% {
-        box-shadow: 0 0 20px rgba(100, 200, 255, 0.3);
-      }
-      50% {
-        box-shadow: 0 0 30px rgba(100, 200, 255, 0.6);
-      }
-    }
-    
-    .animate-fadeIn {
-      animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    .animate-fadeInUp {
-      animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    .animate-fadeInLeft {
-      animation: fadeInLeft 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    .animate-fadeInRight {
-      animation: fadeInRight 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    .animate-fadeInScale {
-      animation: fadeInScale 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    .animate-scroll {
-      animation: scroll 1.5s ease-in-out infinite;
-    }
-    
-    .animate-pulse-slow {
-      animation: pulse 3s ease-in-out infinite;
-    }
-    
-    .animate-float {
-      animation: float 3s ease-in-out infinite;
-    }
-    
-    .animate-glow {
-      animation: glow 2s ease-in-out infinite;
-    }
-    
-    /* Scroll reveal animation */
-    .scroll-reveal {
-      opacity: 0;
-      transform: translateY(50px);
-      transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-                  transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    .scroll-reveal.revealed {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    
-    /* Smooth transitions */
-    * {
-      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    /* Enhanced hover effects */
-    .hover-lift {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    
-    .hover-lift:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 30px rgba(100, 200, 255, 0.2);
-    }
-    
-    /* Gradient text animation */
-    @keyframes gradient-shift {
-      0%, 100% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-    }
-    
-    .gradient-text {
-      background: linear-gradient(90deg, #a78bfa, #c084fc, #e879f9, #a78bfa);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: gradient-shift 4s ease infinite;
-    }
-    
-    /* Quirky animations */
-    @keyframes wiggle {
-      0%, 100% { transform: rotate(0deg); }
-      25% { transform: rotate(-2deg); }
-      75% { transform: rotate(2deg); }
-    }
-    
-    @keyframes glitch {
-      0%, 100% { transform: translate(0); }
-      20% { transform: translate(-2px, 2px); }
-      40% { transform: translate(-2px, -2px); }
-      60% { transform: translate(2px, 2px); }
-      80% { transform: translate(2px, -2px); }
-    }
-    
-    .animate-wiggle {
-      animation: wiggle 0.5s ease-in-out;
-    }
-    
-    .animate-glitch {
-      animation: glitch 0.3s;
-    }
-    
-    /* Hand-drawn style borders */
-    .sketchy-border {
-      border: 2px solid;
-      border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+    .cursor-ring.big { width: 38px; height: 38px; border-color: rgba(167,139,250,.7); }
+
+    /* ── Scroll progress ────────────────────── */
+    .scroll-bar {
+      position: fixed; top: 0; left: 0; height: 2px; z-index: 9993;
+      transition: width .08s ease;
     }
 
-    /* Terminal scrollbar */
-    .scrollbar-thin::-webkit-scrollbar {
-      width: 6px;
+    /* ── Blink ──────────────────────────────── */
+    @keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+    .blink { animation: blink 1s infinite; }
+
+    /* ── Scroll reveal ──────────────────────── */
+    .sr {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity .65s cubic-bezier(.4,0,.2,1), transform .65s cubic-bezier(.4,0,.2,1);
     }
-    
-    .scrollbar-thin::-webkit-scrollbar-track {
-      background: #0d0d0d;
+    .sr.in { opacity: 1; transform: translateY(0); }
+
+    /* ── Selection ──────────────────────────── */
+    ::selection { background: rgba(124,58,237,.28); color: #fff; }
+
+    /* ══════════════════════════════════════════
+       DARK THEME
+    ══════════════════════════════════════════ */
+    .d-body {
+      font-family: 'JetBrains Mono', monospace;
+      background: #05050d; color: #ddddf0;
+      overflow-x: hidden; min-height: 100vh;
     }
-    
-    .scrollbar-thin::-webkit-scrollbar-thumb {
-      background: rgba(139, 92, 246, 0.4);
-      border-radius: 3px;
-    }
-    
-    .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-      background: rgba(167, 139, 250, 0.6);
+    /* Canvas bg sits at z=0 */
+    #circuit-canvas {
+      position: fixed; inset: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 0;
     }
 
-    /* Code snippet styling */
-    pre code {
-      color: #e5e5e5;
+    .d-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      background: rgba(6,6,15,.82); backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(124,58,237,.15);
+    }
+    .d-nav-inner {
+      max-width: 1080px; margin: 0 auto; padding: 0 24px;
+      height: 54px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .d-nav-brand {
+      font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 16px;
+      color: #ddddf0; background: none; border: none;
+    }
+    .d-nav-brand span { color: #a78bfa; }
+    .d-nav-links { display: flex; align-items: center; gap: 22px; }
+    .d-nav-link {
+      font-size: 12px; color: #7777aa; background: none; border: none;
       font-family: 'JetBrains Mono', monospace;
+      transition: color .2s; padding-bottom: 2px;
+    }
+    .d-nav-link.active { color: #a78bfa; border-bottom: 1px solid #a78bfa; }
+    .d-toggle {
+      font-size: 11px; padding: 5px 12px;
+      border: 1px solid rgba(124,58,237,.3); border-radius: 4px;
+      color: #7777aa; background: rgba(124,58,237,.08);
+      font-family: 'JetBrains Mono', monospace;
+      transition: all .2s; letter-spacing: .06em;
+    }
+    .d-toggle:hover { border-color: rgba(167,139,250,.5); color: #a78bfa; }
+
+    /* System card */
+    .sys-card {
+      background: rgba(12,12,28,.9); border: 1px solid rgba(124,58,237,.2);
+      border-radius: 8px; overflow: hidden;
+      backdrop-filter: blur(6px);
+    }
+    .sys-card-bar {
+      background: rgba(124,58,237,.1); border-bottom: 1px solid rgba(124,58,237,.15);
+      padding: 8px 14px; display: flex; align-items: center; gap: 7px;
+    }
+    .dot3 { width: 10px; height: 10px; border-radius: 50%; }
+    .sys-card-body { padding: 18px 20px; line-height: 2.1; font-size: 12px; }
+    .sk { color: #55558a; min-width: 95px; display: inline-block; }
+    .sv { color: #ddddf0; }
+    .sv.gr { color: #10b981; }
+    .sv.am { color: #f59e0b; }
+    .sys-hr { border: none; border-top: 1px solid rgba(124,58,237,.15); margin: 8px 0; }
+
+    /* Dark cards */
+    .d-card {
+      background: rgba(12,12,28,.7); border: 1px solid rgba(124,58,237,.18);
+      border-radius: 8px; backdrop-filter: blur(4px);
+      transition: border-color .25s, transform .25s, box-shadow .25s;
+    }
+    .d-card:hover {
+      border-color: rgba(167,139,250,.4);
+      transform: translateY(-3px);
+      box-shadow: 0 14px 40px rgba(124,58,237,.1);
     }
 
-    /* Enhanced card hover effects */
-    .card-glow {
-      transition: box-shadow 0.3s ease;
+    /* Status pill */
+    .d-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 12px; border-radius: 20px; font-size: 11px;
+      letter-spacing: .05em; border: 1px solid;
     }
-    
-    .card-glow:hover {
-      box-shadow: 0 0 30px rgba(167, 139, 250, 0.3);
+    .d-pill.green { border-color:rgba(16,185,129,.35);color:#10b981;background:rgba(16,185,129,.08); }
+    .d-pill .pulse { width:6px;height:6px;border-radius:50%;background:currentColor;animation:blink 1.6s ease-in-out infinite; }
+
+    /* Dark tags */
+    .d-tag {
+      display: inline-flex; padding: 3px 9px; border-radius: 4px; font-size: 11px;
+      letter-spacing: .04em; border: 1px solid; transition: all .2s;
     }
-    
-    /* Less perfect, more human */
-    .imperfect {
-      transform: rotate(-0.5deg);
+    .d-tag.pu { border-color:rgba(124,58,237,.35);color:#a78bfa;background:rgba(124,58,237,.1); }
+    .d-tag.am { border-color:rgba(245,158,11,.3);color:#f59e0b;background:rgba(245,158,11,.07); }
+    .d-tag.gr { border-color:rgba(16,185,129,.3);color:#10b981;background:rgba(16,185,129,.07); }
+
+    /* Dark section headers */
+    .d-section-label {
+      font-size: 11px; letter-spacing: .15em; color: #a78bfa;
+      text-transform: uppercase; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 10px;
     }
-    
-    .imperfect-alt {
-      transform: rotate(0.3deg);
+    .d-section-label::after { content:''; flex:1; height:1px; background: linear-gradient(90deg,rgba(124,58,237,.25),transparent); }
+    .d-section-title {
+      font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+      font-size: clamp(1.8rem,4vw,2.8rem); color: #ddddf0; line-height: 1.1;
     }
-    
-    /* Personal touches */
-    .handwritten {
-      font-family: 'JetBrains Mono', monospace;
-      font-style: italic;
+
+    /* Classified text */
+    .classified {
+      background: #44446a; color: transparent; border-radius: 2px;
+      transition: all .35s ease; padding: 1px 3px;
     }
-    
-    /* Mouse trail */
-    .mouse-trail {
-      position: fixed;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9998;
-      mix-blend-mode: difference;
+    .classified:hover { background: transparent; color: #f59e0b; }
+
+    /* Timeline */
+    .tl-line { position:absolute; left:0; top:0; bottom:0; width:1px; background:linear-gradient(to bottom,#7c3aed,transparent); }
+    .tl-node { width:8px;height:8px;border-radius:50%;background:#a78bfa;border:2px solid #06060f;flex-shrink:0;margin-top:4px;box-shadow:0 0 8px rgba(167,139,250,.5); }
+
+    /* Case status */
+    .case-badge {
+      font-size: 10px; letter-spacing: .1em; padding: 2px 8px;
+      border-radius: 3px; border: 1px solid;
     }
-    
-    /* Matrix rain effect */
-    .matrix-char {
-      position: absolute;
-      color: #a78bfa;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 14px;
-      opacity: 0.8;
-      animation: matrix-fall linear infinite;
+    .case-badge.dp { border-color:rgba(16,185,129,.4);color:#10b981; }
+
+    /* Code block */
+    .d-code {
+      background: #06060f; border: 1px solid rgba(124,58,237,.18); border-radius: 6px; overflow: hidden;
     }
-    
-    @keyframes matrix-fall {
-      to {
-        transform: translateY(100vh);
-        opacity: 0;
-      }
+    .d-code-hd {
+      background: rgba(124,58,237,.08); border-bottom: 1px solid rgba(124,58,237,.15);
+      padding: 6px 12px; display: flex; align-items: center; justify-content: space-between;
     }
-    
-    /* Glitch effect */
-    .glitch-text {
+
+    /* Tilt */
+    .tilt { transform-style: preserve-3d; will-change: transform; }
+
+    /* Dark terminal widget */
+    .d-term { position:fixed; bottom:22px; right:22px; z-index:400; width:360px; max-width:calc(100vw - 44px); }
+    .d-term-hd {
+      background:rgba(6,6,15,.95); border:1px solid rgba(124,58,237,.2);
+      border-radius:7px 7px 0 0; padding:8px 14px;
+      display:flex; align-items:center; justify-content:space-between;
+      backdrop-filter:blur(8px); cursor:pointer;
+    }
+    .d-term-bd {
+      background:rgba(6,6,15,.97); border:1px solid rgba(124,58,237,.2);
+      border-top:none; border-radius:0 0 7px 7px; padding:14px;
+      backdrop-filter:blur(8px);
+    }
+    .thin-scroll::-webkit-scrollbar { width: 4px; }
+    .thin-scroll::-webkit-scrollbar-track { background: transparent; }
+    .thin-scroll::-webkit-scrollbar-thumb { background: rgba(124,58,237,.3); border-radius:2px; }
+
+    /* ══════════════════════════════════════════
+       LIGHT THEME — WARM OFF-WHITE
+    ══════════════════════════════════════════ */
+    .l-body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #f5ede0;
+      color: #2c1f0e;
+      overflow-x: hidden; min-height: 100vh;
       position: relative;
     }
-    
-    .glitch-text::before,
-    .glitch-text::after {
-      content: attr(data-text);
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-    
-    .glitch-text::before {
-      left: 2px;
-      text-shadow: -2px 0 #ff00c1;
-      clip: rect(44px, 450px, 56px, 0);
-      animation: glitch-anim 5s infinite linear alternate-reverse;
-    }
-    
-    .glitch-text::after {
-      left: -2px;
-      text-shadow: -2px 0 #00fff9, 2px 2px #ff00c1;
-      clip: rect(44px, 450px, 56px, 0);
-      animation: glitch-anim2 1s infinite linear alternate-reverse;
-    }
-    
-    @keyframes glitch-anim {
-      0% { clip: rect(31px, 9999px, 94px, 0); }
-      20% { clip: rect(33px, 9999px, 14px, 0); }
-      40% { clip: rect(26px, 9999px, 37px, 0); }
-      60% { clip: rect(40px, 9999px, 20px, 0); }
-      80% { clip: rect(2px, 9999px, 60px, 0); }
-      100% { clip: rect(90px, 9999px, 98px, 0); }
-    }
-    
-    @keyframes glitch-anim2 {
-      0% { clip: rect(65px, 9999px, 100px, 0); }
-      20% { clip: rect(79px, 9999px, 85px, 0); }
-      40% { clip: rect(66px, 9999px, 4px, 0); }
-      60% { clip: rect(96px, 9999px, 9px, 0); }
-      80% { clip: rect(10px, 9999px, 50px, 0); }
-      100% { clip: rect(2px, 9999px, 60px, 0); }
-    }
-    
-    /* Interactive code block */
-    .code-block {
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .code-block::before {
+    /* Warm paper texture overlay */
+    .l-body::before {
       content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.1), transparent);
-      animation: scan 3s infinite;
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 30%, rgba(217,119,6,.08) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 70%, rgba(180,83,9,.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 55% 10%, rgba(251,146,60,.05) 0%, transparent 45%);
+      pointer-events: none; z-index: 0;
     }
-    
-    @keyframes scan {
-      0% { left: -100%; }
-      100% { left: 100%; }
+
+    .l-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      background: rgba(245,237,224,.96); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(180,83,9,.15);
     }
-    
-    /* Cursor follower */
-    .cursor-follower {
-      position: fixed;
-      width: 30px;
-      height: 30px;
-      border: 2px solid rgba(167, 139, 250, 0.5);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9997;
-      transition: transform 0.1s ease;
+    .l-nav-inner {
+      max-width: 1080px; margin: 0 auto; padding: 0 28px;
+      height: 60px; display: flex; align-items: center; justify-content: space-between;
     }
-    
-    /* Easter egg styles */
-    .easter-egg {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 10000;
-      background: rgba(13, 13, 13, 0.95);
-      border: 2px solid #a78bfa;
-      padding: 2rem;
-      border-radius: 10px;
-      display: none;
+    .l-nav-brand {
+      font-weight: 700; font-size: 17px; color: #2c1f0e;
+      background: none; border: none; letter-spacing: -.01em; cursor: pointer;
     }
-    
-    .easter-egg.active {
-      display: block;
-      animation: fadeInScale 0.5s ease;
+    .l-nav-brand span { color: #b45309; }
+    .l-nav-links { display: flex; align-items: center; gap: 28px; }
+    .l-nav-link {
+      font-size: 14px; color: #78614a; background: none; border: none;
+      font-weight: 500; transition: color .2s;
+      font-family: 'Space Grotesk', sans-serif;
+      position: relative; cursor: pointer;
     }
-    
-    /* 3D transform on scroll */
-    .parallax-3d {
-      transform-style: preserve-3d;
-      transition: transform 0.1s ease-out;
+    .l-nav-link::after {
+      content: ''; position: absolute; bottom: -4px; left: 0;
+      width: 0; height: 2px;
+      background: #b45309;
+      transition: width .25s ease;
     }
-    
-    /* Scroll progress bar */
-    .scroll-progress {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 3px;
-      background: linear-gradient(90deg, #a78bfa, #c084fc, #e879f9);
-      z-index: 10000;
-      transition: width 0.1s ease;
+    .l-nav-link:hover { color: #2c1f0e; }
+    .l-nav-link:hover::after { width: 100%; }
+    .l-nav-link.active { color: #b45309; font-weight: 600; }
+    .l-nav-link.active::after { width: 100%; }
+    .l-toggle {
+      font-size: 12px; padding: 6px 15px; border-radius: 20px;
+      border: 1.5px solid #b45309; color: #b45309;
+      background: transparent; font-weight: 600;
+      font-family: 'Space Grotesk', sans-serif;
+      transition: all .25s ease;
+      letter-spacing: .02em; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
     }
-    
-    /* Text selection color */
-    ::selection {
-      background: rgba(167, 139, 250, 0.3);
-      color: #fff;
+    .l-toggle:hover {
+      background: #b45309; color: #fff;
+      box-shadow: 0 3px 10px rgba(180,83,9,.25);
     }
+
+    /* ── Sticky-note cards ── */
+    .l-card {
+      background: #fef3c7;
+      border: none; border-radius: 2px;
+      box-shadow: 2px 3px 10px rgba(0,0,0,.13), 4px 6px 20px rgba(0,0,0,.07),
+                  inset 0 1px 0 rgba(255,255,255,.6);
+      transition: transform .25s ease, box-shadow .25s ease;
+      position: relative; overflow: visible;
+      transform: rotate(-1.2deg);
+    }
+    /* Tape strip */
+    .l-card::before {
+      content: ''; position: absolute; top: -10px; left: 22px; right: 22px;
+      height: 18px;
+      background: rgba(255,255,255,.55);
+      backdrop-filter: blur(2px);
+      border-radius: 2px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+    }
+    /* Warm pastel rotations — no cold blues / greens */
+    .l-card:nth-child(1) { background:#fef3c7; transform:rotate(-1.2deg); }  /* warm amber */
+    .l-card:nth-child(2) { background:#fde8d0; transform:rotate(1.4deg);  }  /* peach */
+    .l-card:nth-child(3) { background:#fef9c3; transform:rotate(-0.7deg); }  /* warm yellow */
+    .l-card:nth-child(4) { background:#fde0d9; transform:rotate(1.9deg);  }  /* warm rose */
+    .l-card:nth-child(5) { background:#fef3c7; transform:rotate(-1deg);   }  /* amber */
+    .l-card:nth-child(6) { background:#f9e8c8; transform:rotate(0.8deg);  }  /* warm cream */
+    .l-card:hover {
+      transform: rotate(0deg) translateY(-8px) scale(1.02);
+      box-shadow: 4px 12px 28px rgba(0,0,0,.16), 2px 4px 8px rgba(0,0,0,.1),
+                  inset 0 1px 0 rgba(255,255,255,.6);
+      z-index: 10;
+    }
+
+    /* ── Section headings ── */
+    .l-section-label {
+      font-size: 11px; letter-spacing: .14em;
+      color: #b45309; text-transform: uppercase; font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .l-section-title {
+      font-weight: 700; font-size: clamp(2rem,4vw,3rem);
+      color: #2c1f0e;
+      line-height: 1.1; letter-spacing: -.02em;
+    }
+    .l-accent-line {
+      width: 40px; height: 3px;
+      background: linear-gradient(90deg, #b45309, #d97706);
+      border-radius: 2px; margin-bottom: 24px;
+    }
+
+    /* ── Tags ── */
+    .l-tag {
+      display: inline-flex; padding: 4px 12px; border-radius: 20px;
+      font-size: 12px; font-weight: 500;
+      transition: all .2s ease;
+    }
+    .l-tag.ind {
+      background: rgba(180,83,9,.09);
+      color: #92400e;
+      border: 1px solid rgba(180,83,9,.2);
+    }
+    .l-tag.ind:hover { background: rgba(180,83,9,.15); transform: translateY(-1px); }
+    .l-tag.slt {
+      background: rgba(0,0,0,.06);
+      color: #6b5240;
+      border: 1px solid rgba(0,0,0,.1);
+    }
+    .l-tag.slt:hover { background: rgba(0,0,0,.1); }
+
+    /* ── Code block (stays dark for readability) ── */
+    .l-code { background: #1e1e2e; border-radius: 8px; overflow: hidden; }
+    .l-code-hd {
+      background: rgba(255,255,255,.05);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      padding: 8px 14px; display: flex; align-items: center; justify-content: space-between;
+    }
+
+    /* ── Status chip ── */
+    .l-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 13px; border-radius: 24px;
+      font-size: 13px; font-weight: 500;
+      transition: all .2s ease;
+    }
+    .l-chip.av {
+      background: rgba(16,185,129,.1);
+      color: #065f46;
+      border: 1px solid rgba(16,185,129,.25);
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+    @keyframes bob   { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
+    @keyframes titleShimmer {
+      0%,100% { background-position: 0% 50%; }
+      50%      { background-position: 100% 50%; }
+    }
+    .bob { animation: bob 2s ease-in-out infinite; }
+
+    /* Hover shimmer */
+    .shimmer { position:relative; overflow:hidden; }
+    .shimmer::after {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.04) 50%,transparent 60%);
+      transform:translateX(-100%); transition:transform .5s ease; pointer-events:none;
+    }
+    .shimmer:hover::after { transform:translateX(100%); }
+
+    /* Scanline hover */
+    @keyframes scan { 0%{top:-60px} 100%{top:110%} }
+    .scanwrap { position:relative; overflow:hidden; }
+    .scanwrap::before {
+      content:''; position:absolute; left:0; right:0; height:60px;
+      background:linear-gradient(to bottom,transparent,rgba(124,58,237,.05),transparent);
+      top:-60px; pointer-events:none; z-index:2;
+    }
+    .scanwrap:hover::before { animation:scan 1.2s linear forwards; }
   </style>
 </head>
 <body>
-  <!-- Loading Screen -->
-  <div class="loader" id="loader">
-    <div class="terminal-loader">
-      <div>$ coffee.exe --status: brewing</div>
-      <div>$ loading brain.exe...</div>
-      <div>$ cat ~/hamza.txt<span class="cursor">_</span></div>
+
+<!-- Theme-switch overlay -->
+<div id="theme-switch-overlay">
+  <div class="tso-label" id="tso-label">switching theme...</div>
+  <div class="tso-bar"><div class="tso-fill" id="tso-fill"></div></div>
+</div>
+
+<!-- Loader -->
+<div id="loader">
+  <div>
+    <div class="ld-name">HAMZA <span>JEELANI</span></div>
+    <div class="ld-track"><div class="ld-fill" id="ldf"></div></div>
+    <div class="ld-text" id="lds">initializing...</div>
     </div>
   </div>
 
-  <!-- React Root -->
   <div id="root"></div>
 
-  <!-- Portfolio Component -->
+<!-- source reader? hi. -->
+
+<script>
+  (function(){
+    const b=document.getElementById('ldf'),s=document.getElementById('lds');
+    const steps=[[20,'loading...'],[50,'rendering...'],[80,'almost there...'],[100,'done.']];
+    let i=0;
+    const tick=()=>{
+      if(i>=steps.length)return;
+      b.style.width=steps[i][0]+'%'; s.textContent=steps[i][1]; i++;
+      if(i<steps.length) setTimeout(tick,280+Math.random()*160);
+    };
+    setTimeout(tick,180);
+  })();
+</script>
+
   <script type="text/babel">
-    const { useState, useEffect, useRef } = React;
+  const { useState, useEffect, useRef, useCallback } = React;
 
-    // Simple SVG Icons
-    const GithubIcon = () => (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+  /* ══ Icons ══════════════════════════════════════════════════ */
+  const GithubIcon = ({s=18}) => (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+      </svg>
+    );
+  const MailIcon = ({s=18}) => (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+      <polyline points="22,6 12,13 2,6"/>
+      </svg>
+    );
+  const TermIcon = ({s=15}) => (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/>
+      </svg>
+    );
+  const ChevD = ({s=15}) => (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="6 9 12 15 18 9"/>
+      </svg>
+    );
+  const ChevU = ({s=15}) => (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="18 15 12 9 6 15"/>
+      </svg>
+    );
+  const ExtLink = ({s=14}) => (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+      <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+      </svg>
+    );
+  const CopyIcon = ({s=13}) => (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+      </svg>
+    );
+  const SunIcon = ({s=16}) => (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+    );
+  const MoonIcon = ({s=16}) => (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    );
+  const ArrowRight = ({s=16}) => (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
       </svg>
     );
 
-    const MailIcon = () => (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-        <polyline points="22,6 12,13 2,6"></polyline>
-      </svg>
-    );
+  /* ══ Shared data ════════════════════════════════════════════ */
+  const projects = [
+    {
+      id: '001', name: 'Spotify Playlist Downloader',
+      short: 'Downloads entire Spotify playlists with metadata and multi-format support.',
+      desc: 'Started because I needed my music offline. Ended up building a proper tool with accurate metadata, format options, and retry logic for rate-limited API calls.',
+      tech: ['Python','Web APIs','CSS'],
+      github: 'https://github.com/Crepco/spotify-playlist-downlaod',
+      stars: 10,
+      snippet: `import spotify_downloader
 
-    const LinkedinIcon = () => (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-        <rect x="2" y="9" width="4" height="12"></rect>
-        <circle cx="4" cy="4" r="2"></circle>
-      </svg>
-    );
+playlist = spotify_downloader.get_playlist(playlist_id)
+spotify_downloader.download(
+    playlist, output_dir='./music',
+    format='mp3', quality='320kbps'
+)`,
+      detail: 'The real challenge was handling rate limiting. Built exponential backoff with local caching to avoid re-fetching tracks and maintain download progress across sessions.',
+    },
+    {
+      id: '002', name: 'Steganography Tool',
+      short: 'Embeds and extracts hidden data in images using LSB encoding.',
+      desc: 'Built to understand how steganography works at a low level. Supports optional AES-256 encryption before embedding, so even if the carrier is detected, the content stays protected.',
+      tech: ['Python','Image Processing','Cryptography'],
+      github: 'https://github.com/Crepco/Steganography-',
+      stars: 4,
+      snippet: `from steganography import Steganography
 
-    const TerminalIcon = () => (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="4 17 10 11 4 5"></polyline>
-        <line x1="12" y1="19" x2="20" y2="19"></line>
-      </svg>
-    );
+steg = Steganography()
+steg.encode('cover.png', 'secret.txt', 'output.png',
+            encrypt=True, key='passphrase')
 
-    const ShieldIcon = () => (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-      </svg>
-    );
+message = steg.decode('output.png', key='passphrase')`,
+      detail: 'LSB encoding is detectable via chi-square statistical analysis, so I layered AES-256 encryption before embedding. Without the key, even detecting the stego reveals nothing useful.',
+    },
+    {
+      id: '003', name: 'Password Manager',
+      short: 'Local, encrypted password manager. No cloud, no subscriptions.',
+      desc: 'Tired of cloud password managers holding credentials. Built a local vault with AES-256 encryption, PBKDF2 key derivation, and a password generator.',
+      tech: ['Python','AES-256','Security'],
+      github: 'https://github.com/Crepco/Password_Manager',
+      stars: 2,
+      snippet: `manager = PasswordManager(master_password)
 
-    const CodeIcon = () => (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="16 18 22 12 16 6"></polyline>
-        <polyline points="8 6 2 12 8 18"></polyline>
-      </svg>
-    );
+manager.add('github.com', {
+    'username': 'crepco',
+    'password': manager.generate(length=32)
+})
+cred = manager.get('github.com')`,
+      detail: 'Key derivation uses 600,000 PBKDF2-HMAC-SHA256 iterations (OWASP recommendation). The vault is an opaque encrypted blob — without the master password, brute force is computationally infeasible.',
+    },
+  ];
 
-    const ServerIcon = () => (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
-        <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
-        <line x1="6" y1="6" x2="6.01" y2="6"></line>
-        <line x1="6" y1="18" x2="6.01" y2="18"></line>
-      </svg>
-    );
+  const timelineData = [
+    { year: '2025', entries: [
+      { q:'Late 2025', e:'Built a steganography tool to understand how data hiding works at the bit level. Added encryption as a second layer.', tags:['Python','Cryptography'] },
+      { q:'Mid 2025',  e:'Started taking web application security seriously — OWASP Top 10, Burp Suite workflows, understanding request manipulation.', tags:['WebSec','Burp Suite'] },
+      { q:'Early 2025',e:'Switched daily driver to Arch Linux. More educational than expected. Still running it.', tags:['Linux','Sysadmin'] },
+    ]},
+    { year: '2024', entries: [
+      { q:'Late 2024', e:'Built a local password manager with AES-256 after deciding I didn\'t want a cloud service holding my credentials.', tags:['Python','Security'] },
+      { q:'Mid 2024',  e:'Deep-dive into networking — Wireshark, packet analysis, TCP/IP handshakes, DNS internals.', tags:['Networking','Wireshark'] },
+      { q:'Early 2024',e:'Built the Spotify downloader. A practical problem that taught me a lot about API rate limiting and retry strategies.', tags:['Python','APIs'] },
+    ]},
+  ];
 
-    const ExternalLinkIcon = () => (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-        <polyline points="15 3 21 3 21 9"></polyline>
-        <line x1="10" y1="14" x2="21" y2="3"></line>
-      </svg>
-    );
+  const stackGroups = {
+    'Languages':         { color:'pu', items:['Python','JavaScript','Bash','HTML/CSS','SQL'] },
+    'Security Tools':    { color:'am', items:['Burp Suite','Nmap','Wireshark','Metasploit','Hydra','John The Ripper','Nikto','SQLmap'] },
+    'Systems & Tooling': { color:'pu', items:['Arch Linux','Kali Linux','Git','MySQL','Django','Neovim','VS Code'] },
+  };
 
-    const ChevronDownIcon = () => (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="6 9 12 15 18 9"></polyline>
-      </svg>
-    );
+  /* ══ Shared hooks ═══════════════════════════════════════════ */
+  const useReveal = (thresh=0.12) => {
+    const ref=useRef(null); const [v,setV]=useState(false);
+    useEffect(()=>{
+      const o=new IntersectionObserver(([e])=>{if(e.isIntersecting){setV(true);o.disconnect();}},{threshold:thresh});
+      if(ref.current) o.observe(ref.current);
+      return ()=>o.disconnect();
+    },[thresh]);
+    return [ref,v];
+  };
 
-    const ChevronUpIcon = () => (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="18 15 12 9 6 15"></polyline>
-      </svg>
-    );
-
-    // Mouse Trail Component
-    const MouseTrail = () => {
-      const trailRef = useRef([]);
-      const [trails, setTrails] = useState([]);
-
-      useEffect(() => {
-        const handleMouseMove = (e) => {
-          const trail = {
-            id: Date.now(),
-            x: e.clientX,
-            y: e.clientY,
-            opacity: 1
-          };
-          
-          setTrails(prev => [...prev.slice(-10), trail]);
-          
-          setTimeout(() => {
-            setTrails(prev => prev.filter(t => t.id !== trail.id));
-          }, 1000);
-        };
-
-        window.addEventListener('mousemove', handleMouseMove);
-        return () => window.removeEventListener('mousemove', handleMouseMove);
-      }, []);
-
-      return (
-        <>
-          {trails.map((trail, i) => (
-            <div
-              key={trail.id}
-              className="mouse-trail"
-              style={{
-                left: trail.x - 10,
-                top: trail.y - 10,
-                background: `radial-gradient(circle, rgba(167, 139, 250, ${0.3 - i * 0.03}) 0%, transparent 70%)`,
-                transform: `scale(${1 - i * 0.1})`,
-                transition: 'opacity 0.3s ease'
-              }}
-            />
-          ))}
-        </>
-      );
-    };
-
-    // Cursor Follower
-    const CursorFollower = () => {
-      const [position, setPosition] = useState({ x: 0, y: 0 });
-      const [isVisible, setIsVisible] = useState(true);
-
-      useEffect(() => {
-        const handleMouseMove = (e) => {
-          setPosition({ x: e.clientX, y: e.clientY });
-        };
-
-        const handleMouseEnter = () => setIsVisible(true);
-        const handleMouseLeave = () => setIsVisible(false);
-
-        window.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('mouseenter', handleMouseEnter);
-        document.addEventListener('mouseleave', handleMouseLeave);
-
-        return () => {
-          window.removeEventListener('mousemove', handleMouseMove);
-          document.removeEventListener('mouseenter', handleMouseEnter);
-          document.removeEventListener('mouseleave', handleMouseLeave);
-        };
-      }, []);
-
-      if (!isVisible) return null;
-
-      return (
-        <div
-          className="cursor-follower"
-          style={{
-            left: position.x - 15,
-            top: position.y - 15,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-        >
-          {/* Small solid circle in the middle */}
-          <div
-            style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              background: 'rgba(167, 139, 250, 0.8)',
-              position: 'absolute'
-            }}
-          />
-        </div>
-      );
-    };
-
-    // Matrix Rain Effect
-    const MatrixRain = ({ active }) => {
-      const canvasRef = useRef(null);
-      const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
-      const fontSize = 14;
-      const columns = [];
-
-      useEffect(() => {
-        if (!active) return;
-        
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        const columnCount = Math.floor(canvas.width / fontSize);
-        for (let i = 0; i < columnCount; i++) {
-          columns[i] = Math.random() * canvas.height;
+  const useScrollSections = (ids) => {
+    const [active,setActive]=useState(ids[0]);
+    useEffect(()=>{
+      const fn=()=>{
+        const mid=window.scrollY+window.innerHeight/2;
+        for(const id of ids){
+          const el=document.getElementById(id);
+          if(el&&mid>=el.offsetTop&&mid<el.offsetTop+el.offsetHeight){setActive(id);break;}
         }
+      };
+      window.addEventListener('scroll',fn,{passive:true}); fn();
+      return ()=>window.removeEventListener('scroll',fn);
+    },[ids.join()]);
+    return active;
+  };
 
-        const draw = () => {
-          ctx.fillStyle = 'rgba(13, 13, 13, 0.05)';
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const goto = id => document.getElementById(id)?.scrollIntoView({behavior:'smooth'});
 
-          ctx.fillStyle = '#a78bfa';
-          ctx.font = `${fontSize}px JetBrains Mono`;
+  /* ══ Scramble text (dark only) ══════════════════════════════ */
+  const CHARS='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+  const ScrambleHeading = ({text,className=''}) => {
+    const [disp,setDisp]=useState(text);
+    const [done,setDone]=useState(false);
+    const ref=useRef(null);
+    useEffect(()=>{
+      if(done) return;
+      const obs=new IntersectionObserver(([e])=>{
+        if(e.isIntersecting){
+          obs.disconnect(); setDone(true);
+          let fr=0; const total=text.length*4;
+          const run=()=>{
+            setDisp(text.split('').map((ch,i)=>{
+              if(ch===' ') return ' ';
+              if(i<fr/4) return ch;
+              return CHARS[Math.floor(Math.random()*CHARS.length)];
+            }).join(''));
+            fr++; if(fr<=total) requestAnimationFrame(run); else setDisp(text);
+          };
+          requestAnimationFrame(run);
+        }
+      },{threshold:.4});
+      if(ref.current) obs.observe(ref.current);
+      return ()=>obs.disconnect();
+    },[text,done]);
+    return <span ref={ref} className={className}>{disp}</span>;
+  };
 
-          for (let i = 0; i < columns.length; i++) {
-            const text = chars[Math.floor(Math.random() * chars.length)];
-            const x = i * fontSize;
-            const y = columns[i];
+  /* ══ Typing text (dark hero) ════════════════════════════════ */
+  const TypingText = ({lines,speed=90}) => {
+    const [txt,setTxt]=useState('');
+    const [li,setLi]=useState(0);
+    const [ci,setCi]=useState(0);
+    const [del,setDel]=useState(false);
+    useEffect(()=>{
+      const cur=lines[li];
+      const t=setTimeout(()=>{
+        if(!del){
+          if(ci<cur.length){setTxt(cur.slice(0,ci+1));setCi(ci+1);}
+          else setTimeout(()=>setDel(true),1800);
+        } else {
+          if(ci>0){setTxt(cur.slice(0,ci-1));setCi(ci-1);}
+          else{setDel(false);setLi((li+1)%lines.length);}
+        }
+      },del?speed/2:speed);
+      return ()=>clearTimeout(t);
+    },[ci,li,del,lines,speed]);
+    return <span>{txt}<span className="blink" style={{color:'#a78bfa'}}>_</span></span>;
+  };
 
-            ctx.fillText(text, x, y);
+  /* ══ Scroll progress ════════════════════════════════════════ */
+  const ScrollProgress = ({color}) => {
+    const [pct,setPct]=useState(0);
+    useEffect(()=>{
+      const fn=()=>{
+        const h=document.documentElement.scrollHeight-window.innerHeight;
+        setPct(h>0?(window.scrollY/h)*100:0);
+      };
+      window.addEventListener('scroll',fn,{passive:true});
+      return ()=>window.removeEventListener('scroll',fn);
+    },[]);
+    return <div className="scroll-bar" style={{width:pct+'%',background:color}} />;
+  };
 
-            if (y > canvas.height && Math.random() > 0.98) {
-              columns[i] = 0;
-            }
-            columns[i] += fontSize;
-          }
-        };
+  /* ══ Dark cursor ════════════════════════════════════════════ */
+  const DarkCursor = () => {
+    const dotRef=useRef(null); const ringRef=useRef(null);
+    const pos=useRef({x:0,y:0}); const ring=useRef({x:0,y:0});
+    useEffect(()=>{
+      let raf;
+      const onMove=e=>{pos.current={x:e.clientX,y:e.clientY};};
+      const big=()=>ringRef.current?.classList.add('big');
+      const sm=()=>ringRef.current?.classList.remove('big');
+      const tick=()=>{
+        ring.current.x+=(pos.current.x-ring.current.x)*.12;
+        ring.current.y+=(pos.current.y-ring.current.y)*.12;
+        if(dotRef.current){dotRef.current.style.left=pos.current.x-3.5+'px';dotRef.current.style.top=pos.current.y-3.5+'px';}
+        if(ringRef.current){ringRef.current.style.left=ring.current.x-13+'px';ringRef.current.style.top=ring.current.y-13+'px';}
+        raf=requestAnimationFrame(tick);
+      };
+      tick();
+      window.addEventListener('mousemove',onMove);
+      document.querySelectorAll('a,button').forEach(el=>{el.addEventListener('mouseenter',big);el.addEventListener('mouseleave',sm);});
+      return ()=>{cancelAnimationFrame(raf);window.removeEventListener('mousemove',onMove);};
+    },[]);
+    return <><div ref={dotRef} className="cursor-dot"/><div ref={ringRef} className="cursor-ring"/></>;
+  };
 
-        const interval = setInterval(draw, 50);
-        return () => clearInterval(interval);
-      }, [active, chars]);
-
-      if (!active) return null;
-
+  /* ══ Tilt card ══════════════════════════════════════════════ */
+  const TiltCard = ({children,className='',style={}}) => {
+    const ref=useRef(null); const [t,setT]=useState({x:0,y:0}); const [h,setH]=useState(false);
       return (
-        <canvas
-          ref={canvasRef}
-          className="fixed top-0 left-0 w-full h-full pointer-events-none"
-          style={{ zIndex: 1, opacity: 0.3 }}
-        />
-      );
-    };
+      <div ref={ref} className={`tilt ${className}`}
+        style={{...style, transform:`perspective(900px) rotateX(${t.x}deg) rotateY(${t.y}deg) scale(${h?1.02:1})`,
+          transition:h?'transform .08s ease-out':'transform .35s ease'}}
+        onMouseMove={e=>{
+          if(!ref.current)return;
+          const r=ref.current.getBoundingClientRect();
+          setT({x:((e.clientY-r.top-r.height/2)/(r.height/2))*-6, y:((e.clientX-r.left-r.width/2)/(r.width/2))*6});
+        }}
+        onMouseEnter={()=>setH(true)}
+        onMouseLeave={()=>{setT({x:0,y:0});setH(false);}}>
+        {children}
+      </div>
+    );
+  };
 
-    // Konami Code Easter Egg
-    const KonamiCode = () => {
-      const [showEasterEgg, setShowEasterEgg] = useState(false);
-      const sequenceRef = useRef([]);
-      const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
-
-      useEffect(() => {
-        const handleKeyDown = (e) => {
-          sequenceRef.current.push(e.key);
-          if (sequenceRef.current.length > konamiCode.length) {
-            sequenceRef.current.shift();
-          }
-
-          if (sequenceRef.current.length === konamiCode.length &&
-              sequenceRef.current.every((key, i) => key === konamiCode[i])) {
-            setShowEasterEgg(true);
-            sequenceRef.current = [];
-            setTimeout(() => setShowEasterEgg(false), 5000);
-          }
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-      }, []);
-
+  /* ══ Konami egg ═════════════════════════════════════════════ */
+  const KonamiEgg = ({dark}) => {
+    const [show,setShow]=useState(false);
+    const seq=useRef([]);
+    const code=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+    useEffect(()=>{
+      const fn=e=>{
+        seq.current=[...seq.current.slice(-9),e.key];
+        if(seq.current.length===10&&seq.current.every((k,i)=>k===code[i])){
+          setShow(true);seq.current=[];setTimeout(()=>setShow(false),5000);
+        }
+      };
+      window.addEventListener('keydown',fn);
+      return ()=>window.removeEventListener('keydown',fn);
+    },[]);
+    if(!show) return null;
+    const bg=dark?'rgba(6,6,15,.95)':'rgba(248,247,244,.97)';
+    const border=dark?'1px solid #a78bfa':'1px solid #4f46e5';
+    const ac=dark?'#a78bfa':'#4f46e5';
+    const tx=dark?'#ddddf0':'#1a1a2e';
+    const tx2=dark?'#7777aa':'#6b7280';
       return (
-        <div className={`easter-egg ${showEasterEgg ? 'active' : ''}`}>
-          <div className="text-center">
-            <div className="text-4xl mb-4">🎉</div>
-            <h2 className="text-2xl font-bold text-purple-400 mb-2">you found the easter egg!</h2>
-            <p className="text-gray-300 mb-4">congrats, you're one of the cool kids now</p>
-            <p className="text-sm text-gray-500">(this does nothing but you tried)</p>
+      <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:10000}} onClick={()=>setShow(false)}>
+        <div style={{background:bg,border,borderRadius:10,padding:'2.5rem 3rem',textAlign:'center',maxWidth:340}}>
+          <div style={{fontSize:38,marginBottom:14}}>🔓</div>
+          <div style={{fontFamily:'Space Grotesk',fontWeight:700,fontSize:20,color:ac,marginBottom:8}}>Access Granted</div>
+          <div style={{fontSize:13,color:tx2,marginBottom:12,lineHeight:1.6}}>You found the Konami code.<br/>Impressive use of free time.</div>
+          <div style={{fontSize:11,color:tx2}}>click anywhere to close</div>
           </div>
         </div>
       );
     };
 
-    // Interactive Code Editor
-    const InteractiveCodeEditor = ({ initialCode, language = 'python' }) => {
-      const [code, setCode] = useState(initialCode);
-      const [output, setOutput] = useState('');
-      const [isRunning, setIsRunning] = useState(false);
+  /* ══════════════════════════════════════════════════════════
+     DARK MODE COMPONENTS
+  ══════════════════════════════════════════════════════════ */
 
-      const runCode = () => {
-        setIsRunning(true);
-        // Simulate code execution
-        setTimeout(() => {
-          setOutput('> code executed (this is a demo, not a real interpreter)\n> output: [42, "hello", true]\n> execution time: 0.001s');
-          setIsRunning(false);
-        }, 1000);
-      };
-
+  const DarkTerminal = () => {
+    const [open,setOpen]=useState(false);
+    const [history,setHistory]=useState([
+      {cmd:'whoami',out:'hamza — security researcher, developer'},
+      {cmd:'pwd',out:'/home/hamza/portfolio'},
+    ]);
+    const [inp,setInp]=useState('');
+    const bodyRef=useRef(null);
+    const cmds={
+      help:   'available: whoami, ls, skills, projects, contact, neofetch, coffee, clear',
+      whoami: 'hamza jeelani — 21, india, CSE student turned security researcher',
+      ls:     'about/  projects/  skills/  contact/',
+      'cat about':'started with python, fell into security, never left. arch linux (yes).',
+      skills: 'python, bash, js, burp suite, nmap, wireshark, metasploit, linux, kali, git',
+      projects:'spotify-downloader  steganography-tool  password-manager',
+      contact:'hamza0jeelani@gmail.com',
+      neofetch:'hamza@portfolio\n─────────────\nOS: Arch Linux\nShell: zsh\nEditor: neovim\nTheme: dark\nCoffee: critical',
+      coffee: '☕ 3 cups. still not enough.',
+      clear:  '__clear__',
+    };
+    const run=cmd=>{
+      const t=cmd.trim().toLowerCase();
+      if(!t)return;
+      if(t==='clear'){setHistory([]);setInp('');return;}
+      const out=cmds[t]||`command not found: ${t}  (try 'help')`;
+      setHistory(h=>[...h,{cmd,out}]);
+      setInp('');
+    };
+    useEffect(()=>{
+      if(open&&bodyRef.current) bodyRef.current.scrollTop=bodyRef.current.scrollHeight;
+    },[history,open]);
       return (
-        <div className="border border-purple-500/20 rounded-lg overflow-hidden bg-[#0d0d0d] mt-4">
-          <div className="flex items-center justify-between px-4 py-2 bg-purple-500/10 border-b border-purple-500/20">
-            <div className="flex items-center gap-2">
-              <CodeIcon />
-              <span className="text-purple-400 text-sm">{language} editor</span>
+      <div className="d-term">
+        <div className="d-term-hd" onClick={()=>setOpen(v=>!v)}>
+          <div style={{display:'flex',alignItems:'center',gap:8,color:'#a78bfa',fontSize:12}}>
+            <TermIcon /> <span>terminal</span>
             </div>
-            <button
-              onClick={runCode}
-              disabled={isRunning}
-              className="text-xs px-3 py-1 bg-purple-500/20 text-purple-400 rounded hover:bg-purple-500/30 transition-colors disabled:opacity-50"
-            >
-              {isRunning ? 'running...' : 'run code'}
-            </button>
+          <span style={{color:'#44445a'}}>{open?<ChevD/>:<ChevU/>}</span>
           </div>
-          <div className="code-block">
-            <textarea
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              className="w-full p-4 bg-[#0d0d0d] text-gray-300 font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-500/50"
-              rows={8}
-              spellCheck={false}
-            />
+        {open&&(
+          <div className="d-term-bd">
+            <div ref={bodyRef} className="thin-scroll" style={{height:200,overflowY:'auto',marginBottom:10,fontSize:12,lineHeight:1.7}}>
+              <div style={{color:'#33334a',marginBottom:8,fontSize:11}}>type 'help' for commands</div>
+              {history.map((h,i)=>(
+                <div key={i} style={{marginBottom:4}}>
+                  <div><span style={{color:'#33334a'}}>$ </span><span style={{color:'#a78bfa'}}>{h.cmd}</span></div>
+                  {h.out&&<div style={{color:'#8888a8',marginLeft:10,whiteSpace:'pre-line'}}>{h.out}</div>}
           </div>
-          {output && (
-            <div className="px-4 py-2 bg-[#0f0f0f] border-t border-purple-500/20">
-              <pre className="text-xs text-gray-400 font-mono whitespace-pre-wrap">{output}</pre>
+              ))}
+            </div>
+            <div style={{display:'flex',alignItems:'center',gap:6,fontSize:12}}>
+              <span style={{color:'#33334a'}}>$</span>
+              <input value={inp} onChange={e=>setInp(e.target.value)}
+                onKeyDown={e=>e.key==='Enter'&&run(inp)}
+                style={{flex:1,background:'transparent',border:'none',outline:'none',color:'#a78bfa',fontFamily:'JetBrains Mono',fontSize:12}}
+                autoFocus placeholder="enter command..."/>
+            </div>
             </div>
           )}
         </div>
       );
     };
 
-    // Interactive Terminal Component
-    const InteractiveTerminal = ({ onMatrixToggle }) => {
-      const [commandHistory, setCommandHistory] = useState([
-        { command: 'whoami', output: 'hamza (probably)' },
-        { command: 'pwd', output: '/home/hamza/portfolio' },
-        { command: 'ls -la', output: 'about.md  projects/  skills/  contact.md  coffee.cup' },
-        { command: 'cat coffee.cup', output: 'empty (need more)' }
-      ]);
-      const [currentCommand, setCurrentCommand] = useState('');
-      const [isVisible, setIsVisible] = useState(false);
-      const terminalRef = useRef(null);
-
-      const commands = {
-        'help': 'try: whoami, coffee, skills, projects, contact, matrix, easter, sudo rm -rf / (jk dont), clear',
-        'whoami': 'hamza - just a guy who likes breaking things (ethically)',
-        'coffee': '☕ currently: 3 cups today (it\'s fine, i\'m fine)',
-        'skills': 'Python, JavaScript, breaking things, fixing things, Linux, too much coffee',
-        'projects': 'scroll down or type "ls projects/" (jk just scroll)',
-        'contact': 'hamza0jeelani@gmail.com (or just yell really loud)',
-        'matrix': 'try typing "matrix" to toggle the matrix effect (or just scroll)',
-        'easter': 'hint: try the konami code (↑↑↓↓←→←→BA)',
-        'sudo rm -rf /': 'nice try. but no.',
-        'ls': 'about.md  projects/  skills/  contact.md  coffee.cup  secrets/',
-        'cat secrets/': 'you found a secret! but there\'s nothing here... yet 👀',
-        'neofetch': 'hamza@portfolio ~\nOS: Arch Linux (btw)\nShell: zsh\nEditor: vim (obviously)\nTheme: dark (always)',
-        'fortune': 'you will find a bug in your code at 3am',
-        'clear': () => {
-          setCommandHistory([]);
-          return '';
-        }
-      };
-
-      const handleCommand = (cmd) => {
-        const trimmedCmd = cmd.trim().toLowerCase();
-        if (trimmedCmd === '') return;
-        
-        let output = `command not found: ${trimmedCmd}. try 'help' or just scroll down idk`;
-        
-        // Handle matrix toggle
-        if (trimmedCmd === 'matrix' && onMatrixToggle) {
-          onMatrixToggle();
-          output = 'matrix rain toggled (check the button in top right)';
-        } else if (commands[trimmedCmd]) {
-          if (typeof commands[trimmedCmd] === 'function') {
-            output = commands[trimmedCmd]();
-          } else {
-            output = commands[trimmedCmd];
-          }
-        }
-        
-        setCommandHistory(prev => [...prev, { command: cmd, output }]);
-        setCurrentCommand('');
-      };
-
-      useEffect(() => {
-        if (isVisible && terminalRef.current) {
-          terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
-        }
-      }, [commandHistory, isVisible]);
-
+  const DarkNav = ({active, onToggle}) => {
+    const ids=['d-home','d-about','d-timeline','d-projects','d-stack','d-contact'];
+    const labels=['home','about','log','projects','stack','contact'];
       return (
-        <div className="fixed bottom-6 right-6 z-40 w-96 max-w-[calc(100vw-3rem)]">
-          <div className="bg-[#0f0f0f] border border-cyan-500/30 rounded-lg shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-2 bg-purple-500/10 border-b border-purple-500/20">
-              <div className="flex items-center gap-2 text-purple-400 text-sm">
-                <TerminalIcon />
-                <span>terminal.exe</span>
-              </div>
-              <button
-                onClick={() => setIsVisible(!isVisible)}
-                className="text-gray-400 hover:text-purple-400 transition-colors"
-              >
-                {isVisible ? <ChevronDownIcon /> : <ChevronUpIcon />}
+      <nav className="d-nav">
+        <div className="d-nav-inner">
+          <button className="d-nav-brand" onClick={()=>goto('d-home')}>
+            hamza<span>.</span>
               </button>
+          <div className="d-nav-links">
+            {ids.map((id,i)=>(
+              <button key={id} className={`d-nav-link ${active===id?'active':''}`} onClick={()=>goto(id)}>
+                ./{labels[i]}
+              </button>
+            ))}
+            <button className="d-toggle" onClick={onToggle}><SunIcon s={13}/> &nbsp;light</button>
             </div>
-            {isVisible && (
-              <div className="p-4">
-                <div
-                  ref={terminalRef}
-                  className="h-64 overflow-y-auto font-mono text-sm space-y-2 mb-4 scrollbar-thin"
-                  style={{ maxHeight: '16rem' }}
-                >
-                  <div className="text-gray-500 text-xs mb-2">type 'help' for commands (or just explore idk)</div>
-                  {commandHistory.map((item, idx) => (
-                    <div key={idx} className="space-y-1">
-                      <div className="text-purple-400">
-                        <span className="text-gray-500">$ </span>{item.command}
                       </div>
-                      {item.output && (
-                        <div className="text-gray-300 ml-4">{item.output}</div>
-                      )}
+      </nav>
+    );
+  };
+
+  const DarkHero = ({loaded}) => (
+    <section id="d-home" style={{minHeight:'100vh',display:'flex',alignItems:'center',padding:'80px 24px 40px',position:'relative',zIndex:10}}>
+      <div style={{maxWidth:1080,margin:'0 auto',width:'100%'}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'4rem',alignItems:'center'}}>
+          {/* Left */}
+          <div style={{opacity:loaded?1:0,transition:'opacity .9s ease .1s'}}>
+            <div style={{marginBottom:18}}>
+              <span className="d-pill green"><span className="pulse"/>open to work</span>
                     </div>
-                  ))}
-                  <div className="flex items-center text-purple-400">
-                    <span className="text-gray-500">$ </span>
-                    <input
-                      type="text"
-                      value={currentCommand}
-                      onChange={(e) => setCurrentCommand(e.target.value)}
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                          handleCommand(currentCommand);
-                        }
-                      }}
-                      className="flex-1 bg-transparent border-none outline-none text-purple-400 ml-1"
-                      autoFocus
-                      placeholder="Enter command..."
-                    />
+            <div style={{fontSize:12,color:'#33334a',marginBottom:14,letterSpacing:'.08em'}}>
+              <span style={{color:'#a78bfa'}}>$</span> whoami
+            </div>
+            <h1 style={{fontFamily:'Space Grotesk',fontWeight:700,fontSize:'clamp(3rem,8vw,5.5rem)',lineHeight:1,letterSpacing:'-.02em',color:'#ddddf0',marginBottom:16}}>
+              Hamza<br/><span style={{color:'#a78bfa'}}>Jeelani</span>
+            </h1>
+            <div style={{fontSize:16,color:'#8888a8',marginBottom:24,height:26}}>
+              <TypingText lines={['security researcher','python developer','linux sysadmin — arch, btw','building things that work']} speed={88}/>
+            </div>
+            <p style={{color:'#8888a8',fontSize:13,lineHeight:1.85,maxWidth:440,marginBottom:36}}>
+              21, from India. CSE student who took a detour into cybersecurity and never came back.
+              I break things to understand them, then build tools around what I find.
+            </p>
+            <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
+              {[
+                {href:'https://github.com/crepco',icon:<GithubIcon s={15}/>,label:'GitHub'},
+                {href:'mailto:hamza0jeelani@gmail.com',icon:<MailIcon s={15}/>,label:'Email'},
+              ].map(({href,icon,label})=>(
+                <a key={label} href={href} target={href.startsWith('http')?'_blank':undefined} rel="noopener noreferrer"
+                  style={{display:'flex',alignItems:'center',gap:8,padding:'9px 18px',border:'1px solid rgba(124,58,237,.25)',borderRadius:6,color:'#8888a8',fontSize:12,textDecoration:'none',transition:'all .2s',background:'rgba(12,12,28,.6)'}}>
+                  {icon} {label}
+                </a>
+              ))}
                   </div>
+                </div>
+          {/* System Profile */}
+          <div style={{opacity:loaded?1:0,transition:'opacity .9s ease .3s'}}>
+            <TiltCard>
+              <div className="sys-card scanwrap shimmer">
+                <div className="sys-card-bar">
+                  <div className="dot3" style={{background:'#ef4444'}}/>
+                  <div className="dot3" style={{background:'#f59e0b'}}/>
+                  <div className="dot3" style={{background:'#10b981'}}/>
+                  <span style={{marginLeft:8,color:'#33334a',fontSize:11}}>system.profile — hamza@portfolio</span>
+              </div>
+                <div className="sys-card-body">
+                  <div><span className="sk">operator</span><span className="sv">Hamza Jeelani</span></div>
+                  <div><span className="sk">role</span><span className="sv">CSE Student / Sec. Researcher</span></div>
+                  <div><span className="sk">location</span><span className="sv">India</span></div>
+                  <div><span className="sk">os</span><span className="sv">Arch Linux (btw)</span></div>
+                  <div><span className="sk">shell</span><span className="sv">zsh + neovim</span></div>
+                  <hr className="sys-hr"/>
+                  <div><span className="sk">status</span><span className="sv gr">● ACTIVE</span></div>
+                  <div><span className="sk">focus</span><span className="sv">offensive security</span></div>
+                  <div><span className="sk">platforms</span><span className="sv">TryHackMe · HackTheBox</span></div>
+                  <hr className="sys-hr"/>
+                  <div><span className="sk">coffee</span><span className="sv am">⚠ critical level</span></div>
+                  <div style={{marginTop:14,color:'#33334a',fontSize:10}}>
+                    {'> '}<span style={{color:'#a78bfa'}}>connection established</span>
+                    <span className="blink">_</span>
+          </div>
+        </div>
+              </div>
+            </TiltCard>
+          </div>
+        </div>
+        {/* Scroll hint */}
+        <div style={{position:'absolute',bottom:36,left:'50%',transform:'translateX(-50%)',opacity:loaded?.45:0,transition:'opacity 1s ease 1.5s'}} className="bob">
+          <div style={{width:22,height:36,border:'1.5px solid rgba(167,139,250,.4)',borderRadius:12,display:'flex',justifyContent:'center',padding:'5px 0'}}>
+            <div style={{width:4,height:8,background:'#a78bfa',borderRadius:4}}/>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+
+  const DarkAbout = () => {
+    const [r1,v1]=useReveal(); const [r2,v2]=useReveal();
+      return (
+      <section id="d-about" style={{padding:'100px 24px',position:'relative',zIndex:10}}>
+        <div style={{maxWidth:1080,margin:'0 auto'}}>
+          <div className="d-section-label">01 — about</div>
+          <h2 className="d-section-title" style={{marginBottom:56}}><ScrambleHeading text="WHOIS hamza"/></h2>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'3.5rem',alignItems:'start'}}>
+            {/* WHOIS block */}
+            <div ref={r1} className={`sr ${v1?'in':''}`}>
+              <div className="d-code">
+                <div className="d-code-hd">
+                  <span style={{color:'#33334a',fontSize:11}}>$ whois hamza.jeelani</span>
+          </div>
+                <div style={{padding:'18px 20px',fontSize:12,lineHeight:2,fontFamily:'JetBrains Mono'}}>
+                  <div style={{color:'#33334a',marginBottom:8,fontSize:10,borderBottom:'1px solid rgba(124,58,237,.15)',paddingBottom:8,letterSpacing:'.1em'}}>
+                    RECORD: HJ-2004-IN ─── UNRESTRICTED
+          </div>
+                  {[
+                    ['Full Name','Hamza Jeelani'],['Age','21'],['Location','India'],
+                  ].map(([k,v])=>(
+                    <div key={k}><span style={{color:'#55558a',minWidth:100,display:'inline-block'}}>{k}</span><span style={{color:'#ddddf0'}}>{v}</span></div>
+                  ))}
+                  <div><span style={{color:'#55558a',minWidth:100,display:'inline-block'}}>Status</span><span style={{color:'#10b981'}}>CSE Student → Researcher</span></div>
+                  <div style={{marginTop:8,borderTop:'1px solid rgba(124,58,237,.15)',paddingTop:8}}>
+                    <span style={{color:'#55558a',minWidth:100,display:'inline-block'}}>Focus</span>
+                    <span style={{color:'#ddddf0'}}>Penetration Testing<br/>
+                      <span style={{marginLeft:100,display:'inline-block'}}>Network Security</span><br/>
+                      <span style={{marginLeft:100,display:'inline-block'}}>Security Tooling</span>
+                    </span>
+        </div>
+                  <div style={{marginTop:8,borderTop:'1px solid rgba(124,58,237,.15)',paddingTop:8}}>
+                    <div style={{color:'#55558a',marginBottom:6}}>Interests</div>
+                    <div style={{color:'#ddddf0',paddingLeft:12}}>
+                      <div>├── Offensive Security</div>
+                      <div>├── Linux Administration</div>
+                      <div>├── Network Analysis</div>
+                      <div>└── Building things that actually work</div>
+                    </div>
+                  </div>
+                  <div style={{marginTop:8,color:'#33334a',fontSize:10,borderTop:'1px solid rgba(124,58,237,.15)',paddingTop:8}}>─── END OF RECORD ───</div>
+                </div>
+              </div>
+            </div>
+            {/* Bio */}
+            <div ref={r2} className={`sr ${v2?'in':''}`} style={{display:'flex',flexDirection:'column',gap:18}}>
+              <p style={{color:'#8888a8',lineHeight:1.9,fontSize:13}}>
+                Started with Python because I wanted to automate repetitive tasks.
+                Ended up in security because breaking things is more interesting
+                than building them. Now I do both.
+              </p>
+              <p style={{color:'#8888a8',lineHeight:1.9,fontSize:13}}>
+                I learn best by doing — which usually means breaking something,
+                understanding why it broke, then building a better version.
+                Most of my projects started as solutions to problems I personally ran into.
+              </p>
+              <p style={{color:'#8888a8',lineHeight:1.9,fontSize:13}}>
+                Currently working through offensive security training on TryHackMe
+                and HackTheBox while building tools in Python on the side.
+              </p>
+              {/* Classified block */}
+              <div style={{background:'rgba(12,12,28,.6)',border:'1px solid rgba(124,58,237,.15)',borderRadius:6,padding:'14px 16px'}}>
+                <div style={{fontSize:10,color:'#33334a',letterSpacing:'.1em',marginBottom:8,fontFamily:'JetBrains Mono'}}>// classified — hover text to reveal</div>
+                <p style={{fontSize:12,color:'#8888a8',lineHeight:1.8}}>
+                  Confession:{' '}
+                  <span className="classified">I use Arch Linux</span>
+                  {' '}and{' '}
+                  <span className="classified">talk about it constantly</span>.
+                  My dotfiles are{' '}
+                  <span className="classified">genuinely over-engineered</span>.
+                </p>
+              </div>
+              <div style={{display:'flex',gap:8,flexWrap:'wrap',marginTop:4}}>
+                {['TryHackMe','HackTheBox','Python','Linux'].map(p=>(
+                  <span key={p} className="d-tag pu">{p}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  };
+
+  const DarkTimeline = () => {
+    const [ref,visible]=useReveal();
+      return (
+      <section id="d-timeline" style={{padding:'100px 24px',position:'relative',zIndex:10}}>
+        <div style={{maxWidth:780,margin:'0 auto'}}>
+          <div className="d-section-label">02 — activity log</div>
+          <h2 className="d-section-title" style={{marginBottom:56}}><ScrambleHeading text="What I've Been Up To"/></h2>
+          <div ref={ref} className={`sr ${visible?'in':''}`}>
+            {timelineData.map(yr=>(
+              <div key={yr.year} style={{marginBottom:48}}>
+                <div style={{fontFamily:'Space Grotesk',fontWeight:700,fontSize:26,color:'#ddddf0',marginBottom:20,borderBottom:'1px solid rgba(124,58,237,.15)',paddingBottom:10}}>
+                  {yr.year}
+            </div>
+                <div style={{position:'relative',paddingLeft:22}}>
+                  <div className="tl-line"/>
+                  <div style={{display:'flex',flexDirection:'column',gap:18}}>
+                    {yr.entries.map((e,i)=>(
+                      <div key={i} style={{display:'flex',gap:14,alignItems:'flex-start'}}>
+                        <div className="tl-node" style={{marginLeft:-4}}/>
+                        <div style={{flex:1}}>
+                          <div style={{fontSize:11,color:'#a78bfa',letterSpacing:'.1em',marginBottom:4}}>{e.q}</div>
+                          <p style={{color:'#8888a8',fontSize:13,lineHeight:1.7,marginBottom:8}}>{e.e}</p>
+                          <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+                            {e.tags.map(t=><span key={t} className="d-tag pu">{t}</span>)}
+          </div>
+          </div>
+        </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  };
+
+  const DarkProjectCard = ({project,index}) => {
+    const [open,setOpen]=useState(false);
+    const [copied,setCopied]=useState(false);
+    const [ref,v]=useReveal();
+    const copy=()=>{navigator.clipboard.writeText(project.snippet);setCopied(true);setTimeout(()=>setCopied(false),2000);};
+      return (
+      <div ref={ref} className={`sr ${v?'in':''}`} style={{transitionDelay:index*.12+'s'}}>
+        <TiltCard>
+          <div className="d-card scanwrap shimmer" style={{padding:28}}>
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:6}}>
+              <span style={{fontSize:10,letterSpacing:'.12em',color:'#33334a'}}>CASE #{project.id}</span>
+              <div style={{display:'flex',gap:8,alignItems:'center'}}>
+                <span className="case-badge dp">DEPLOYED</span>
+                <span style={{color:'#33334a',fontSize:12}}>★ {project.stars}</span>
+              </div>
+            </div>
+            <h3 style={{fontFamily:'Space Grotesk',fontWeight:700,fontSize:19,color:'#ddddf0',marginBottom:10}}>{project.name}</h3>
+            <p style={{color:'#8888a8',fontSize:13,lineHeight:1.7,marginBottom:16}}>{project.desc}</p>
+            <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:20}}>
+              {project.tech.map(t=><span key={t} className="d-tag pu">{t}</span>)}
+            </div>
+            <div style={{display:'flex',gap:10,borderTop:'1px solid rgba(124,58,237,.15)',paddingTop:16}}>
+              <a href={project.github} target="_blank" rel="noopener noreferrer"
+                style={{display:'flex',alignItems:'center',gap:6,fontSize:12,color:'#8888a8',textDecoration:'none',padding:'6px 12px',border:'1px solid rgba(124,58,237,.2)',borderRadius:5,transition:'all .2s'}}>
+                <GithubIcon s={13}/> Source
+              </a>
+              <button onClick={()=>setOpen(v=>!v)}
+                style={{display:'flex',alignItems:'center',gap:6,fontSize:12,color:'#8888a8',background:'none',border:'1px solid rgba(124,58,237,.2)',borderRadius:5,padding:'6px 12px',fontFamily:'JetBrains Mono',transition:'all .2s'}}>
+                {open?<><ChevU s={13}/> Less</>:<><ChevD s={13}/> Details</>}
+            </button>
+          </div>
+            {open&&(
+              <div style={{marginTop:20,paddingTop:20,borderTop:'1px solid rgba(124,58,237,.15)'}}>
+                <p style={{color:'#8888a8',fontSize:13,lineHeight:1.7,marginBottom:16}}>{project.detail}</p>
+                <div className="d-code">
+                  <div className="d-code-hd">
+                    <span style={{color:'#33334a',fontSize:11}}>python — {project.name.toLowerCase().replace(/ /g,'-')}.py</span>
+                    <button onClick={copy} style={{background:'none',border:'none',color:'#33334a',fontSize:11,display:'flex',alignItems:'center',gap:4,fontFamily:'JetBrains Mono',cursor:'pointer',transition:'color .2s'}}>
+                      <CopyIcon/> {copied?'copied':'copy'}
+                    </button>
+          </div>
+                  <pre style={{padding:'14px',fontSize:12,color:'#8888a8',overflowX:'auto',margin:0,lineHeight:1.7}}><code>{project.snippet}</code></pre>
                 </div>
               </div>
             )}
           </div>
+        </TiltCard>
+      </div>
+    );
+  };
+
+  const DarkProjects = () => (
+    <section id="d-projects" style={{padding:'100px 24px',position:'relative',zIndex:10}}>
+      <div style={{maxWidth:880,margin:'0 auto'}}>
+        <div className="d-section-label">03 — projects</div>
+        <h2 className="d-section-title" style={{marginBottom:12}}><ScrambleHeading text="Case Files"/></h2>
+        <p style={{color:'#8888a8',fontSize:13,lineHeight:1.7,marginBottom:52,maxWidth:500}}>
+          Things I built because I needed them. Details explain the technical decisions.
+        </p>
+        <div style={{display:'flex',flexDirection:'column',gap:18}}>
+          {projects.map((p,i)=><DarkProjectCard key={p.id} project={p} index={i}/>)}
         </div>
-      );
-    };
+      </div>
+    </section>
+  );
 
-    // Skill Proficiency Bar Component
-    const SkillBar = ({ skill, level, color = 'cyan' }) => {
-      const [isVisible, setIsVisible] = useState(false);
-      const barRef = useRef(null);
-
-      useEffect(() => {
-        const observer = new IntersectionObserver(
-          ([entry]) => {
-            if (entry.isIntersecting) {
-              setIsVisible(true);
-            }
-          },
-          { threshold: 0.5 }
-        );
-        if (barRef.current) observer.observe(barRef.current);
-        return () => observer.disconnect();
-      }, []);
-
-      const colorMap = {
-        cyan: 'from-purple-500 to-purple-400',
-        blue: 'from-violet-500 to-violet-400',
-        green: 'from-fuchsia-500 to-fuchsia-400',
-        purple: 'from-purple-500 to-purple-400'
-      };
-
-      return (
-        <div ref={barRef} className="mb-4">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-gray-300 text-sm">{skill}</span>
-            <span className="text-purple-400 text-xs">{level}%</span>
-          </div>
-          <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
-            <div
-              className={`h-full bg-gradient-to-r ${colorMap[color] || colorMap.cyan} rounded-full transition-all duration-1000 ease-out`}
-              style={{
-                width: isVisible ? `${level}%` : '0%',
-                boxShadow: isVisible ? `0 0 10px rgba(167, 139, 250, 0.5)` : 'none'
-              }}
-            />
-          </div>
-        </div>
-      );
-    };
-
-    // Code Snippet Viewer Component
-    const CodeSnippet = ({ code, language = 'python', title }) => {
-      const [isExpanded, setIsExpanded] = useState(false);
-      const [copied, setCopied] = useState(false);
-
-      const handleCopy = () => {
-        navigator.clipboard.writeText(code);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      };
-
-      return (
-        <div className="border border-purple-500/20 rounded-lg overflow-hidden bg-[#0d0d0d]">
-          <div className="flex items-center justify-between px-4 py-2 bg-purple-500/10 border-b border-purple-500/20">
-            <div className="flex items-center gap-2">
-              <CodeIcon />
-              <span className="text-purple-400 text-sm">{title || language}</span>
-            </div>
-            <button
-              onClick={handleCopy}
-              className="text-xs text-gray-400 hover:text-purple-400 transition-colors"
-            >
-              {copied ? 'copied!' : 'copy'}
-            </button>
-          </div>
-          <div className={`overflow-hidden transition-all duration-300 ${isExpanded ? 'max-h-none' : 'max-h-32'}`}>
-            <pre className="p-4 text-xs text-gray-300 overflow-x-auto font-mono">
-              <code>{code}</code>
-            </pre>
-          </div>
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="w-full py-2 text-xs text-purple-400 hover:bg-purple-500/10 transition-colors flex items-center justify-center gap-1"
-          >
-            {isExpanded ? 'show less' : 'show more'}
-            {isExpanded ? <ChevronUpIcon /> : <ChevronDownIcon />}
-          </button>
-        </div>
-      );
-    };
-
-    // Expandable Project Card Component
-    const ExpandableProjectCard = ({ project, index }) => {
-      const [isExpanded, setIsExpanded] = useState(false);
-
-      return (
-        <TiltCard
-          className="group relative border border-purple-500/20 rounded-lg p-6 bg-[#0f0f0f]/50 backdrop-blur hover:border-purple-400/50 transition-all duration-300 hover-lift scroll-reveal"
-          style={{
-            animationDelay: `${index * 0.15}s`
-          }}
-        >
-          <div className="absolute top-4 right-4 flex gap-2">
-            <a 
-              href={project.github} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-gray-400 hover:text-purple-400 transition-all duration-300 hover:scale-110 inline-block opacity-0 group-hover:opacity-100"
-            >
-              <ExternalLinkIcon />
-            </a>
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="text-gray-400 hover:text-purple-400 transition-all duration-300 opacity-0 group-hover:opacity-100"
-            >
-              {isExpanded ? <ChevronUpIcon /> : <ChevronDownIcon />}
-            </button>
-          </div>
-          
-          <div className="flex items-center gap-2 mb-4 text-purple-400">
-            <CodeIcon />
-            <span className="text-xs bg-purple-500/10 px-2 py-1 rounded border border-purple-500/20">
-              ⭐ {project.stars} stars (thanks!)
-            </span>
-          </div>
-          
-          <h3 className="text-xl font-bold mb-3 text-white group-hover:text-purple-400 transition-colors duration-300">
-            {project.name}
-          </h3>
-          
-          <p className="text-gray-400 text-sm mb-4 leading-relaxed">
-            {project.description}
+  const DarkStack = () => {
+    const [ref,v]=useReveal();
+    return (
+      <section id="d-stack" style={{padding:'100px 24px',position:'relative',zIndex:10}}>
+        <div style={{maxWidth:1080,margin:'0 auto'}}>
+          <div className="d-section-label">04 — stack</div>
+          <h2 className="d-section-title" style={{marginBottom:12}}><ScrambleHeading text="Tools of the Trade"/></h2>
+          <p style={{color:'#8888a8',fontSize:13,lineHeight:1.7,marginBottom:48,maxWidth:500}}>
+            No invented percentages. Here's what I actually use.
           </p>
-          
-          <div className="flex flex-wrap gap-2 mb-4">
-            {project.tech.map((tech, i) => (
-              <span 
-                key={i} 
-                className="text-xs px-2 py-1 bg-purple-500/10 text-purple-400 rounded border border-purple-500/20 hover:bg-purple-500/20 hover:border-purple-400/40 transition-all duration-300 cursor-default"
-                style={{
-                  animation: `fadeInScale 0.4s ease-out ${0.3 + i * 0.05}s both`
-                }}
-              >
-                {tech}
-              </span>
+          <div ref={ref} className={`sr ${v?'in':''}`} style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:20}}>
+            {Object.entries(stackGroups).map(([cat,{color,items}])=>(
+              <TiltCard key={cat}>
+                <div className="d-card" style={{padding:22}}>
+                  <div style={{fontSize:10,letterSpacing:'.12em',color:'#33334a',marginBottom:14,textTransform:'uppercase'}}>{cat}</div>
+                  <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
+                    {items.map(item=><span key={item} className={`d-tag ${color}`}>{item}</span>)}
+                  </div>
+                </div>
+              </TiltCard>
             ))}
           </div>
+          <div style={{marginTop:36,padding:'18px 22px',background:'rgba(12,12,28,.6)',border:'1px solid rgba(124,58,237,.15)',borderRadius:8,fontSize:12,color:'#8888a8',lineHeight:1.7}}>
+            <span style={{color:'#a78bfa'}}>// note: </span>
+            Proficiency varies by tool. Python and Linux are daily use. Security tools depend on the context.
+            Currently going deeper on{' '}<span className="d-tag pu" style={{margin:'0 4px'}}>Active Directory</span>{' '}and{' '}
+            <span className="d-tag pu" style={{margin:'0 4px'}}>web app exploitation</span>.
+          </div>
+        </div>
+      </section>
+    );
+  };
 
-          {isExpanded && (
-            <div className="mt-4 pt-4 border-t border-purple-500/20 space-y-4 animate-fadeIn">
-              {project.details && (
-                <div>
-                  <h4 className="text-purple-400 text-sm font-bold mb-2">what it does</h4>
-                  <p className="text-gray-300 text-sm leading-relaxed">{project.details}</p>
+  const DarkContact = () => {
+    const [ref,v]=useReveal();
+    return (
+      <section id="d-contact" style={{padding:'100px 24px 80px',position:'relative',zIndex:10}}>
+        <div style={{maxWidth:640,margin:'0 auto',textAlign:'center'}}>
+          <div className="d-section-label" style={{justifyContent:'center'}}>05 — contact</div>
+          <h2 className="d-section-title" style={{marginBottom:16}}><ScrambleHeading text="Get In Touch"/></h2>
+          <div ref={ref} className={`sr ${v?'in':''}`}>
+            <p style={{color:'#8888a8',fontSize:14,lineHeight:1.9,marginBottom:48}}>
+              Open to collaborating on security research, development projects,
+              or anything technically interesting. Found a bug in my code? Please tell me.
+            </p>
+            <a href="mailto:hamza0jeelani@gmail.com"
+              style={{display:'inline-flex',alignItems:'center',gap:10,padding:'14px 32px',border:'1px solid rgba(167,139,250,.5)',borderRadius:7,color:'#a78bfa',fontSize:14,textDecoration:'none',background:'rgba(124,58,237,.1)',transition:'all .25s',fontFamily:'JetBrains Mono'}}>
+              <MailIcon s={17}/> hamza0jeelani@gmail.com
+            </a>
+            <div style={{display:'flex',justifyContent:'center',gap:14,marginTop:20}}>
+              <a href="https://github.com/crepco" target="_blank" rel="noopener noreferrer"
+                style={{display:'flex',alignItems:'center',gap:8,fontSize:12,color:'#8888a8',textDecoration:'none',padding:'7px 16px',border:'1px solid rgba(124,58,237,.2)',borderRadius:6,background:'rgba(12,12,28,.5)',transition:'all .2s'}}>
+                <GithubIcon s={14}/> @crepco
+              </a>
                 </div>
-              )}
-              {project.features && (
-                <div>
-                  <h4 className="text-purple-400 text-sm font-bold mb-2">cool stuff</h4>
-                  <ul className="space-y-1">
-                    {project.features.map((feature, i) => (
-                      <li key={i} className="text-gray-300 text-sm flex items-center gap-2">
-                        <span className="text-purple-400">→</span> {feature}
-                      </li>
-                    ))}
-                  </ul>
+            <div style={{marginTop:72,paddingTop:28,borderTop:'1px solid rgba(124,58,237,.12)'}}>
+              <p style={{color:'#33334a',fontSize:12}}>Built with React · GitHub Pages · No template used</p>
+              <p style={{color:'#33334a',fontSize:11,marginTop:6}}>© 2026 Hamza Jeelani</p>
                 </div>
-              )}
-              {project.codeSnippet && (
-                <>
-                  <CodeSnippet 
-                    code={project.codeSnippet} 
-                    language="python"
-                    title={project.name}
-                  />
-                  <InteractiveCodeEditor 
-                    initialCode={project.codeSnippet}
-                    language="python"
-                  />
-                </>
-              )}
             </div>
-          )}
-        </TiltCard>
+        </div>
+      </section>
       );
     };
 
-    // Starry, parallax, mouse-reactive background with click effects
-    const ParticleBackground = () => {
+  /* ══ Circuit board background ═══════════════════════════════ */
+  const CircuitBackground = () => {
       const canvasRef = useRef(null);
-
-      useEffect(() => {
+    useEffect(()=>{
         const canvas = canvasRef.current;
-        if (!canvas) return;
-
+      if(!canvas) return;
         const ctx = canvas.getContext('2d');
-        let animationFrameId;
-        let particles = [];
-        let explosions = [];
+      let W, H, nodes, animId;
 
-        const mouse = {
-          x: window.innerWidth / 2,
-          y: window.innerHeight / 2
-        };
+      const resize = () => {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+        init();
+      };
 
-        const handleMouseMove = (e) => {
-          mouse.x = e.clientX;
-          mouse.y = e.clientY;
-        };
+      const rand = (a,b) => a + Math.random()*(b-a);
 
-        const handleClick = (e) => {
-          // Create explosion effect on click
-          for (let i = 0; i < 15; i++) {
-            explosions.push({
-              x: e.clientX,
-              y: e.clientY,
-              vx: (Math.random() - 0.5) * 10,
-              vy: (Math.random() - 0.5) * 10,
-              life: 1,
-              size: Math.random() * 3 + 2
+      const init = () => {
+        nodes = [];
+        const count = Math.floor((W * H) / 22000);
+        for(let i=0; i<count; i++){
+          nodes.push({
+            x: rand(0,W), y: rand(0,H),
+            vx: rand(-.15,.15), vy: rand(-.15,.15),
+            r: rand(1.5,3),
+            pulse: rand(0, Math.PI*2),
+            pulseSpeed: rand(.01,.025),
+            connections: [],
             });
           }
         };
 
-        const init = () => {
-          canvas.width = window.innerWidth;
-          canvas.height = window.innerHeight;
-          particles = [];
+      // scanline position
+      let scanY = 0;
 
-          // More particles on larger screens, but with limits
-          const particleCount = Math.max(
-            80,
-            Math.min(250, Math.floor((canvas.width * canvas.height) / 10000))
-          );
+      const draw = () => {
+        ctx.clearRect(0,0,W,H);
 
-          class Particle {
-            constructor() {
-              this.x = Math.random() * canvas.width;
-              this.y = Math.random() * canvas.height;
-              // depth controls parallax & speed (0.5 = far, 2 = close)
-              this.depth = Math.random() * 1.5 + 0.5;
-              this.size = Math.random() * 1.5 * this.depth;
-              this.speedX = (Math.random() - 0.5) * 0.2 * this.depth;
-              this.speedY = (Math.random() - 0.5) * 0.2 * this.depth;
-            }
+        // faint scanlines
+        scanY = (scanY + 0.4) % H;
+        const scanGrad = ctx.createLinearGradient(0, scanY-60, 0, scanY+60);
+        scanGrad.addColorStop(0,'rgba(124,58,237,0)');
+        scanGrad.addColorStop(.5,'rgba(124,58,237,0.025)');
+        scanGrad.addColorStop(1,'rgba(124,58,237,0)');
+        ctx.fillStyle = scanGrad;
+        ctx.fillRect(0, scanY-60, W, 120);
 
-            update() {
-              this.x += this.speedX;
-              this.y += this.speedY;
+        // move nodes
+        nodes.forEach(n=>{
+          n.x += n.vx; n.y += n.vy;
+          if(n.x<0||n.x>W) n.vx*=-1;
+          if(n.y<0||n.y>H) n.vy*=-1;
+          n.pulse += n.pulseSpeed;
+        });
 
-              // Wrap around edges
-              if (this.x > canvas.width) this.x = 0;
-              if (this.x < 0) this.x = canvas.width;
-              if (this.y > canvas.height) this.y = 0;
-              if (this.y < 0) this.y = canvas.height;
-            }
-
-            draw(parallaxX, parallaxY) {
-              const drawX = this.x + parallaxX * this.depth;
-              const drawY = this.y + parallaxY * this.depth;
-
-              const alpha = 0.3 + this.depth * 0.3;
-              
-              // Add glow effect for larger particles
-              if (this.size > 1) {
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = `rgba(167, 139, 250, ${alpha * 0.5})`;
-              } else {
-                ctx.shadowBlur = 0;
-              }
-              
-              ctx.fillStyle = `rgba(196, 181, 253, ${alpha})`;
+        // draw edges with circuit-board L-shaped routes
+        const maxDist = 160;
+        for(let i=0;i<nodes.length;i++){
+          for(let j=i+1;j<nodes.length;j++){
+            const a=nodes[i], b=nodes[j];
+            const dx=b.x-a.x, dy=b.y-a.y;
+            const dist=Math.sqrt(dx*dx+dy*dy);
+            if(dist>maxDist) continue;
+            const alpha = (1-(dist/maxDist))*0.35;
+            // L-shaped path (horizontal then vertical)
               ctx.beginPath();
-              ctx.arc(drawX, drawY, this.size, 0, Math.PI * 2);
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, a.y);  // horizontal segment
+            ctx.lineTo(b.x, b.y);  // vertical segment
+            ctx.strokeStyle = `rgba(124,58,237,${alpha*0.6})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+            // draw corner dot
+            ctx.beginPath();
+            ctx.arc(b.x, a.y, 1.5, 0, Math.PI*2);
+            ctx.fillStyle = `rgba(167,139,250,${alpha*0.8})`;
               ctx.fill();
-              
-              ctx.shadowBlur = 0;
-            }
           }
+        }
 
-          for (let i = 0; i < particleCount; i++) {
-            particles.push(new Particle());
-          }
-        };
-
-        const animate = () => {
-          // Space-y dark background
-          ctx.fillStyle = 'rgba(5, 10, 20, 0.9)';
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-          const parallaxStrength = 25;
-          const normX =
-            ((mouse.x ?? canvas.width / 2) - canvas.width / 2) / (canvas.width / 2);
-          const normY =
-            ((mouse.y ?? canvas.height / 2) - canvas.height / 2) / (canvas.height / 2);
-
-          const parallaxX = normX * parallaxStrength;
-          const parallaxY = normY * parallaxStrength;
-
-          // Draw and update particles
-          particles.forEach((p) => {
-            p.update();
-            p.draw(parallaxX, parallaxY);
-          });
-
-          // Update and draw explosions
-          explosions = explosions.filter(exp => {
-            exp.x += exp.vx;
-            exp.y += exp.vy;
-            exp.life -= 0.02;
-            exp.vx *= 0.98;
-            exp.vy *= 0.98;
-
-            if (exp.life > 0) {
-              ctx.fillStyle = `rgba(167, 139, 250, ${exp.life})`;
+        // draw nodes (pulsing)
+        nodes.forEach(n=>{
+          const glow = 0.5 + 0.5*Math.sin(n.pulse);
+          // outer glow
+          const grad = ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r*5);
+          grad.addColorStop(0,`rgba(167,139,250,${0.25*glow})`);
+          grad.addColorStop(1,'rgba(167,139,250,0)');
               ctx.beginPath();
-              ctx.arc(exp.x, exp.y, exp.size, 0, Math.PI * 2);
+          ctx.arc(n.x, n.y, n.r*5, 0, Math.PI*2);
+          ctx.fillStyle = grad;
               ctx.fill();
-              return true;
-            }
-            return false;
-          });
+          // core dot
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, n.r, 0, Math.PI*2);
+          ctx.fillStyle = `rgba(167,139,250,${0.6+0.4*glow})`;
+          ctx.fill();
+        });
 
-          // Connect close stars with faint lines
-          for (let i = 0; i < particles.length; i++) {
-            for (let j = i + 1; j < particles.length; j++) {
-              const a = particles[i];
-              const b = particles[j];
-
-              const ax = a.x + parallaxX * a.depth;
-              const ay = a.y + parallaxY * a.depth;
-              const bx = b.x + parallaxX * b.depth;
-              const by = b.y + parallaxY * b.depth;
-
-              const dx = ax - bx;
-              const dy = ay - by;
-              const distance = Math.sqrt(dx * dx + dy * dy);
-
-              const maxDist = 110;
-              if (distance < maxDist) {
-                const t = 1 - distance / maxDist;
-                ctx.strokeStyle = `rgba(167, 139, 250, ${0.15 * t})`;
-                ctx.lineWidth = 0.5;
-                ctx.beginPath();
-                ctx.moveTo(ax, ay);
-                ctx.lineTo(bx, by);
-                ctx.stroke();
-              }
-            }
-          }
-
-          animationFrameId = requestAnimationFrame(animate);
+        // ambient corner glows
+        const drawCornerGlow = (x,y,color) => {
+          const g = ctx.createRadialGradient(x,y,0,x,y,Math.min(W,H)*0.45);
+          g.addColorStop(0,color);
+          g.addColorStop(1,'rgba(0,0,0,0)');
+          ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
         };
+        drawCornerGlow(W*0.15, H*0.25, 'rgba(124,58,237,0.06)');
+        drawCornerGlow(W*0.85, H*0.75, 'rgba(59,130,246,0.04)');
 
-        // Init and start
-        init();
-        animate();
-
-        window.addEventListener('resize', init);
-        window.addEventListener('mousemove', handleMouseMove);
-        window.addEventListener('click', handleClick);
-
-        return () => {
-          window.removeEventListener('resize', init);
-          window.removeEventListener('mousemove', handleMouseMove);
-          window.removeEventListener('click', handleClick);
-          cancelAnimationFrame(animationFrameId);
-        };
-      }, []);
-
-      return (
-        <canvas
-          ref={canvasRef}
-          className="fixed top-0 left-0 w-full h-full pointer-events-none"
-          style={{ zIndex: 0 }}
-        />
-      );
-    };
-
-    // Terminal typing effect
-    const TerminalText = ({ texts, speed = 100 }) => {
-      const [displayText, setDisplayText] = useState('');
-      const [currentIndex, setCurrentIndex] = useState(0);
-      const [charIndex, setCharIndex] = useState(0);
-      const [isDeleting, setIsDeleting] = useState(false);
-      
-      useEffect(() => {
-        if (currentIndex >= texts.length) return;
-        
-        const currentText = texts[currentIndex];
-        
-        const timeout = setTimeout(() => {
-          if (!isDeleting) {
-            if (charIndex < currentText.length) {
-              setDisplayText(currentText.substring(0, charIndex + 1));
-              setCharIndex(charIndex + 1);
-            } else {
-              setTimeout(() => setIsDeleting(true), 2000);
-            }
-          } else {
-            if (charIndex > 0) {
-              setDisplayText(currentText.substring(0, charIndex - 1));
-              setCharIndex(charIndex - 1);
-            } else {
-              setIsDeleting(false);
-              setCurrentIndex((currentIndex + 1) % texts.length);
-            }
-          }
-        }, isDeleting ? speed / 2 : speed);
-        
-        return () => clearTimeout(timeout);
-      }, [charIndex, currentIndex, isDeleting, texts, speed]);
-      
-      return (
-        <span className="inline-block">
-          {displayText}
-          <span className="inline-block animate-pulse ml-1 text-purple-400">_</span>
-        </span>
-      );
-    };
-
-    // Tilt Card Component with enhanced animations
-    const TiltCard = ({ children, className = "", style = {}, hoverScale = 1.05 }) => {
-      const [tilt, setTilt] = useState({ x: 0, y: 0 });
-      const [isHovered, setIsHovered] = useState(false);
-      const cardRef = useRef(null);
-      
-      const handleMouseMove = (e) => {
-        if (!cardRef.current) return;
-        
-        const rect = cardRef.current.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        
-        const mouseX = e.clientX - centerX;
-        const mouseY = e.clientY - centerY;
-        
-        const maxTilt = 8; // Reduced for smoother effect
-        const tiltX = (mouseY / (rect.height / 2)) * -maxTilt;
-        const tiltY = (mouseX / (rect.width / 2)) * maxTilt;
-        
-        // Smooth interpolation
-        setTilt(prev => ({
-          x: prev.x + (tiltX - prev.x) * 0.1,
-          y: prev.y + (tiltY - prev.y) * 0.1
-        }));
-      };
-      
-      const handleMouseLeave = () => {
-        setTilt({ x: 0, y: 0 });
-        setIsHovered(false);
+        animId = requestAnimationFrame(draw);
       };
 
-      const scale = isHovered ? hoverScale : 1;
-      
+      resize();
+      window.addEventListener('resize', resize);
+      draw();
+      return () => { cancelAnimationFrame(animId); window.removeEventListener('resize',resize); };
+    },[]);
+    return <canvas ref={canvasRef} id="circuit-canvas"/>;
+  };
+
+  const DarkPortfolio = ({onToggle}) => {
+    const [loaded,setLoaded]=useState(false);
+    const ids=['d-home','d-about','d-timeline','d-projects','d-stack','d-contact'];
+    const active=useScrollSections(ids);
+    useEffect(()=>{
+      setTimeout(()=>setLoaded(true),2300);
+      const obs=new IntersectionObserver(entries=>{
+        entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});
+      },{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+      document.querySelectorAll('.sr').forEach(el=>obs.observe(el));
+      return ()=>obs.disconnect();
+    },[]);
       return (
-        <div
-          ref={cardRef}
-          onMouseMove={handleMouseMove}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={handleMouseLeave}
-          className={className}
-          style={{
-            ...style,
-            transform: `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale3d(${scale}, ${scale}, ${scale})`,
-            transformStyle: 'preserve-3d',
-            transition: isHovered ? 'transform 0.1s ease-out' : 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-            willChange: 'transform'
-          }}
-        >
-          {children}
+      <div className="d-body dark-scroll dark-cursor-mode">
+        <CircuitBackground/>
+        <div className="grain-overlay"/>
+        <ScrollProgress color="linear-gradient(90deg,#7c3aed,#a78bfa)"/>
+        <DarkCursor/>
+        <KonamiEgg dark/>
+        <DarkTerminal/>
+        <DarkNav active={active} onToggle={onToggle}/>
+        <DarkHero loaded={loaded}/>
+        <DarkAbout/>
+        <DarkTimeline/>
+        <DarkProjects/>
+        <DarkStack/>
+        <DarkContact/>
         </div>
       );
     };
 
-    // Scroll Progress Indicator
-    const ScrollProgress = () => {
-      const [scrollProgress, setScrollProgress] = useState(0);
+  /* ══════════════════════════════════════════════════════════
+     LIGHT MODE COMPONENTS
+  ══════════════════════════════════════════════════════════ */
 
-      useEffect(() => {
-        const handleScroll = () => {
-          const windowHeight = window.innerHeight;
-          const documentHeight = document.documentElement.scrollHeight;
-          const scrollTop = window.scrollY;
-          const progress = (scrollTop / (documentHeight - windowHeight)) * 100;
-          setScrollProgress(progress);
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-      }, []);
-
+  const LightNav = ({active, onToggle}) => {
+    const ids=['l-home','l-about','l-projects','l-skills','l-contact'];
+    const labels=['Home','About','Projects','Skills','Contact'];
       return (
-        <div 
-          className="scroll-progress"
-          style={{ width: `${scrollProgress}%` }}
-        />
-      );
-    };
-
-    // Main Portfolio Component
-    const Portfolio = () => {
-      const [activeSection, setActiveSection] = useState('home');
-      const [matrixActive, setMatrixActive] = useState(false);
-      
-      const projects = [
-        {
-          name: 'Spotify Playlist Downloader',
-          description: 'because spotify premium is expensive and i wanted my music offline. built with python because why not.',
-          tech: ['Python', 'CSS', 'Web APIs'],
-          github: 'https://github.com/Crepco/spotify-playlist-downlaod',
-          stars: 10,
-          details: 'so basically i got tired of spotify\'s limitations and built this. it downloads entire playlists, keeps metadata (because organization matters), and supports different formats. it\'s not perfect but it works (most of the time).',
-          codeSnippet: `# how i use it
-import spotify_downloader
-
-playlist = spotify_downloader.get_playlist(playlist_id)
-spotify_downloader.download(playlist, output_dir='./music')
-# then i listen to music offline like a rebel`,
-          features: ['batch download', 'metadata preservation', 'format support', 'progress tracking (so you know it\'s working)']
-        },
-        {
-          name: 'Steganography Tool',
-          description: 'hide messages in images because sometimes you need to be sneaky. built for ctf challenges mostly.',
-          tech: ['Python', 'Image Processing', 'Cryptography'],
-          github: 'https://github.com/Crepco/Steganography-',
-          stars: 4,
-          details: 'this was built after i got frustrated with ctf steganography challenges. it uses lsb (least significant bit) to hide messages in images. you can encrypt before embedding too, because why not add layers?',
-          codeSnippet: `# hide a message
-from steganography import Steganography
-
-steg = Steganography()
-steg.encode('image.png', 'secret_message.txt', 'output.png')
-# now your image has secrets
-
-# get the message back
-message = steg.decode('output.png')
-# reveal the secrets`,
-          features: ['lsb encoding', 'encryption support', 'multi-format', 'message extraction']
-        },
-        {
-          name: 'Password Manager',
-          description: 'because remembering passwords is hard and i don\'t trust cloud services with my credentials.',
-          tech: ['Python', 'Encryption', 'Security'],
-          github: 'https://github.com/Crepco/Password_Manager',
-          stars: 2,
-          details: 'built this because i got tired of forgetting passwords and didn\'t want to use cloud-based managers. uses aes-256 encryption, has a master password, and can generate secure passwords. it\'s local, it\'s mine, and it works.',
-          codeSnippet: `# add a credential
-manager = PasswordManager()
-manager.add_credential('github.com', 'username', 'password')
-# now i don't have to remember it
-
-# get it back
-cred = manager.get_credential('github.com')
-print(f"Username: {cred.username}")
-# easy`,
-          features: ['aes-256 encryption', 'master password', 'password generator', 'backup/restore']
-        }
-      ];
-      
-      const skills = {
-        languages: [
-          { name: 'Python', level: 90 },
-          { name: 'JavaScript', level: 75 },
-          { name: 'HTML/CSS', level: 85 },
-          { name: 'Bash', level: 80 }
-        ],
-        frameworks: [
-          { name: 'Django', level: 70 },
-          { name: 'Tailwind CSS', level: 85 }
-        ],
-        security: [
-          { name: 'Burp Suite', level: 75 },
-          { name: 'Nmap', level: 80 },
-          { name: 'Wireshark', level: 70 },
-          { name: 'Metasploit', level: 65 },
-          { name: 'John The Ripper', level: 70 },
-          { name: 'Hydra', level: 75 }
-        ],
-        tools: [
-          { name: 'Git/GitHub', level: 85 },
-          { name: 'Linux', level: 90 },
-          { name: 'Arch Linux', level: 85 },
-          { name: 'MySQL', level: 70 },
-          { name: 'VS Code', level: 90 },
-          { name: 'Kali Linux', level: 80 }
-        ]
-      };
-
-      useEffect(() => {
-        // Enhanced loader animation
-        const loader = document.getElementById('loader');
-        const loaderLines = loader?.querySelectorAll('div');
-        
-        if (loaderLines) {
-          loaderLines.forEach((line, index) => {
-            line.style.opacity = '0';
-            line.style.transform = 'translateY(10px)';
-            setTimeout(() => {
-              line.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-              line.style.opacity = '1';
-              line.style.transform = 'translateY(0)';
-            }, index * 200);
-          });
-        }
-        
-        // Hide loader after component mounts
-        setTimeout(() => {
-          if (loader) {
-            loader.style.transition = 'opacity 0.8s ease-out';
-            loader.classList.add('hidden');
-          }
-        }, 2000);
-
-        // Scroll reveal observer
-        const observerOptions = {
-          threshold: 0.1,
-          rootMargin: '0px 0px -50px 0px'
-        };
-        
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('revealed');
-            }
-          });
-        }, observerOptions);
-        
-        // Observe all scroll-reveal elements
-        const revealElements = document.querySelectorAll('.scroll-reveal');
-        revealElements.forEach(el => observer.observe(el));
-
-        const handleScroll = () => {
-          const sections = ['home', 'about', 'projects', 'skills', 'contact'];
-          const scrollPosition = window.scrollY + window.innerHeight / 2;
-          
-          for (const section of sections) {
-            const element = document.getElementById(section);
-            if (element) {
-              const { offsetTop, offsetHeight } = element;
-              if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-                setActiveSection(section);
-                break;
-              }
-            }
-          }
-        };
-        
-        window.addEventListener('scroll', handleScroll);
-        handleScroll(); // Initial check
-        
-        return () => {
-          window.removeEventListener('scroll', handleScroll);
-          observer.disconnect();
-        };
-      }, []);
-      
-      const scrollToSection = (id) => {
-        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-      };
-      
-      return (
-        <div className="min-h-screen bg-[#0d0d0d] text-gray-200 overflow-x-hidden">
-          <ScrollProgress />
-          <ParticleBackground />
-          <MouseTrail />
-          <CursorFollower />
-          <MatrixRain active={matrixActive} />
-          <KonamiCode />
-          <InteractiveTerminal onMatrixToggle={() => setMatrixActive(!matrixActive)} />
-          
-          {/* Matrix Toggle Button */}
-          <button
-            onClick={() => setMatrixActive(!matrixActive)}
-            className="fixed top-20 right-6 z-50 px-3 py-2 bg-purple-500/10 border border-purple-500/30 rounded-lg text-purple-400 text-xs hover:bg-purple-500/20 transition-all duration-300 hover:scale-110"
-            title="Toggle Matrix Rain"
-          >
-            {matrixActive ? 'matrix: on' : 'matrix: off'}
+      <nav className="l-nav">
+        <div className="l-nav-inner">
+          <button className="l-nav-brand" onClick={()=>goto('l-home')}>
+            Hamza<span>.</span>
           </button>
-          
-          {/* Navigation */}
-          <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0d0d0d]/80 backdrop-blur-md border-b border-purple-500/20">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-3 sm:gap-0">
-              <div className="flex items-center gap-2 text-purple-400">
-                <TerminalIcon />
-                <span className="text-sm font-bold">~/hamza</span>
-                <span className="text-xs text-gray-500">(probably)</span>
-              </div>
-              <div className="flex flex-wrap gap-3 sm:gap-6 text-xs sm:text-sm justify-center sm:justify-end">
-                {['home', 'about', 'projects', 'skills', 'contact'].map((section, index) => (
-                  <button
-                    key={section}
-                    onClick={() => scrollToSection(section)}
-                    className={`transition-all duration-300 hover:text-purple-400 hover:scale-110 relative group ${
-                      activeSection === section ? 'text-purple-400' : 'text-gray-400'
-                    }`}
-                    style={{
-                      animation: `fadeIn 0.6s ease-out ${0.2 + index * 0.1}s both`
-                    }}
-                  >
-                    <span className="relative z-10">./{section}</span>
-                    {activeSection === section && (
-                      <span className="absolute bottom-0 left-0 w-full h-0.5 bg-purple-400 animate-fadeIn"></span>
-                    )}
+          <div className="l-nav-links">
+            {ids.map((id,i)=>(
+              <button key={id} className={`l-nav-link ${active===id?'active':''}`} onClick={()=>goto(id)}>
+                {labels[i]}
                   </button>
                 ))}
+            <button className="l-toggle" onClick={onToggle}><MoonIcon s={13}/> &nbsp;dark</button>
               </div>
             </div>
           </nav>
-          
-          {/* Hero Section */}
-          <section id="home" className="relative min-h-screen flex items-center justify-center px-6">
-            <div className="max-w-4xl mx-auto text-center z-10">
-              <div className="mb-8 text-purple-400 text-sm opacity-0 animate-fadeIn" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
-                <span className="text-gray-500">$ </span>whoami
+    );
+  };
+
+  const LightHero = ({loaded}) => {
+    const [mousePos,setMousePos]=useState({x:0,y:0});
+    useEffect(()=>{
+      const onMove=e=>{setMousePos({x:e.clientX/window.innerWidth,y:e.clientY/window.innerHeight});};
+      window.addEventListener('mousemove',onMove);
+      return ()=>window.removeEventListener('mousemove',onMove);
+    },[]);
+    return (
+      <section id="l-home" style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:'80px 28px',textAlign:'center',position:'relative',overflow:'hidden'}}>
+        {/* Warm dot grid */}
+        <div style={{
+          position:'absolute',inset:0,
+          backgroundImage:'radial-gradient(rgba(180,83,9,.07) 1px, transparent 1px)',
+          backgroundSize:'32px 32px',
+          backgroundPosition:`${mousePos.x*15}px ${mousePos.y*15}px`,
+          zIndex:0,transition:'background-position .1s ease-out'
+        }}/>
+        {/* Warm ambient orbs */}
+        <div style={{
+          position:'absolute',width:'420px',height:'420px',
+          background:'radial-gradient(circle, rgba(217,119,6,0.12) 0%, transparent 70%)',
+          borderRadius:'50%',top:'10%',left:'5%',
+          filter:'blur(70px)',zIndex:0,
+          animation:'float 9s ease-in-out infinite',
+          transform:`translate(${mousePos.x*25}px, ${mousePos.y*25}px)`
+        }}/>
+        <div style={{
+          position:'absolute',width:'360px',height:'360px',
+          background:'radial-gradient(circle, rgba(251,146,60,0.1) 0%, transparent 70%)',
+          borderRadius:'50%',bottom:'15%',right:'8%',
+          filter:'blur(60px)',zIndex:0,
+          animation:'float 11s ease-in-out infinite 1s',
+          transform:`translate(${mousePos.x*-20}px, ${mousePos.y*-20}px)`
+        }}/>
+        <div style={{maxWidth:680,position:'relative',zIndex:1,opacity:loaded?1:0,transition:'opacity .9s ease .1s'}}>
+          <div style={{marginBottom:20,animation:'fadeInUp .8s ease-out .2s both'}}>
+            <span className="l-chip av">
+              <span style={{width:7,height:7,borderRadius:'50%',background:'#10b981',display:'inline-block',animation:'blink 2s ease-in-out infinite'}}/>
+              Open to opportunities
+            </span>
               </div>
-              
-              <h1 
-                className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold mb-6" 
+          <h1 style={{
+            fontFamily:'Space Grotesk',fontWeight:700,fontSize:'clamp(3.2rem,9vw,6rem)',
+            letterSpacing:'-.03em',lineHeight:1,marginBottom:20,
+            color:'#2c1f0e',
+            animation:'fadeInUp .8s ease-out .3s both'
+          }}>
+            Hi, I'm<br/>
+            <span style={{
+              color:'#b45309',display:'inline-block',
+              animation:'scaleIn .6s ease-out .5s both'
+            }}>Hamza.</span>
+          </h1>
+          <p style={{
+            fontSize:'clamp(1rem,2.5vw,1.2rem)',color:'#5c4a32',lineHeight:1.7,
+            marginBottom:16,fontWeight:400,
+            animation:'fadeInUp .8s ease-out .4s both'
+          }}>
+            Security researcher and developer from India.
+          </p>
+          <p style={{
+            fontSize:15,color:'#78614a',lineHeight:1.8,marginBottom:44,
+            maxWidth:520,margin:'0 auto 44px',
+            animation:'fadeInUp .8s ease-out .5s both'
+          }}>
+            I build tools, explore systems, and try to understand how things work by
+            taking them apart. Currently studying CSE while going deep on security.
+          </p>
+          <div style={{
+            display:'flex',gap:14,justifyContent:'center',flexWrap:'wrap',
+            animation:'fadeInUp .8s ease-out .6s both'
+          }}>
+            <button onClick={()=>goto('l-projects')}
                 style={{ 
-                  opacity: 0,
-                  animation: 'fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.5s forwards',
-                  textShadow: '0 0 20px rgba(167, 139, 250, 0.3)'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.animation = 'glitch 0.3s';
-                  setTimeout(() => {
-                    e.target.style.animation = 'fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.5s forwards';
-                  }, 300);
-                }}
-              >
-                <span className="text-white inline-block hover:scale-105 transition-transform duration-300">hamza</span>
-                <span className="text-purple-400 inline-block animate-pulse-slow">.</span>
-              </h1>
-              
-              <div className="text-lg sm:text-xl md:text-2xl mb-8 text-gray-300 h-8 opacity-0 animate-fadeIn" style={{ animationDelay: '0.8s', animationFillMode: 'forwards' }}>
-                <TerminalText 
-                  texts={[
-                    'breaks things (ethically)',
-                    'fixes things (sometimes)',
-                    'linux enjoyer',
-                    'coffee addict',
-                    'ctf enthusiast'
-                  ]} 
-                  speed={80}
-                />
-              </div>
-              
-              <p className="text-gray-400 max-w-2xl mx-auto mb-12 leading-relaxed opacity-0 animate-fadeIn" style={{ animationDelay: '1.1s', animationFillMode: 'forwards' }}>
-                21, from india. i like breaking things and putting them back together. 
-                currently studying cse, spending too much time in terminals, and probably drinking too much coffee.
-                <br /><br />
-                <span className="text-purple-400/70 text-sm">(this website is still a work in progress, like most of my projects)</span>
-              </p>
-              
-              <div className="flex gap-6 justify-center opacity-0 animate-fadeIn" style={{ animationDelay: '1.4s', animationFillMode: 'forwards' }}>
-                {/* GitHub */}
-                <a href="https://github.com/crepco" target="_blank" rel="noopener noreferrer" 
-                   className="p-3 border border-purple-500/30 rounded-lg hover:bg-purple-500/10 hover:border-purple-400 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-purple-400/20 group relative">
-                  <GithubIcon />
-                  <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-                    github
-                  </span>
-                </a>
-                {/* Gmail */}
-                <a href="mailto:hamza0jeelani@gmail.com" 
-                   className="p-3 border border-purple-500/30 rounded-lg hover:bg-purple-500/10 hover:border-purple-400 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-purple-400/20 group relative">
-                  <MailIcon />
-                  <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-                    email
-                  </span>
+                display:'flex',alignItems:'center',gap:8,padding:'14px 32px',
+                background:'#b45309',
+                color:'#fff',border:'none',borderRadius:10,fontSize:15,fontWeight:600,
+                fontFamily:'Space Grotesk',transition:'all .25s ease',
+                cursor:'pointer',boxShadow:'0 4px 14px rgba(180,83,9,.3)',
+              }}
+              onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-3px)';e.currentTarget.style.boxShadow='0 8px 20px rgba(180,83,9,.4)';}}
+              onMouseLeave={e=>{e.currentTarget.style.transform='translateY(0)';e.currentTarget.style.boxShadow='0 4px 14px rgba(180,83,9,.3)';}}>
+              View My Work <ArrowRight s={16}/>
+            </button>
+            <a href="mailto:hamza0jeelani@gmail.com"
+              style={{
+                display:'flex',alignItems:'center',gap:8,padding:'14px 32px',
+                background:'transparent',color:'#2c1f0e',
+                border:'2px solid rgba(180,83,9,.3)',borderRadius:10,
+                fontSize:15,fontWeight:600,textDecoration:'none',
+                transition:'all .25s ease',
+              }}
+              onMouseEnter={e=>{
+                e.currentTarget.style.background='rgba(180,83,9,.08)';
+                e.currentTarget.style.borderColor='rgba(180,83,9,.5)';
+                e.currentTarget.style.transform='translateY(-2px)';
+              }}
+              onMouseLeave={e=>{
+                e.currentTarget.style.background='transparent';
+                e.currentTarget.style.borderColor='rgba(180,83,9,.3)';
+                e.currentTarget.style.transform='translateY(0)';
+              }}>
+              Say Hello <MailIcon s={16}/>
                 </a>
               </div>
             </div>
-            
-            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-float opacity-0 animate-fadeIn" style={{ animationDelay: '1.7s', animationFillMode: 'forwards' }}>
-              <div className="w-6 h-10 border-2 border-purple-400/50 rounded-full p-1 hover:border-purple-400 transition-colors duration-300 cursor-pointer group">
-                <div className="w-1.5 h-3 bg-purple-400 rounded-full animate-scroll group-hover:bg-purple-300 transition-colors duration-300"></div>
+        {/* Scroll hint */}
+        <div style={{position:'absolute',bottom:36,left:'50%',transform:'translateX(-50%)',opacity:loaded?.4:0,transition:'opacity 1s ease 1.5s'}} className="bob">
+          <div style={{
+            width:22,height:36,border:'1.5px solid rgba(180,83,9,.25)',
+            borderRadius:12,display:'flex',justifyContent:'center',padding:'5px 0',
+            background:'rgba(180,83,9,.04)'
+          }}>
+            <div style={{
+              width:4,height:8,background:'#b45309',
+              borderRadius:4
+            }}/>
               </div>
             </div>
           </section>
-          
-          {/* About Section */}
-          <section id="about" className="relative min-h-screen flex items-center px-6 py-20">
-            <div className="max-w-4xl mx-auto z-10">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 flex items-center gap-4 scroll-reveal">
-                <span className="text-gray-500 text-2xl">01.</span>
-                <span className="text-purple-400">about me (i guess)</span>
-                <div className="flex-1 h-px bg-gradient-to-r from-purple-500/50 to-transparent"></div>
-              </h2>
-              
-              <div className="grid md:grid-cols-2 gap-12 items-center">
-                <div className="space-y-6 text-gray-300 leading-relaxed scroll-reveal">
-                  <p className="opacity-0 animate-fadeInLeft" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
-                    hey! so i'm hamza. i'm a cse student who got way too into 
-                    <span className="text-purple-400"> cybersecurity</span> and 
-                    <span className="text-purple-400"> linux</span> and now i can't stop. 
-                    i like understanding how things work by... well, breaking them first. 
-                    (ethically, of course. mostly.)
-                  </p>
-                  <p className="opacity-0 animate-fadeInLeft" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
-                    when i'm not procrastinating on assignments, you'll find me doing ctf challenges, 
-                    writing scripts that probably have too many bugs, or just messing around with 
-                    arch linux (yes, i use arch btw). i learn by breaking things and then frantically 
-                    googling how to fix them.
-                  </p>
-                  <p className="opacity-0 animate-fadeInLeft" style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}>
-                    my goal? honestly, just keep learning and building cool stuff. maybe make the 
-                    internet slightly more secure, one broken thing at a time. also trying to drink 
-                    less coffee but that's not going well.
+    );
+  };
+
+  const LightAbout = () => {
+    const [r1,v1]=useReveal(); const [r2,v2]=useReveal();
+    const facts=[
+      'Currently studying Computer Science',
+      'Self-taught in cybersecurity',
+      'Linux daily driver (Arch, since you asked)',
+      'Python is my language of choice',
+      'Building things that solve real problems',
+    ];
+    return (
+      <section id="l-about" style={{padding:'100px 28px',background:'#f0e6d2'}}>
+        <div style={{maxWidth:1080,margin:'0 auto'}}>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'5rem',alignItems:'start'}}>
+            <div ref={r1} className={`sr ${v1?'in':''}`}>
+              <div className="l-section-label">About Me</div>
+              <div className="l-accent-line"/>
+              <h2 className="l-section-title" style={{marginBottom:28}}>A bit about who I am.</h2>
+              <div style={{display:'flex',flexDirection:'column',gap:18}}>
+                <p style={{color:'#5c4a32',lineHeight:1.9,fontSize:15}}>
+                  I'm a 21-year-old CSE student from India who fell into cybersecurity
+                  and hasn't looked back. What started as curiosity about how systems
+                  work turned into a genuine interest in finding where they don't.
+                </p>
+                <p style={{color:'#5c4a32',lineHeight:1.9,fontSize:15}}>
+                  I learn best by doing — most of what I know came from breaking
+                  something, understanding why, and then building something better.
+                  The projects on this site are all things I made to solve problems
+                  I actually had.
+                </p>
+                <p style={{color:'#5c4a32',lineHeight:1.9,fontSize:15}}>
+                  Alongside security, I write a fair amount of Python, use Linux
+                  as my daily driver, and spend more time in the terminal than
+                  most people would consider reasonable.
                   </p>
                 </div>
-                
-                <TiltCard className="relative group scroll-reveal">
-                  <div className="absolute inset-0 bg-purple-500/20 blur-2xl group-hover:bg-purple-500/30 transition-all duration-500"></div>
-                  <div className="relative border border-purple-500/30 p-8 rounded-lg bg-[#0f0f0f]/50 backdrop-blur hover:border-purple-400/50 transition-all duration-300">
-                    <div className="flex items-center gap-3 mb-6 text-purple-400">
-                      <ShieldIcon />
-                      <span className="font-bold">things i do</span>
+              <div style={{display:'flex',gap:10,flexWrap:'wrap',marginTop:28}}>
+                {['Python','Linux','Security','Networking'].map(t=>(
+                  <span key={t} className="l-tag ind">{t}</span>
+                ))}
                     </div>
-                    <ul className="space-y-3 text-gray-300">
-                      {['penetration testing (legally)', 'network security stuff', 'linux sysadmin things', 'osint & recon', 'full-stack dev (when i feel like it)'].map((item, i) => (
-                        <li key={i} className="flex items-center gap-2 opacity-0 animate-fadeInLeft" style={{ animationDelay: `${0.7 + i * 0.1}s`, animationFillMode: 'forwards' }}>
-                          <span className="text-purple-400">→</span> {item}
+            </div>
+            <div ref={r2} className={`sr ${v2?'in':''}`} style={{transitionDelay:'.1s'}}>
+              <div className="l-card" style={{padding:28}}>
+                <div style={{fontWeight:700,fontSize:13,color:'#92400e',marginBottom:18,borderBottom:'1px solid rgba(180,83,9,.15)',paddingBottom:14,textTransform:'uppercase',letterSpacing:'.08em'}}>
+                  A few quick facts
+                </div>
+                <ul style={{display:'flex',flexDirection:'column',gap:12}}>
+                  {facts.map((f,i)=>(
+                    <li key={i} style={{
+                      display:'flex',alignItems:'flex-start',gap:12,
+                      transition:'all .2s ease',
+                      padding:'6px 8px',borderRadius:6
+                    }}
+                    onMouseEnter={e=>{e.currentTarget.style.background='rgba(180,83,9,.06)';e.currentTarget.style.transform='translateX(4px)';}}
+                    onMouseLeave={e=>{e.currentTarget.style.background='transparent';e.currentTarget.style.transform='translateX(0)';}}>
+                      <span style={{color:'#b45309',fontWeight:700,fontSize:16,lineHeight:1.5}}>→</span>
+                      <span style={{color:'#2c1f0e',fontSize:14,lineHeight:1.6,fontWeight:500}}>{f}</span>
                         </li>
                       ))}
                     </ul>
+                <div style={{marginTop:24,paddingTop:18,borderTop:'1px solid rgba(180,83,9,.12)'}}>
+                  <div style={{fontSize:12,color:'#b45309',marginBottom:12,fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>Find me on</div>
+                  <div style={{display:'flex',gap:10}}>
+                    <a href="https://github.com/crepco" target="_blank" rel="noopener noreferrer"
+                      style={{
+                        display:'flex',alignItems:'center',gap:7,padding:'9px 16px',
+                        border:'1.5px solid rgba(180,83,9,.25)',borderRadius:8,
+                        color:'#92400e',textDecoration:'none',fontSize:13,fontWeight:600,
+                        transition:'all .2s ease', background:'rgba(180,83,9,.05)'
+                      }}
+                      onMouseEnter={e=>{e.currentTarget.style.background='rgba(180,83,9,.1)';e.currentTarget.style.transform='translateY(-2px)';}}
+                      onMouseLeave={e=>{e.currentTarget.style.background='rgba(180,83,9,.05)';e.currentTarget.style.transform='translateY(0)';}}>
+                      <GithubIcon s={15}/> GitHub
+                    </a>
+                    <a href="mailto:hamza0jeelani@gmail.com"
+                      style={{
+                        display:'flex',alignItems:'center',gap:7,padding:'9px 16px',
+                        border:'1.5px solid rgba(180,83,9,.25)',borderRadius:8,
+                        color:'#92400e',textDecoration:'none',fontSize:13,fontWeight:600,
+                        transition:'all .2s ease', background:'rgba(180,83,9,.05)'
+                      }}
+                      onMouseEnter={e=>{e.currentTarget.style.background='rgba(180,83,9,.1)';e.currentTarget.style.transform='translateY(-2px)';}}
+                      onMouseLeave={e=>{e.currentTarget.style.background='rgba(180,83,9,.05)';e.currentTarget.style.transform='translateY(0)';}}>
+                      <MailIcon s={15}/> Email
+                    </a>
                   </div>
-                </TiltCard>
+              </div>
+            </div>
+            </div>
               </div>
             </div>
           </section>
-          
-          {/* Projects Section */}
-          <section id="projects" className="relative min-h-screen px-6 py-20">
-            <div className="max-w-6xl mx-auto z-10">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 flex items-center gap-4 scroll-reveal">
-                <span className="text-gray-500 text-2xl">02.</span>
-                <span className="text-purple-400">stuff i built</span>
-                <div className="flex-1 h-px bg-gradient-to-r from-purple-500/50 to-transparent"></div>
-              </h2>
-              
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {projects.map((project, index) => (
-                  <ExpandableProjectCard key={index} project={project} index={index} />
-                ))}
-              </div>
-            </div>
-          </section>
-          
-          {/* Skills Section */}
-          <section id="skills" className="relative min-h-screen px-6 py-20">
-            <div className="max-w-6xl mx-auto z-10">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 flex items-center gap-4 scroll-reveal">
-                <span className="text-gray-500 text-2xl">03.</span>
-                <span className="text-purple-400">things i know (kinda)</span>
-                <div className="flex-1 h-px bg-gradient-to-r from-purple-500/50 to-transparent"></div>
-              </h2>
-              
-              <div className="grid md:grid-cols-2 gap-8">
-                <TiltCard className="border border-purple-500/20 rounded-lg p-8 bg-[#0f0f0f]/50 backdrop-blur hover:border-purple-400/50 transition-all hover-lift scroll-reveal">
-                  <div className="flex items-center gap-3 mb-6 text-purple-400">
-                    <CodeIcon />
-                    <h3 className="text-xl font-bold">languages & frameworks</h3>
+    );
+  };
+
+  const LightProjectCard = ({project,index}) => {
+    const [ref,v]=useReveal();
+    const [open,setOpen]=useState(false);
+    const [copied,setCopied]=useState(false);
+    const copy=()=>{navigator.clipboard.writeText(project.snippet);setCopied(true);setTimeout(()=>setCopied(false),2000);};
+    return (
+      <div ref={ref} className={`sr ${v?'in':''}`} style={{transitionDelay:index*.1+'s'}}>
+        <div className="l-card" style={{padding:28,height:'100%',display:'flex',flexDirection:'column'}}>
+          <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginBottom:16}}>
+            <h3 style={{fontWeight:700,fontSize:18,color:'#2c1f0e',letterSpacing:'-.01em',flex:1,paddingRight:12}}>{project.name}</h3>
+            <a href={project.github} target="_blank" rel="noopener noreferrer"
+              style={{color:'#92400e',textDecoration:'none',transition:'color .2s',flexShrink:0}}>
+              <ExtLink s={16}/>
+            </a>
                   </div>
-                  <div className="space-y-4">
-                    <div>
-                      <div className="flex justify-between mb-3 text-sm">
-                        <span className="text-gray-300">Programming Languages</span>
+          <p style={{color:'#5c4a32',fontSize:14,lineHeight:1.75,marginBottom:18,flex:1}}>{project.short}</p>
+          <div style={{display:'flex',gap:7,flexWrap:'wrap',marginBottom:18}}>
+            {project.tech.map(t=><span key={t} className="l-tag slt">{t}</span>)}
                       </div>
-                      <div className="space-y-3">
-                        {skills.languages.map((lang, i) => (
-                          <SkillBar key={i} skill={lang.name} level={lang.level} />
-                        ))}
+          <div style={{borderTop:'1px solid rgba(0,0,0,.07)',paddingTop:16}}>
+            <button onClick={()=>setOpen(v=>!v)}
+              style={{display:'flex',alignItems:'center',gap:6,fontSize:13,color:'#b45309',background:'none',border:'none',fontFamily:'Space Grotesk',fontWeight:600,padding:0,cursor:'pointer',transition:'all .2s'}}
+              onMouseEnter={e=>e.currentTarget.style.color='#92400e'}
+              onMouseLeave={e=>e.currentTarget.style.color='#b45309'}>
+              {open?<><ChevU s={14}/> Hide details</>:<><ChevD s={14}/> More details</>}
+            </button>
+            {open&&(
+              <div style={{marginTop:16}}>
+                <p style={{color:'#5c4a32',fontSize:13,lineHeight:1.75,marginBottom:14}}>{project.detail}</p>
+                <div className="l-code">
+                  <div className="l-code-hd">
+                    <span style={{color:'rgba(255,255,255,.3)',fontSize:11,fontFamily:'JetBrains Mono'}}>{project.name.toLowerCase().replace(/ /g,'-')}.py</span>
+                    <button onClick={copy} style={{background:'none',border:'none',color:'rgba(255,255,255,.3)',fontSize:11,display:'flex',alignItems:'center',gap:4,fontFamily:'JetBrains Mono',cursor:'pointer'}}>
+                      <CopyIcon s={12}/> {copied?'copied':'copy'}
+                    </button>
+                      </div>
+                  <pre style={{padding:'14px',fontSize:12,color:'rgba(255,255,255,.6)',overflowX:'auto',margin:0,lineHeight:1.7,fontFamily:'JetBrains Mono'}}><code>{project.snippet}</code></pre>
+                    </div>
+                      </div>
+            )}
                       </div>
                     </div>
-                    <div>
-                      <div className="flex justify-between mb-3 text-sm">
-                        <span className="text-gray-300">Frameworks</span>
-                      </div>
-                      <div className="space-y-3">
-                        {skills.frameworks.map((fw, i) => (
-                          <SkillBar key={i} skill={fw.name} level={fw.level} />
-                        ))}
-                      </div>
-                    </div>
                   </div>
-                </TiltCard>
-                
-                <TiltCard className="border border-purple-500/20 rounded-lg p-8 bg-[#0f0f0f]/50 backdrop-blur hover:border-purple-400/50 transition-all hover-lift scroll-reveal">
-                  <div className="flex items-center gap-3 mb-6 text-purple-400">
-                    <ShieldIcon />
-                    <h3 className="text-xl font-bold">security tools</h3>
+    );
+  };
+
+  const LightProjects = () => (
+    <section id="l-projects" style={{padding:'100px 28px',background:'#f5ede0'}}>
+      <div style={{maxWidth:1080,margin:'0 auto'}}>
+        <div className="l-section-label">Projects</div>
+        <div className="l-accent-line"/>
+        <h2 className="l-section-title" style={{marginBottom:12}}>Things I've built.</h2>
+        <p style={{color:'#6b7280',fontSize:15,lineHeight:1.7,marginBottom:52,maxWidth:520}}>
+          A few projects I made to solve problems I actually had.
+        </p>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(300px,1fr))',gap:22}}>
+          {projects.map((p,i)=><LightProjectCard key={p.id} project={p} index={i}/>)}
                   </div>
-                  <div className="space-y-3">
-                    {skills.security.map((tool, i) => (
-                      <SkillBar key={i} skill={tool.name} level={tool.level} />
+                  </div>
+    </section>
+  );
+
+  const LightSkills = () => {
+    const [ref,v]=useReveal();
+    return (
+      <section id="l-skills" style={{padding:'100px 28px',background:'#f0e6d2'}}>
+        <div style={{maxWidth:1080,margin:'0 auto'}}>
+          <div className="l-section-label">Skills</div>
+          <div className="l-accent-line"/>
+          <h2 className="l-section-title" style={{marginBottom:12}}>What I work with.</h2>
+            <p style={{color:'#78614a',fontSize:15,lineHeight:1.7,marginBottom:52,maxWidth:480}}>
+            Tools and technologies I use regularly. No made-up proficiency bars.
+          </p>
+          <div ref={ref} className={`sr ${v?'in':''}`} style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:22}}>
+            {Object.entries(stackGroups).map(([cat,{items}])=>(
+              <div key={cat} className="l-card" style={{padding:24}}>
+                <div style={{fontWeight:700,fontSize:12,color:'#92400e',marginBottom:16,textTransform:'uppercase',letterSpacing:'.1em'}}>{cat}</div>
+                <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
+                  {items.map(item=><span key={item} className="l-tag ind">{item}</span>)}
+                  </div>
+              </div>
                     ))}
                   </div>
-                </TiltCard>
-                
-                <TiltCard className="border border-purple-500/20 rounded-lg p-8 bg-[#0f0f0f]/50 backdrop-blur hover:border-purple-400/50 transition-all hover-lift md:col-span-2 scroll-reveal">
-                  <div className="flex items-center gap-3 mb-6 text-purple-400">
-                    <ServerIcon />
-                    <h3 className="text-xl font-bold">tools & other stuff</h3>
-                  </div>
-                  <div className="space-y-3">
-                    {skills.tools.map((tool, i) => (
-                      <SkillBar key={i} skill={tool.name} level={tool.level} />
-                    ))}
-                  </div>
-                </TiltCard>
+          <div style={{marginTop:32,padding:'18px 22px',background:'rgba(180,83,9,.04)',border:'1px solid rgba(180,83,9,.12)',borderRadius:10,fontSize:14,color:'#78614a',lineHeight:1.7}}>
+            <span style={{color:'#b45309',fontWeight:700}}>Currently learning: </span>
+            Active Directory security, advanced web application exploitation, and network traffic analysis.
               </div>
             </div>
           </section>
-          
-          {/* Contact Section */}
-          <section id="contact" className="relative min-h-screen flex items-center px-6 py-20">
-            <div className="max-w-4xl mx-auto z-10 text-center">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 flex items-center justify-center gap-4 scroll-reveal">
-                <span className="text-gray-500 text-2xl">04.</span>
-                <span className="text-purple-400">let's talk (maybe)</span>
-              </h2>
-              
-              <p className="text-gray-300 mb-12 text-lg leading-relaxed max-w-2xl mx-auto scroll-reveal">
-                want to collaborate? have a cool project idea? just want to chat about tech? 
-                or maybe you found a bug in my code (please tell me). hit me up!
-                <br /><br />
-                <span className="text-purple-400/70 text-sm">(i usually respond within 24-48 hours, unless i'm in the middle of a ctf challenge)</span>
-              </p>
-              
-              <a 
-                href="mailto:hamza0jeelani@gmail.com"
-                className="inline-flex items-center gap-2 px-8 py-4 border-2 border-purple-400 text-purple-400 rounded-lg hover:bg-purple-400/10 transition-all duration-300 text-lg font-semibold hover:scale-110 hover:shadow-lg hover:shadow-purple-400/20 scroll-reveal"
-              >
-                <MailIcon />
-                hamza0jeelani@gmail.com
+    );
+  };
+
+  const LightContact = () => {
+    const [ref,v]=useReveal();
+    return (
+      <section id="l-contact" style={{padding:'100px 28px 80px',background:'#f5ede0'}}>
+        <div style={{maxWidth:600,margin:'0 auto',textAlign:'center'}}>
+          <div ref={ref} className={`sr ${v?'in':''}`}>
+            <div className="l-section-label" style={{justifyContent:'center'}}>Get In Touch</div>
+            <div className="l-accent-line" style={{margin:'0 auto 24px'}}/>
+            <h2 className="l-section-title" style={{marginBottom:20}}>Let's talk.</h2>
+            <p style={{color:'#78614a',fontSize:15,lineHeight:1.9,marginBottom:44}}>
+              I'm open to collaborating on interesting projects,
+              discussing security topics, or just having a conversation
+              about tech. Feel free to reach out.
+            </p>
+            <a href="mailto:hamza0jeelani@gmail.com"
+              style={{display:'inline-flex',alignItems:'center',gap:10,padding:'14px 32px',background:'#b45309',color:'#fff',borderRadius:8,fontSize:15,fontWeight:600,textDecoration:'none',transition:'all .25s',fontFamily:'Space Grotesk',boxShadow:'0 4px 14px rgba(180,83,9,.3)'}}
+              onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-2px)';e.currentTarget.style.boxShadow='0 8px 20px rgba(180,83,9,.4)';}}
+              onMouseLeave={e=>{e.currentTarget.style.transform='translateY(0)';e.currentTarget.style.boxShadow='0 4px 14px rgba(180,83,9,.3)';}}>
+              <MailIcon s={18}/> hamza0jeelani@gmail.com
+            </a>
+            <div style={{display:'flex',justifyContent:'center',gap:14,marginTop:18}}>
+              <a href="https://github.com/crepco" target="_blank" rel="noopener noreferrer"
+                style={{display:'flex',alignItems:'center',gap:8,padding:'10px 20px',border:'1.5px solid rgba(180,83,9,.25)',borderRadius:8,color:'#92400e',textDecoration:'none',fontSize:14,fontWeight:600,transition:'all .2s'}}
+                onMouseEnter={e=>{e.currentTarget.style.background='rgba(180,83,9,.07)';e.currentTarget.style.transform='translateY(-2px)';}}
+                onMouseLeave={e=>{e.currentTarget.style.background='transparent';e.currentTarget.style.transform='translateY(0)';}}>
+                <GithubIcon s={16}/> @crepco
               </a>
-              
-              <div className="mt-16 pt-8 border-t border-purple-500/20 scroll-reveal">
-                <p className="text-gray-500 text-sm">
-                  built with react • designed at 3am • deployed on github pages (free hosting ftw)
-                </p>
-                <p className="text-gray-600 text-xs mt-2">
-                  © 2026 hamza. all rights reserved (probably).
-                </p>
-                <p className="text-gray-700 text-xs mt-1">
-                  ps: if you're reading this, you scrolled all the way down. respect.
-                </p>
+            </div>
+            <div style={{marginTop:72,paddingTop:28,borderTop:'1px solid rgba(180,83,9,.1)'}}>
+              <p style={{color:'#a08060',fontSize:13}}>Built with React · No template · GitHub Pages</p>
+              <p style={{color:'#a08060',fontSize:12,marginTop:6}}>© 2026 Hamza Jeelani</p>
+            </div>
               </div>
             </div>
           </section>
+    );
+  };
+
+  const LightPortfolio = ({onToggle}) => {
+    const [loaded,setLoaded]=useState(false);
+    const ids=['l-home','l-about','l-projects','l-skills','l-contact'];
+    const active=useScrollSections(ids);
+    useEffect(()=>{
+      setTimeout(()=>setLoaded(true),2300);
+      const obs=new IntersectionObserver(entries=>{
+        entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});
+      },{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+      document.querySelectorAll('.sr').forEach(el=>obs.observe(el));
+      return ()=>obs.disconnect();
+    },[]);
+    return (
+      <div className="l-body">
+        <ScrollProgress color="linear-gradient(90deg,#4f46e5,#818cf8)"/>
+        <KonamiEgg dark={false}/>
+        <LightNav active={active} onToggle={onToggle}/>
+        <LightHero loaded={loaded}/>
+        <LightAbout/>
+        <LightProjects/>
+        <LightSkills/>
+        <LightContact/>
         </div>
       );
     };
 
-    // Render the app
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<Portfolio />);
+  /* ══ Root ════════════════════════════════════════════════════ */
+  const Portfolio = () => {
+    const [theme,setTheme]=useState(()=>localStorage.getItem('pf-theme')||'light');
+    const [fading,setFading]=useState(false);
+
+      const showSwitchOverlay=(next)=>{
+      const ov=document.getElementById('theme-switch-overlay');
+      const lbl=document.getElementById('tso-label');
+      const fill=document.getElementById('tso-fill');
+      if(!ov||!lbl||!fill) return;
+      // style for destination theme
+      const isDark=next==='dark';
+      ov.style.background=isDark?'#05050d':'#f5ede0';
+      lbl.style.color=isDark?'#a78bfa':'#b45309';
+      fill.style.background=isDark?'#7c3aed':'#b45309';
+      lbl.textContent=isDark?'→ dark mode':'→ light mode';
+      // reset fill animation
+      fill.style.animation='none';
+      fill.offsetHeight; // reflow
+      fill.style.animation='tsoFill 1.2s ease-out forwards';
+      ov.classList.add('show');
+    };
+    const hideSwitchOverlay=()=>{
+      const ov=document.getElementById('theme-switch-overlay');
+      ov?.classList.remove('show');
+    };
+
+    const toggle=useCallback(()=>{
+      const next=theme==='dark'?'light':'dark';
+      setFading(true);
+      showSwitchOverlay(next);
+      setTimeout(()=>{
+        setTheme(next);
+        localStorage.setItem('pf-theme',next);
+        window.scrollTo(0,0);
+        setFading(false);
+        setTimeout(hideSwitchOverlay,400);
+      },1600);
+    },[theme]);
+
+    useEffect(()=>{
+      // hide loader
+      setTimeout(()=>{
+        document.getElementById('loader')?.classList.add('gone');
+      },2000);
+    },[]);
+
+    return (
+      <div style={{opacity:fading?0:1,transition:'opacity .25s ease'}}>
+        {theme==='dark'
+          ? <DarkPortfolio onToggle={toggle}/>
+          : <LightPortfolio onToggle={toggle}/>
+        }
+      </div>
+    );
+  };
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<Portfolio/>);
   </script>
 </body>
 </html>
