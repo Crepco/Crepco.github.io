@@ -79,8 +79,9 @@
     .dark-scroll::-webkit-scrollbar-track { background: #06060f; }
     .dark-scroll::-webkit-scrollbar-thumb { background: rgba(124,58,237,.35); border-radius: 3px; }
 
-    /* ── Custom cursor (dark only) ──────────── */
+    /* ── Custom cursor ───────────────────────── */
     .dark-cursor-mode, .dark-cursor-mode * { cursor: none !important; }
+    .light-cursor-mode, .light-cursor-mode * { cursor: none !important; }
     .cursor-dot {
       position: fixed; width: 7px; height: 7px; border-radius: 50%;
       background: #a78bfa; pointer-events: none; z-index: 9995; mix-blend-mode: difference;
@@ -92,6 +93,19 @@
       transition: width .18s ease, height .18s ease, border-color .18s ease;
     }
     .cursor-ring.big { width: 38px; height: 38px; border-color: rgba(167,139,250,.7); }
+    
+    /* Light mode cursor */
+    .light-cursor-dot {
+      position: fixed; width: 7px; height: 7px; border-radius: 50%;
+      background: #b45309; pointer-events: none; z-index: 9995; mix-blend-mode: difference;
+    }
+    .light-cursor-ring {
+      position: fixed; width: 26px; height: 26px;
+      border: 1.5px solid rgba(180,83,9,.4); border-radius: 50%;
+      pointer-events: none; z-index: 9994;
+      transition: width .18s ease, height .18s ease, border-color .18s ease;
+    }
+    .light-cursor-ring.big { width: 38px; height: 38px; border-color: rgba(180,83,9,.7); }
 
     /* ── Scroll progress ────────────────────── */
     .scroll-bar {
@@ -936,6 +950,30 @@ cred = manager.get('github.com')`,
       return ()=>{cancelAnimationFrame(raf);window.removeEventListener('mousemove',onMove);};
     },[]);
     return <><div ref={dotRef} className="cursor-dot"/><div ref={ringRef} className="cursor-ring"/></>;
+  };
+
+  /* ══ Light cursor ═══════════════════════════════════════════ */
+  const LightCursor = () => {
+    const dotRef=useRef(null); const ringRef=useRef(null);
+    const pos=useRef({x:0,y:0}); const ring=useRef({x:0,y:0});
+    useEffect(()=>{
+      let raf;
+      const onMove=e=>{pos.current={x:e.clientX,y:e.clientY};};
+      const big=()=>ringRef.current?.classList.add('big');
+      const sm=()=>ringRef.current?.classList.remove('big');
+      const tick=()=>{
+        ring.current.x+=(pos.current.x-ring.current.x)*.12;
+        ring.current.y+=(pos.current.y-ring.current.y)*.12;
+        if(dotRef.current){dotRef.current.style.left=pos.current.x-3.5+'px';dotRef.current.style.top=pos.current.y-3.5+'px';}
+        if(ringRef.current){ringRef.current.style.left=ring.current.x-13+'px';ringRef.current.style.top=ring.current.y-13+'px';}
+        raf=requestAnimationFrame(tick);
+      };
+      tick();
+      window.addEventListener('mousemove',onMove);
+      document.querySelectorAll('a,button').forEach(el=>{el.addEventListener('mouseenter',big);el.addEventListener('mouseleave',sm);});
+      return ()=>{cancelAnimationFrame(raf);window.removeEventListener('mousemove',onMove);};
+    },[]);
+    return <><div ref={dotRef} className="light-cursor-dot"/><div ref={ringRef} className="light-cursor-ring"/></>;
   };
 
   /* ══ Tilt card ══════════════════════════════════════════════ */
@@ -1998,9 +2036,10 @@ cred = manager.get('github.com')`,
       return ()=>obs.disconnect();
     },[]);
     return (
-      <div className="l-body">
+      <div className="l-body light-cursor-mode">
         <ScrollProgress color="linear-gradient(90deg,#4f46e5,#818cf8)"/>
         <KonamiEgg dark={false}/>
+        <LightCursor/>
         <LightNav active={active} onToggle={onToggle}/>
         <LightHero loaded={loaded}/>
         <LightAbout/>
