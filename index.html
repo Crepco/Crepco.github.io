@@ -889,23 +889,45 @@ cred = manager.get('github.com')`,
     return <span>{txt}<span className="blink" style={{color:'#a78bfa'}}>_</span></span>;
   };
 
-  /* ══ Visit counter ═══════════════════════════════════════════ */
+  /* ══ Visit counter (global) ═════════════════════════════════ */
   const VisitCounter = ({dark=false}) => {
     const [count,setCount]=useState(0);
+    const [loading,setLoading]=useState(true);
     useEffect(()=>{
-      const key='site-visits';
-      const lastVisit=localStorage.getItem('last-visit-date');
-      const today=new Date().toDateString();
-      if(lastVisit!==today){
-        const current=parseInt(localStorage.getItem(key)||'0',10)+1;
-        localStorage.setItem(key,current.toString());
-        localStorage.setItem('last-visit-date',today);
-        setCount(current);
-      } else {
-        setCount(parseInt(localStorage.getItem(key)||'0',10));
-      }
+      // Use CountAPI for global visit tracking
+      const namespace='crepco-portfolio';
+      const key='visits';
+      const apiUrl=`https://api.countapi.xyz/hit/${namespace}/${key}`;
+      
+      // Increment counter and get updated count
+      fetch(apiUrl)
+        .then(res=>res.json())
+        .then(data=>{
+          if(data.value!==undefined){
+            setCount(data.value);
+            setLoading(false);
+          } else {
+            // Fallback: try to get current count
+            fetch(`https://api.countapi.xyz/get/${namespace}/${key}`)
+              .then(r=>r.json())
+              .then(d=>{
+                if(d.value!==undefined){
+                  setCount(d.value);
+                }
+                setLoading(false);
+              })
+              .catch(()=>setLoading(false));
+          }
+        })
+        .catch(err=>{
+          console.error('Visit counter error:',err);
+          setLoading(false);
+        });
     },[]);
+    
+    if(loading) return null;
     if(count===0) return null;
+    
     const color=dark?'#33334a':'#a08060';
     return (
       <span style={{color,fontSize:11,fontFamily:'Space Grotesk, sans-serif'}}>
