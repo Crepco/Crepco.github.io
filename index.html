@@ -193,12 +193,27 @@
     .d-card {
       background: rgba(12,12,28,.7); border: 1px solid rgba(124,58,237,.18);
       border-radius: 8px; backdrop-filter: blur(4px);
-      transition: border-color .25s, transform .25s, box-shadow .25s;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .d-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.1), transparent);
+      transition: left 0.5s ease;
     }
     .d-card:hover {
-      border-color: rgba(167,139,250,.4);
-      transform: translateY(-3px);
-      box-shadow: 0 14px 40px rgba(124,58,237,.1);
+      border-color: rgba(167,139,250,.5);
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 60px rgba(124,58,237,.25), 0 0 40px rgba(167, 139, 250, 0.15);
+    }
+    .d-card:hover::before {
+      left: 100%;
     }
 
     /* Status pill */
@@ -371,10 +386,11 @@
     .l-card:nth-child(5) { background:#fef3c7; transform:rotate(-1deg);   }  /* amber */
     .l-card:nth-child(6) { background:#f9e8c8; transform:rotate(0.8deg);  }  /* warm cream */
     .l-card:hover {
-      transform: rotate(0deg) translateY(-8px) scale(1.02);
-      box-shadow: 4px 12px 28px rgba(0,0,0,.16), 2px 4px 8px rgba(0,0,0,.1),
+      transform: rotate(0deg) translateY(-12px) scale(1.05);
+      box-shadow: 6px 16px 40px rgba(0,0,0,.2), 4px 8px 16px rgba(0,0,0,.12),
                   inset 0 1px 0 rgba(255,255,255,.6);
       z-index: 10;
+      animation: bounce 0.6s ease-in-out;
     }
 
     /* ── Section headings ── */
@@ -450,6 +466,214 @@
       50%      { background-position: 100% 50%; }
     }
     .bob { animation: bob 2s ease-in-out infinite; }
+    
+    /* New Cool Animations */
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes rotateIn {
+      from { opacity: 0; transform: rotate(-10deg) scale(0.9); }
+      to { opacity: 1; transform: rotate(0deg) scale(1); }
+    }
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(167, 139, 250, 0.3), 0 0 40px rgba(167, 139, 250, 0.1); }
+      50% { box-shadow: 0 0 30px rgba(167, 139, 250, 0.6), 0 0 60px rgba(167, 139, 250, 0.3); }
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes textReveal {
+      from { clip-path: inset(0 100% 0 0); opacity: 0; }
+      to { clip-path: inset(0 0 0 0); opacity: 1; }
+    }
+    @keyframes cardFlip {
+      from { transform: perspective(1000px) rotateY(0deg); }
+      to { transform: perspective(1000px) rotateY(5deg); }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px) rotate(-2deg); }
+      75% { transform: translateX(5px) rotate(2deg); }
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+    @keyframes spinSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes scaleBounce {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    
+    /* Animation Classes */
+    .animate-slide-left { animation: slideInLeft 0.6s ease-out forwards; }
+    .animate-slide-right { animation: slideInRight 0.6s ease-out forwards; }
+    .animate-rotate-in { animation: rotateIn 0.8s ease-out forwards; }
+    .animate-glow-pulse { animation: glowPulse 2s ease-in-out infinite; }
+    .animate-gradient { 
+      background-size: 200% auto;
+      animation: gradientShift 3s ease infinite;
+    }
+    .animate-text-reveal { animation: textReveal 1s ease-out forwards; }
+    .animate-bounce { animation: bounce 1s ease-in-out infinite; }
+    .animate-shake { animation: shake 0.5s ease-in-out; }
+    .animate-spin-slow { animation: spinSlow 20s linear infinite; }
+    .animate-scale-bounce { animation: scaleBounce 2s ease-in-out infinite; }
+    .animate-fade-scale { animation: fadeInScale 0.6s ease-out forwards; }
+    
+    /* Hover Effects */
+    .hover-lift {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .hover-lift:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(167, 139, 250, 0.2);
+    }
+    
+    .hover-glow {
+      transition: box-shadow 0.3s ease;
+    }
+    .hover-glow:hover {
+      box-shadow: 0 0 30px rgba(167, 139, 250, 0.5), 0 0 60px rgba(167, 139, 250, 0.2);
+    }
+    
+    .hover-rotate {
+      transition: transform 0.3s ease;
+    }
+    .hover-rotate:hover {
+      transform: rotate(5deg) scale(1.05);
+    }
+    
+    .hover-scale {
+      transition: transform 0.3s ease;
+    }
+    .hover-scale:hover {
+      transform: scale(1.1);
+    }
+    
+    /* Smooth transitions for all interactive elements */
+    a, button, .d-card, .l-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Enhanced button animations */
+    button, a[role="button"] {
+      position: relative;
+      overflow: hidden;
+    }
+    button::before, a[role="button"]::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(167, 139, 250, 0.2);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    button:hover::before, a[role="button"]:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+    
+    /* Text gradient animation */
+    .gradient-text-animated {
+      background: linear-gradient(90deg, #a78bfa, #c084fc, #e879f9, #a78bfa);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShift 3s ease infinite;
+    }
+    
+    /* Pulse glow effect */
+    .pulse-glow {
+      animation: glowPulse 2s ease-in-out infinite;
+    }
+    
+    /* Floating animation */
+    .float-animation {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    /* Rotate on hover */
+    .rotate-on-hover {
+      transition: transform 0.3s ease;
+    }
+    .rotate-on-hover:hover {
+      transform: rotate(360deg);
+    }
+    
+    /* Scale bounce on hover */
+    .bounce-on-hover {
+      transition: transform 0.3s ease;
+    }
+    .bounce-on-hover:hover {
+      animation: bounce 0.6s ease-in-out;
+    }
+    
+    /* Stagger animation delays */
+    .stagger-1 { animation-delay: 0.1s; opacity: 0; }
+    .stagger-2 { animation-delay: 0.2s; opacity: 0; }
+    .stagger-3 { animation-delay: 0.3s; opacity: 0; }
+    .stagger-4 { animation-delay: 0.4s; opacity: 0; }
+    .stagger-5 { animation-delay: 0.5s; opacity: 0; }
+    
+    /* Apply fade in to staggered elements */
+    .stagger-1, .stagger-2, .stagger-3, .stagger-4, .stagger-5 {
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+    
+    /* Smooth scroll reveal */
+    .reveal-on-scroll {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .reveal-on-scroll.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* Icon animations */
+    .icon-spin:hover {
+      animation: spinSlow 2s linear infinite;
+    }
+    
+    /* Link underline animation */
+    .link-underline {
+      position: relative;
+      text-decoration: none;
+    }
+    .link-underline::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #a78bfa, #c084fc);
+      transition: width 0.3s ease;
+    }
+    .link-underline:hover::after {
+      width: 100%;
+    }
 
     /* Hover shimmer */
     .shimmer { position:relative; overflow:hidden; }
@@ -677,8 +901,121 @@
   })();
 </script>
 
+<script>
+  // Auto-apply scroll reveal animations
+  document.addEventListener('DOMContentLoaded', () => {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const element = entry.target;
+          
+          // Add revealed class for CSS animations
+          if (element.classList.contains('reveal-on-scroll')) {
+            element.classList.add('revealed');
+          }
+          
+          // Apply stagger animations
+          if (element.classList.contains('stagger-1') || 
+              element.classList.contains('stagger-2') ||
+              element.classList.contains('stagger-3') ||
+              element.classList.contains('stagger-4') ||
+              element.classList.contains('stagger-5')) {
+            element.style.opacity = '1';
+          }
+          
+          observer.unobserve(element);
+        }
+      });
+    }, observerOptions);
+    
+    // Observe all elements that should animate
+    const elementsToAnimate = document.querySelectorAll(
+      '.reveal-on-scroll, .stagger-1, .stagger-2, .stagger-3, .stagger-4, .stagger-5, [data-animate]'
+    );
+    elementsToAnimate.forEach(el => observer.observe(el));
+    
+    // Add hover effects to cards dynamically
+    const cards = document.querySelectorAll('.d-card, .l-card');
+    cards.forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        this.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+      });
+    });
+    
+    // Add pulse animation to buttons on hover
+    const buttons = document.querySelectorAll('button, a[role="button"], .d-toggle, .l-toggle');
+    buttons.forEach(btn => {
+      btn.addEventListener('mouseenter', function() {
+        if (!this.classList.contains('pulse-glow')) {
+          this.classList.add('pulse-glow');
+        }
+      });
+      btn.addEventListener('mouseleave', function() {
+        this.classList.remove('pulse-glow');
+      });
+    });
+  });
+</script>
+
   <script type="text/babel">
   const { useState, useEffect, useRef, useCallback } = React;
+  
+  // Scroll Animation Observer
+  const useScrollAnimation = () => {
+    useEffect(() => {
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+          if (entry.isIntersecting) {
+            const element = entry.target;
+            const delay = index * 0.1;
+            
+            // Add animation classes based on data attributes
+            if (element.dataset.animate === 'fade-up') {
+              element.style.animation = `fadeInUp 0.8s ease-out ${delay}s forwards`;
+            } else if (element.dataset.animate === 'slide-left') {
+              element.style.animation = `slideInLeft 0.6s ease-out ${delay}s forwards`;
+            } else if (element.dataset.animate === 'slide-right') {
+              element.style.animation = `slideInRight 0.6s ease-out ${delay}s forwards`;
+            } else if (element.dataset.animate === 'scale') {
+              element.style.animation = `fadeInScale 0.6s ease-out ${delay}s forwards`;
+            } else if (element.dataset.animate === 'rotate') {
+              element.style.animation = `rotateIn 0.8s ease-out ${delay}s forwards`;
+            } else {
+              // Default fade in
+              element.style.opacity = '0';
+              element.style.transform = 'translateY(30px)';
+              setTimeout(() => {
+                element.style.transition = 'all 0.6s ease-out';
+                element.style.opacity = '1';
+                element.style.transform = 'translateY(0)';
+              }, delay * 1000);
+            }
+            
+            observer.unobserve(element);
+          }
+        });
+      }, observerOptions);
+      
+      // Observe all elements with data-animate attribute
+      const animatedElements = document.querySelectorAll('[data-animate]');
+      animatedElements.forEach(el => {
+        el.style.opacity = '0';
+        observer.observe(el);
+      });
+      
+      return () => observer.disconnect();
+    }, []);
+  };
 
   /* ══ Icons ══════════════════════════════════════════════════ */
   const GithubIcon = ({s=18}) => (
