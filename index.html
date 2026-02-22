@@ -23,7 +23,7 @@
     /* ── Loader ─────────────────────────────── */
     #loader {
       position: fixed; inset: 0;
-      background: #f5ede0;
+      background: #05050d;
       display: flex; align-items: center; justify-content: center;
       z-index: 9999;
       transition: opacity 0.6s ease;
@@ -32,47 +32,13 @@
     .ld-name {
       font-family: 'Space Grotesk', sans-serif;
       font-weight: 700; font-size: 20px;
-      letter-spacing: .12em; color: #2c1f0e;
+      letter-spacing: .12em; color: #ddddf0;
       margin-bottom: 18px;
     }
-    .ld-name span { color: #b45309; }
-    .ld-track { width: 220px; height: 3px; background: rgba(180,83,9,.15); border-radius: 3px; overflow: hidden; }
-    .ld-fill  { height: 100%; background: linear-gradient(90deg,#b45309,#d97706); border-radius: 3px; width: 0; transition: width .08s linear; }
-    .ld-text  { margin-top: 10px; font-family:'Space Grotesk',sans-serif; font-size: 11px; color: #78614a; letter-spacing: .08em; font-weight: 500; }
-
-    /* ── Grain (dark mode only) ─────────────── */
-    .grain-overlay {
-      position: fixed; inset: -50%;
-      width: 200%; height: 200%;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      opacity: .026; pointer-events: none; z-index: 9990;
-      animation: grain 8s steps(10) infinite;
-    }
-    @keyframes grain {
-      0%  {transform:translate(0,0)}   10%{transform:translate(-5%,-10%)}
-      20% {transform:translate(-15%,5%)} 30%{transform:translate(7%,-25%)}
-      40% {transform:translate(-5%,25%)} 50%{transform:translate(-15%,10%)}
-      60% {transform:translate(15%,0%)} 70%{transform:translate(0%,15%)}
-      80% {transform:translate(3%,35%)} 90%{transform:translate(-10%,10%)}
-    }
-
-    /* ── Theme-switch overlay ───────────────── */
-    #theme-switch-overlay {
-      position: fixed; inset: 0; z-index: 10000;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 18px;
-      pointer-events: none; opacity: 0;
-      transition: opacity .22s ease;
-    }
-    #theme-switch-overlay.show { opacity: 1; pointer-events: all; }
-    .tso-bar { width: 180px; height: 2px; border-radius: 2px; overflow: hidden; }
-    .tso-fill { height: 100%; width: 0%; border-radius: 2px; animation: tsoFill 1.2s ease-out forwards; }
-    @keyframes tsoFill { to { width: 100%; } }
-    .tso-label { font-family: 'Space Grotesk', sans-serif; font-size: 12px; letter-spacing: .1em; font-weight: 600; }
-
-    /* ── Page fade on theme switch ─────────── */
-    .page-fade { opacity: 0 !important; transition: opacity .28s ease !important; }
-    .page-show  { opacity: 1;  transition: opacity .28s ease; }
+    .ld-name span { color: #a78bfa; }
+    .ld-track { width: 220px; height: 3px; background: rgba(124,58,237,.2); border-radius: 3px; overflow: hidden; }
+    .ld-fill  { height: 100%; background: linear-gradient(90deg,#7c3aed,#a78bfa); border-radius: 3px; width: 0; transition: width .08s linear; }
+    .ld-text  { margin-top: 10px; font-family:'Space Grotesk',sans-serif; font-size: 11px; color: #7777aa; letter-spacing: .08em; font-weight: 500; }
 
     /* ── Scrollbars ─────────────────────────── */
     .dark-scroll::-webkit-scrollbar { width: 5px; }
@@ -81,7 +47,6 @@
 
     /* ── Custom cursor ───────────────────────── */
     .dark-cursor-mode, .dark-cursor-mode * { cursor: none !important; }
-    .light-cursor-mode, .light-cursor-mode * { cursor: none !important; }
     .cursor-dot {
       position: fixed; width: 7px; height: 7px; border-radius: 50%;
       background: #a78bfa; pointer-events: none; z-index: 9995; mix-blend-mode: difference;
@@ -93,19 +58,6 @@
       transition: width .18s ease, height .18s ease, border-color .18s ease;
     }
     .cursor-ring.big { width: 38px; height: 38px; border-color: rgba(167,139,250,.7); }
-    
-    /* Light mode cursor */
-    .light-cursor-dot {
-      position: fixed; width: 7px; height: 7px; border-radius: 50%;
-      background: #b45309; pointer-events: none; z-index: 9995; mix-blend-mode: difference;
-    }
-    .light-cursor-ring {
-      position: fixed; width: 26px; height: 26px;
-      border: 1.5px solid rgba(180,83,9,.4); border-radius: 50%;
-      pointer-events: none; z-index: 9994;
-      transition: width .18s ease, height .18s ease, border-color .18s ease;
-    }
-    .light-cursor-ring.big { width: 38px; height: 38px; border-color: rgba(180,83,9,.7); }
 
     /* ── Scroll progress ────────────────────── */
     .scroll-bar {
@@ -135,11 +87,6 @@
       background: #05050d; color: #ddddf0;
       overflow-x: hidden; min-height: 100vh;
     }
-    /* Canvas bg sits at z=0 */
-    #circuit-canvas {
-      position: fixed; inset: 0; width: 100%; height: 100%;
-      pointer-events: none; z-index: 0;
-    }
 
     .d-nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 500;
@@ -162,15 +109,6 @@
       transition: color .2s; padding-bottom: 2px;
     }
     .d-nav-link.active { color: #a78bfa; border-bottom: 1px solid #a78bfa; }
-    .d-toggle {
-      font-size: 11px; padding: 5px 12px;
-      border: 1px solid rgba(124,58,237,.3); border-radius: 4px;
-      color: #7777aa; background: rgba(124,58,237,.08);
-      font-family: 'JetBrains Mono', monospace;
-      transition: all .2s; letter-spacing: .06em;
-    }
-    .d-toggle:hover { border-color: rgba(167,139,250,.5); color: #a78bfa; }
-
     /* System card */
     .sys-card {
       background: rgba(12,12,28,.9); border: 1px solid rgba(124,58,237,.2);
@@ -293,163 +231,6 @@
     .thin-scroll::-webkit-scrollbar-track { background: transparent; }
     .thin-scroll::-webkit-scrollbar-thumb { background: rgba(124,58,237,.3); border-radius:2px; }
 
-    /* ══════════════════════════════════════════
-       LIGHT THEME — WARM OFF-WHITE
-    ══════════════════════════════════════════ */
-    .l-body {
-      font-family: 'Space Grotesk', sans-serif;
-      background: #f5ede0;
-      color: #2c1f0e;
-      overflow-x: hidden; min-height: 100vh;
-      position: relative;
-    }
-    /* Warm paper texture overlay */
-    .l-body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background:
-        radial-gradient(ellipse at 20% 30%, rgba(217,119,6,.08) 0%, transparent 55%),
-        radial-gradient(ellipse at 80% 70%, rgba(180,83,9,.06) 0%, transparent 50%),
-        radial-gradient(ellipse at 55% 10%, rgba(251,146,60,.05) 0%, transparent 45%);
-      pointer-events: none; z-index: 0;
-    }
-
-    .l-nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
-      background: rgba(245,237,224,.96); backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(180,83,9,.15);
-    }
-    .l-nav-inner {
-      max-width: 1080px; margin: 0 auto; padding: 0 28px;
-      height: 60px; display: flex; align-items: center; justify-content: space-between;
-    }
-    .l-nav-brand {
-      font-weight: 700; font-size: 17px; color: #2c1f0e;
-      background: none; border: none; letter-spacing: -.01em; cursor: pointer;
-    }
-    .l-nav-brand span { color: #b45309; }
-    .l-nav-links { display: flex; align-items: center; gap: 28px; }
-    .l-nav-link {
-      font-size: 14px; color: #78614a; background: none; border: none;
-      font-weight: 500; transition: color .2s;
-      font-family: 'Space Grotesk', sans-serif;
-      position: relative; cursor: pointer;
-    }
-    .l-nav-link::after {
-      content: ''; position: absolute; bottom: -4px; left: 0;
-      width: 0; height: 2px;
-      background: #b45309;
-      transition: width .25s ease;
-    }
-    .l-nav-link:hover { color: #2c1f0e; }
-    .l-nav-link:hover::after { width: 100%; }
-    .l-nav-link.active { color: #b45309; font-weight: 600; }
-    .l-nav-link.active::after { width: 100%; }
-    .l-toggle {
-      font-size: 12px; padding: 6px 15px; border-radius: 20px;
-      border: 1.5px solid #b45309; color: #b45309;
-      background: transparent; font-weight: 600;
-      font-family: 'Space Grotesk', sans-serif;
-      transition: all .25s ease;
-      letter-spacing: .02em; cursor: pointer;
-      display: inline-flex; align-items: center; gap: 6px;
-    }
-    .l-toggle:hover {
-      background: #b45309; color: #fff;
-      box-shadow: 0 3px 10px rgba(180,83,9,.25);
-    }
-
-    /* ── Sticky-note cards ── */
-    .l-card {
-      background: #fef3c7;
-      border: none; border-radius: 2px;
-      box-shadow: 2px 3px 10px rgba(0,0,0,.13), 4px 6px 20px rgba(0,0,0,.07),
-                  inset 0 1px 0 rgba(255,255,255,.6);
-      transition: transform .25s ease, box-shadow .25s ease;
-      position: relative; overflow: visible;
-      transform: rotate(-1.2deg);
-    }
-    /* Tape strip */
-    .l-card::before {
-      content: ''; position: absolute; top: -10px; left: 22px; right: 22px;
-      height: 18px;
-      background: rgba(255,255,255,.55);
-      backdrop-filter: blur(2px);
-      border-radius: 2px;
-      box-shadow: 0 1px 4px rgba(0,0,0,.08);
-    }
-    /* Warm pastel rotations — no cold blues / greens */
-    .l-card:nth-child(1) { background:#fef3c7; transform:rotate(-1.2deg); }  /* warm amber */
-    .l-card:nth-child(2) { background:#fde8d0; transform:rotate(1.4deg);  }  /* peach */
-    .l-card:nth-child(3) { background:#fef9c3; transform:rotate(-0.7deg); }  /* warm yellow */
-    .l-card:nth-child(4) { background:#fde0d9; transform:rotate(1.9deg);  }  /* warm rose */
-    .l-card:nth-child(5) { background:#fef3c7; transform:rotate(-1deg);   }  /* amber */
-    .l-card:nth-child(6) { background:#f9e8c8; transform:rotate(0.8deg);  }  /* warm cream */
-    .l-card:hover {
-      transform: rotate(0deg) translateY(-12px) scale(1.05);
-      box-shadow: 6px 16px 40px rgba(0,0,0,.2), 4px 8px 16px rgba(0,0,0,.12),
-                  inset 0 1px 0 rgba(255,255,255,.6);
-      z-index: 10;
-      animation: bounce 0.6s ease-in-out;
-    }
-
-    /* ── Section headings ── */
-    .l-section-label {
-      font-size: 11px; letter-spacing: .14em;
-      color: #b45309; text-transform: uppercase; font-weight: 700;
-      margin-bottom: 10px;
-    }
-    .l-section-title {
-      font-weight: 700; font-size: clamp(2rem,4vw,3rem);
-      color: #2c1f0e;
-      line-height: 1.1; letter-spacing: -.02em;
-    }
-    .l-accent-line {
-      width: 40px; height: 3px;
-      background: linear-gradient(90deg, #b45309, #d97706);
-      border-radius: 2px; margin-bottom: 24px;
-    }
-
-    /* ── Tags ── */
-    .l-tag {
-      display: inline-flex; padding: 4px 12px; border-radius: 20px;
-      font-size: 12px; font-weight: 500;
-      transition: all .2s ease;
-    }
-    .l-tag.ind {
-      background: rgba(180,83,9,.09);
-      color: #92400e;
-      border: 1px solid rgba(180,83,9,.2);
-    }
-    .l-tag.ind:hover { background: rgba(180,83,9,.15); transform: translateY(-1px); }
-    .l-tag.slt {
-      background: rgba(0,0,0,.06);
-      color: #6b5240;
-      border: 1px solid rgba(0,0,0,.1);
-    }
-    .l-tag.slt:hover { background: rgba(0,0,0,.1); }
-
-    /* ── Code block (stays dark for readability) ── */
-    .l-code { background: #1e1e2e; border-radius: 8px; overflow: hidden; }
-    .l-code-hd {
-      background: rgba(255,255,255,.05);
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      padding: 8px 14px; display: flex; align-items: center; justify-content: space-between;
-    }
-
-    /* ── Status chip ── */
-    .l-chip {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 5px 13px; border-radius: 24px;
-      font-size: 13px; font-weight: 500;
-      transition: all .2s ease;
-    }
-    .l-chip.av {
-      background: rgba(16,185,129,.1);
-      color: #065f46;
-      border: 1px solid rgba(16,185,129,.25);
-    }
-
     /* ── Animations ── */
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(20px); }
@@ -566,7 +347,7 @@
     }
     
     /* Smooth transitions for all interactive elements */
-    a, button, .d-card, .l-card {
+    a, button, .d-card {
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
@@ -712,38 +493,6 @@
     .mob-menu-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
     .mob-menu-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-    /* ── Light mobile nav drawer ─────────────── */
-    .l-mob-drawer {
-      position: fixed; top: 60px; left: 0; right: 0;
-      background: rgba(245,237,224,.98); backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(180,83,9,.15);
-      padding: 20px 28px 28px;
-      display: flex; flex-direction: column; gap: 4px;
-      z-index: 499;
-      transform: translateY(-110%);
-      transition: transform .35s cubic-bezier(.4,0,.2,1);
-    }
-    .l-mob-drawer.open { transform: translateY(0); }
-    .l-mob-link {
-      font-size: 16px; font-weight: 500; color: #78614a;
-      background: none; border: none; text-align: left;
-      padding: 12px 0; cursor: pointer;
-      font-family: 'Space Grotesk', sans-serif;
-      border-bottom: 1px solid rgba(180,83,9,.08);
-      transition: color .2s;
-    }
-    .l-mob-link:last-of-type { border-bottom: none; }
-    .l-mob-link:hover, .l-mob-link.active { color: #b45309; }
-    .l-mob-toggle {
-      margin-top: 12px; padding: 10px 0; text-align: center;
-      font-size: 14px; font-weight: 600; color: #b45309;
-      background: rgba(180,83,9,.08); border: 1.5px solid rgba(180,83,9,.25);
-      border-radius: 8px; cursor: pointer;
-      font-family: 'Space Grotesk', sans-serif;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      transition: all .2s;
-    }
-
     /* ── Dark mobile nav drawer ──────────────── */
     .d-mob-drawer {
       position: fixed; top: 54px; left: 0; right: 0;
@@ -766,19 +515,10 @@
     }
     .d-mob-link:last-of-type { border-bottom: none; }
     .d-mob-link:hover, .d-mob-link.active { color: #a78bfa; }
-    .d-mob-toggle {
-      margin-top: 12px; padding: 10px 0; text-align: center;
-      font-size: 13px; color: #a78bfa;
-      background: rgba(124,58,237,.1); border: 1px solid rgba(124,58,237,.3);
-      border-radius: 6px; cursor: pointer;
-      font-family: 'JetBrains Mono', monospace;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      transition: all .2s;
-    }
 
     /* ── Tablet (≤900px) ─────────────────────── */
     @media (max-width: 900px) {
-      .d-nav-links, .l-nav-links { display: none !important; }
+      .d-nav-links { display: none !important; }
       .mob-menu-btn { display: flex !important; }
 
       /* Dark Hero: stack columns */
@@ -798,10 +538,9 @@
     /* ── Mobile (≤640px) ─────────────────────── */
     @media (max-width: 640px) {
       /* Navs */
-      .l-nav-inner, .d-nav-inner { padding: 0 18px !important; }
+      .d-nav-inner { padding: 0 18px !important; }
 
       /* Hero sections */
-      #l-home { padding: 100px 18px 60px !important; }
       #d-home { padding: 80px 18px 40px !important; }
 
       /* Section padding */
@@ -809,24 +548,11 @@
       section > div { padding-left: 0 !important; padding-right: 0 !important; }
 
       /* Light about: stack grid */
-      #l-about .about-2col { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
-
-      /* Sticky notes: no rotation on small screens */
-      .l-card { transform: none !important; }
-      .l-card:hover { transform: translateY(-4px) scale(1.01) !important; }
-
       /* Contact email: shrink text */
       .contact-email { font-size: 13px !important; padding: 12px 18px !important; }
 
       /* Reduce heading sizes */
       .d-section-title { font-size: clamp(1.6rem,7vw,2.4rem) !important; }
-      .l-section-title { font-size: clamp(1.6rem,7vw,2.4rem) !important; }
-    }
-
-    /* ── Small mobile (≤380px) ───────────────── */
-    @media (max-width: 380px) {
-      #l-home h1 { font-size: clamp(2.4rem,14vw,3.5rem) !important; }
-      .l-card::before { display: none; } /* hide tape on very small */
     }
 
     /* ── Dark hero: center on mobile ────────── */
@@ -839,14 +565,9 @@
       /* Dark about: single column */
       #d-about .about-grid { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
 
-      /* Light about: single column */
-      #l-about .about-2col { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
-
       /* Sections: reduce padding */
-      #l-home { padding-top: 100px !important; padding-bottom: 60px !important; }
       #d-home { padding-top: 80px !important; padding-bottom: 40px !important; }
-      #l-about, #d-about, #d-timeline, #d-projects, #d-stack, #d-contact,
-      #l-projects, #l-skills, #l-contact { padding-top: 80px !important; padding-bottom: 80px !important; }
+      #d-about, #d-timeline, #d-projects, #d-stack, #d-contact { padding-top: 80px !important; padding-bottom: 80px !important; }
 
       /* Contact email */
       .contact-email { font-size: 13px !important; padding: 12px 20px !important; word-break: break-all; }
@@ -854,25 +575,15 @@
 
     /* ── Mobile: horizontal padding ─────────── */
     @media (max-width: 640px) {
-      #l-about { padding-left: 18px !important; padding-right: 18px !important; }
       #d-about { padding-left: 18px !important; padding-right: 18px !important; }
-      #l-projects { padding-left: 18px !important; padding-right: 18px !important; }
       #d-projects { padding-left: 18px !important; padding-right: 18px !important; }
-      #l-skills { padding-left: 18px !important; padding-right: 18px !important; }
       #d-stack { padding-left: 18px !important; padding-right: 18px !important; }
-      #l-contact { padding-left: 18px !important; padding-right: 18px !important; }
       #d-contact { padding-left: 18px !important; padding-right: 18px !important; }
       #d-timeline { padding-left: 18px !important; padding-right: 18px !important; }
     }
   </style>
 </head>
 <body>
-
-<!-- Theme-switch overlay -->
-<div id="theme-switch-overlay">
-  <div class="tso-label" id="tso-label">switching theme...</div>
-  <div class="tso-bar"><div class="tso-fill" id="tso-fill"></div></div>
-</div>
 
 <!-- Loader -->
 <div id="loader">
@@ -940,7 +651,7 @@
     elementsToAnimate.forEach(el => observer.observe(el));
     
     // Add hover effects to cards dynamically
-    const cards = document.querySelectorAll('.d-card, .l-card');
+    const cards = document.querySelectorAll('.d-card');
     cards.forEach(card => {
       card.addEventListener('mouseenter', function() {
         this.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
@@ -948,7 +659,7 @@
     });
     
     // Add pulse animation to buttons on hover
-    const buttons = document.querySelectorAll('button, a[role="button"], .d-toggle, .l-toggle');
+    const buttons = document.querySelectorAll('button, a[role="button"]');
     buttons.forEach(btn => {
       btn.addEventListener('mouseenter', function() {
         if (!this.classList.contains('pulse-glow')) {
@@ -1311,30 +1022,6 @@ cred = manager.get('github.com')`,
     return <><div ref={dotRef} className="cursor-dot"/><div ref={ringRef} className="cursor-ring"/></>;
   };
 
-  /* ══ Light cursor ═══════════════════════════════════════════ */
-  const LightCursor = () => {
-    const dotRef=useRef(null); const ringRef=useRef(null);
-    const pos=useRef({x:0,y:0}); const ring=useRef({x:0,y:0});
-    useEffect(()=>{
-      let raf;
-      const onMove=e=>{pos.current={x:e.clientX,y:e.clientY};};
-      const big=()=>ringRef.current?.classList.add('big');
-      const sm=()=>ringRef.current?.classList.remove('big');
-      const tick=()=>{
-        ring.current.x+=(pos.current.x-ring.current.x)*.12;
-        ring.current.y+=(pos.current.y-ring.current.y)*.12;
-        if(dotRef.current){dotRef.current.style.left=pos.current.x-3.5+'px';dotRef.current.style.top=pos.current.y-3.5+'px';}
-        if(ringRef.current){ringRef.current.style.left=ring.current.x-13+'px';ringRef.current.style.top=ring.current.y-13+'px';}
-        raf=requestAnimationFrame(tick);
-      };
-      tick();
-      window.addEventListener('mousemove',onMove);
-      document.querySelectorAll('a,button').forEach(el=>{el.addEventListener('mouseenter',big);el.addEventListener('mouseleave',sm);});
-      return ()=>{cancelAnimationFrame(raf);window.removeEventListener('mousemove',onMove);};
-    },[]);
-    return <><div ref={dotRef} className="light-cursor-dot"/><div ref={ringRef} className="light-cursor-ring"/></>;
-  };
-
   /* ══ Tilt card ══════════════════════════════════════════════ */
   const TiltCard = ({children,className='',style={}}) => {
     const ref=useRef(null); const [t,setT]=useState({x:0,y:0}); const [h,setH]=useState(false);
@@ -1454,7 +1141,7 @@ cred = manager.get('github.com')`,
       );
     };
 
-  const DarkNav = ({active, onToggle}) => {
+  const DarkNav = ({active}) => {
     const ids=['d-home','d-about','d-timeline','d-projects','d-stack','d-contact'];
     const labels=['home','about','log','projects','stack','contact'];
     const [open,setOpen]=useState(false);
@@ -1467,16 +1154,13 @@ cred = manager.get('github.com')`,
           <button className="d-nav-brand" onClick={()=>nav('d-home')}>
             hamza<span>.</span>
           </button>
-          {/* Desktop links */}
           <div className="d-nav-links">
             {ids.map((id,i)=>(
               <button key={id} className={`d-nav-link ${active===id?'active':''}`} onClick={()=>goto(id)}>
                 ./{labels[i]}
               </button>
             ))}
-            <button className="d-toggle" onClick={onToggle}><SunIcon s={13}/> &nbsp;light</button>
           </div>
-          {/* Hamburger */}
           <button className={`mob-menu-btn ${open?'open':''}`} onClick={()=>setOpen(o=>!o)} aria-label="menu">
             <span style={{background:'#7777aa'}}/>
             <span style={{background:'#7777aa'}}/>
@@ -1484,16 +1168,12 @@ cred = manager.get('github.com')`,
           </button>
         </div>
       </nav>
-      {/* Mobile drawer */}
       <div className={`d-mob-drawer ${open?'open':''}`}>
         {ids.map((id,i)=>(
           <button key={id} className={`d-mob-link ${active===id?'active':''}`} onClick={()=>nav(id)}>
             ./{labels[i]}
           </button>
         ))}
-        <button className="d-mob-toggle" onClick={()=>{onToggle();close();}}>
-          <SunIcon s={14}/> switch to light mode
-        </button>
       </div>
       </>
     );
@@ -1831,126 +1511,7 @@ cred = manager.get('github.com')`,
       );
     };
 
-  /* ══ Circuit board background ═══════════════════════════════ */
-  const CircuitBackground = () => {
-      const canvasRef = useRef(null);
-    useEffect(()=>{
-        const canvas = canvasRef.current;
-      if(!canvas) return;
-        const ctx = canvas.getContext('2d');
-      let W, H, nodes, animId;
-
-      const resize = () => {
-        W = canvas.width = window.innerWidth;
-        H = canvas.height = window.innerHeight;
-        init();
-      };
-
-      const rand = (a,b) => a + Math.random()*(b-a);
-
-      const init = () => {
-        nodes = [];
-        const count = Math.floor((W * H) / 22000);
-        for(let i=0; i<count; i++){
-          nodes.push({
-            x: rand(0,W), y: rand(0,H),
-            vx: rand(-.15,.15), vy: rand(-.15,.15),
-            r: rand(1.5,3),
-            pulse: rand(0, Math.PI*2),
-            pulseSpeed: rand(.01,.025),
-            connections: [],
-            });
-          }
-        };
-
-      // scanline position
-      let scanY = 0;
-
-      const draw = () => {
-        ctx.clearRect(0,0,W,H);
-
-        // faint scanlines
-        scanY = (scanY + 0.4) % H;
-        const scanGrad = ctx.createLinearGradient(0, scanY-60, 0, scanY+60);
-        scanGrad.addColorStop(0,'rgba(124,58,237,0)');
-        scanGrad.addColorStop(.5,'rgba(124,58,237,0.025)');
-        scanGrad.addColorStop(1,'rgba(124,58,237,0)');
-        ctx.fillStyle = scanGrad;
-        ctx.fillRect(0, scanY-60, W, 120);
-
-        // move nodes
-        nodes.forEach(n=>{
-          n.x += n.vx; n.y += n.vy;
-          if(n.x<0||n.x>W) n.vx*=-1;
-          if(n.y<0||n.y>H) n.vy*=-1;
-          n.pulse += n.pulseSpeed;
-        });
-
-        // draw edges with circuit-board L-shaped routes
-        const maxDist = 160;
-        for(let i=0;i<nodes.length;i++){
-          for(let j=i+1;j<nodes.length;j++){
-            const a=nodes[i], b=nodes[j];
-            const dx=b.x-a.x, dy=b.y-a.y;
-            const dist=Math.sqrt(dx*dx+dy*dy);
-            if(dist>maxDist) continue;
-            const alpha = (1-(dist/maxDist))*0.35;
-            // L-shaped path (horizontal then vertical)
-              ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, a.y);  // horizontal segment
-            ctx.lineTo(b.x, b.y);  // vertical segment
-            ctx.strokeStyle = `rgba(124,58,237,${alpha*0.6})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-            // draw corner dot
-            ctx.beginPath();
-            ctx.arc(b.x, a.y, 1.5, 0, Math.PI*2);
-            ctx.fillStyle = `rgba(167,139,250,${alpha*0.8})`;
-              ctx.fill();
-          }
-        }
-
-        // draw nodes (pulsing)
-        nodes.forEach(n=>{
-          const glow = 0.5 + 0.5*Math.sin(n.pulse);
-          // outer glow
-          const grad = ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r*5);
-          grad.addColorStop(0,`rgba(167,139,250,${0.25*glow})`);
-          grad.addColorStop(1,'rgba(167,139,250,0)');
-              ctx.beginPath();
-          ctx.arc(n.x, n.y, n.r*5, 0, Math.PI*2);
-          ctx.fillStyle = grad;
-              ctx.fill();
-          // core dot
-          ctx.beginPath();
-          ctx.arc(n.x, n.y, n.r, 0, Math.PI*2);
-          ctx.fillStyle = `rgba(167,139,250,${0.6+0.4*glow})`;
-          ctx.fill();
-        });
-
-        // ambient corner glows
-        const drawCornerGlow = (x,y,color) => {
-          const g = ctx.createRadialGradient(x,y,0,x,y,Math.min(W,H)*0.45);
-          g.addColorStop(0,color);
-          g.addColorStop(1,'rgba(0,0,0,0)');
-          ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
-        };
-        drawCornerGlow(W*0.15, H*0.25, 'rgba(124,58,237,0.06)');
-        drawCornerGlow(W*0.85, H*0.75, 'rgba(59,130,246,0.04)');
-
-        animId = requestAnimationFrame(draw);
-      };
-
-      resize();
-      window.addEventListener('resize', resize);
-      draw();
-      return () => { cancelAnimationFrame(animId); window.removeEventListener('resize',resize); };
-    },[]);
-    return <canvas ref={canvasRef} id="circuit-canvas"/>;
-  };
-
-  const DarkPortfolio = ({onToggle}) => {
+  const DarkPortfolio = () => {
     const [loaded,setLoaded]=useState(false);
     const ids=['d-home','d-about','d-timeline','d-projects','d-stack','d-contact'];
     const active=useScrollSections(ids);
@@ -1964,13 +1525,11 @@ cred = manager.get('github.com')`,
     },[]);
       return (
       <div className="d-body dark-scroll dark-cursor-mode">
-        <CircuitBackground/>
-        <div className="grain-overlay"/>
         <ScrollProgress color="linear-gradient(90deg,#7c3aed,#a78bfa)"/>
         <DarkCursor/>
         <KonamiEgg dark/>
         <DarkTerminal/>
-        <DarkNav active={active} onToggle={onToggle}/>
+        <DarkNav active={active}/>
         <DarkHero loaded={loaded}/>
         <DarkAbout/>
         <DarkTimeline/>
@@ -1981,489 +1540,14 @@ cred = manager.get('github.com')`,
       );
     };
 
-  /* ══════════════════════════════════════════════════════════
-     LIGHT MODE COMPONENTS
-  ══════════════════════════════════════════════════════════ */
-
-  const LightNav = ({active, onToggle}) => {
-    const ids=['l-home','l-about','l-projects','l-skills','l-contact'];
-    const labels=['Home','About','Projects','Skills','Contact'];
-    const [open,setOpen]=useState(false);
-    const close=()=>setOpen(false);
-    const nav=(id)=>{goto(id);close();};
-    return (
-      <>
-      <nav className="l-nav">
-        <div className="l-nav-inner">
-          <button className="l-nav-brand" onClick={()=>nav('l-home')}>
-            Hamza<span>.</span>
-          </button>
-          {/* Desktop links */}
-          <div className="l-nav-links">
-            {ids.map((id,i)=>(
-              <button key={id} className={`l-nav-link ${active===id?'active':''}`} onClick={()=>goto(id)}>
-                {labels[i]}
-              </button>
-            ))}
-            <button className="l-toggle" onClick={onToggle}><MoonIcon s={13}/> &nbsp;dark</button>
-          </div>
-          {/* Hamburger */}
-          <button className={`mob-menu-btn ${open?'open':''}`} onClick={()=>setOpen(o=>!o)} aria-label="menu">
-            <span style={{background:'#78614a'}}/>
-            <span style={{background:'#78614a'}}/>
-            <span style={{background:'#78614a'}}/>
-          </button>
-        </div>
-      </nav>
-      {/* Mobile drawer */}
-      <div className={`l-mob-drawer ${open?'open':''}`}>
-        {ids.map((id,i)=>(
-          <button key={id} className={`l-mob-link ${active===id?'active':''}`} onClick={()=>nav(id)}>
-            {labels[i]}
-          </button>
-        ))}
-        <button className="l-mob-toggle" onClick={()=>{onToggle();close();}}>
-          <MoonIcon s={14}/> switch to dark mode
-        </button>
-      </div>
-      </>
-    );
-  };
-
-  const LightHero = ({loaded}) => {
-    const [mousePos,setMousePos]=useState({x:0,y:0});
-    useEffect(()=>{
-      const onMove=e=>{setMousePos({x:e.clientX/window.innerWidth,y:e.clientY/window.innerHeight});};
-      window.addEventListener('mousemove',onMove);
-      return ()=>window.removeEventListener('mousemove',onMove);
-    },[]);
-    return (
-      <section id="l-home" style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:'80px 28px',textAlign:'center',position:'relative',overflow:'hidden'}}>
-        {/* Warm dot grid */}
-        <div style={{
-          position:'absolute',inset:0,
-          backgroundImage:'radial-gradient(rgba(180,83,9,.07) 1px, transparent 1px)',
-          backgroundSize:'32px 32px',
-          backgroundPosition:`${mousePos.x*15}px ${mousePos.y*15}px`,
-          zIndex:0,transition:'background-position .1s ease-out'
-        }}/>
-        {/* Warm ambient orbs */}
-        <div style={{
-          position:'absolute',width:'420px',height:'420px',
-          background:'radial-gradient(circle, rgba(217,119,6,0.12) 0%, transparent 70%)',
-          borderRadius:'50%',top:'10%',left:'5%',
-          filter:'blur(70px)',zIndex:0,
-          animation:'float 9s ease-in-out infinite',
-          transform:`translate(${mousePos.x*25}px, ${mousePos.y*25}px)`
-        }}/>
-        <div style={{
-          position:'absolute',width:'360px',height:'360px',
-          background:'radial-gradient(circle, rgba(251,146,60,0.1) 0%, transparent 70%)',
-          borderRadius:'50%',bottom:'15%',right:'8%',
-          filter:'blur(60px)',zIndex:0,
-          animation:'float 11s ease-in-out infinite 1s',
-          transform:`translate(${mousePos.x*-20}px, ${mousePos.y*-20}px)`
-        }}/>
-        <div style={{maxWidth:680,position:'relative',zIndex:1,opacity:loaded?1:0,transition:'opacity .9s ease .1s'}}>
-          <div style={{marginBottom:20,animation:'fadeInUp .8s ease-out .2s both'}}>
-            <span className="l-chip av">
-              <span style={{width:7,height:7,borderRadius:'50%',background:'#10b981',display:'inline-block',animation:'blink 2s ease-in-out infinite'}}/>
-              Open to opportunities
-            </span>
-              </div>
-          <h1 style={{
-            fontFamily:'Space Grotesk',fontWeight:700,fontSize:'clamp(3.2rem,9vw,6rem)',
-            letterSpacing:'-.03em',lineHeight:1,marginBottom:20,
-            color:'#2c1f0e',
-            animation:'fadeInUp .8s ease-out .3s both'
-          }}>
-            Hi, I'm<br/>
-            <span style={{
-              color:'#b45309',display:'inline-block',
-              animation:'scaleIn .6s ease-out .5s both'
-            }}>Hamza.</span>
-          </h1>
-          <p style={{
-            fontSize:'clamp(1rem,2.5vw,1.2rem)',color:'#5c4a32',lineHeight:1.7,
-            marginBottom:16,fontWeight:400,
-            animation:'fadeInUp .8s ease-out .4s both'
-          }}>
-            Security researcher and developer from India.
-          </p>
-          <p style={{
-            fontSize:15,color:'#78614a',lineHeight:1.8,marginBottom:44,
-            maxWidth:520,margin:'0 auto 44px',
-            animation:'fadeInUp .8s ease-out .5s both'
-          }}>
-            I build tools, explore systems, and try to understand how things work by
-            taking them apart. Currently studying CSE while going deep on security.
-          </p>
-          <div style={{
-            display:'flex',gap:14,justifyContent:'center',flexWrap:'wrap',
-            animation:'fadeInUp .8s ease-out .6s both'
-          }}>
-            <button onClick={()=>goto('l-projects')}
-                style={{ 
-                display:'flex',alignItems:'center',gap:8,padding:'14px 32px',
-                background:'#b45309',
-                color:'#fff',border:'none',borderRadius:10,fontSize:15,fontWeight:600,
-                fontFamily:'Space Grotesk',transition:'all .25s ease',
-                cursor:'pointer',boxShadow:'0 4px 14px rgba(180,83,9,.3)',
-              }}
-              onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-3px)';e.currentTarget.style.boxShadow='0 8px 20px rgba(180,83,9,.4)';}}
-              onMouseLeave={e=>{e.currentTarget.style.transform='translateY(0)';e.currentTarget.style.boxShadow='0 4px 14px rgba(180,83,9,.3)';}}>
-              View My Work <ArrowRight s={16}/>
-            </button>
-            <a href="mailto:hamza0jeelani@gmail.com"
-              style={{
-                display:'flex',alignItems:'center',gap:8,padding:'14px 32px',
-                background:'transparent',color:'#2c1f0e',
-                border:'2px solid rgba(180,83,9,.3)',borderRadius:10,
-                fontSize:15,fontWeight:600,textDecoration:'none',
-                transition:'all .25s ease',
-              }}
-              onMouseEnter={e=>{
-                e.currentTarget.style.background='rgba(180,83,9,.08)';
-                e.currentTarget.style.borderColor='rgba(180,83,9,.5)';
-                e.currentTarget.style.transform='translateY(-2px)';
-              }}
-              onMouseLeave={e=>{
-                e.currentTarget.style.background='transparent';
-                e.currentTarget.style.borderColor='rgba(180,83,9,.3)';
-                e.currentTarget.style.transform='translateY(0)';
-              }}>
-              Say Hello <MailIcon s={16}/>
-                </a>
-              </div>
-            </div>
-        {/* Scroll hint */}
-        <div style={{position:'absolute',bottom:36,left:'50%',transform:'translateX(-50%)',opacity:loaded?.4:0,transition:'opacity 1s ease 1.5s'}} className="bob">
-          <div style={{
-            width:22,height:36,border:'1.5px solid rgba(180,83,9,.25)',
-            borderRadius:12,display:'flex',justifyContent:'center',padding:'5px 0',
-            background:'rgba(180,83,9,.04)'
-          }}>
-            <div style={{
-              width:4,height:8,background:'#b45309',
-              borderRadius:4
-            }}/>
-              </div>
-            </div>
-          </section>
-    );
-  };
-
-  const LightAbout = () => {
-    const [r1,v1]=useReveal(); const [r2,v2]=useReveal();
-    const facts=[
-      'Currently studying Computer Science',
-      'Self-taught in cybersecurity',
-      'Linux daily driver (Arch, since you asked)',
-      'Python is my language of choice',
-      'Building things that solve real problems',
-    ];
-    return (
-      <section id="l-about" style={{padding:'100px 28px',background:'#f0e6d2'}}>
-        <div style={{maxWidth:1080,margin:'0 auto'}}>
-          <div className="about-2col" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'5rem',alignItems:'start'}}>
-            <div ref={r1} className={`sr ${v1?'in':''}`}>
-              <div className="l-section-label">About Me</div>
-              <div className="l-accent-line"/>
-              <h2 className="l-section-title" style={{marginBottom:28}}>A bit about who I am.</h2>
-              <div style={{display:'flex',flexDirection:'column',gap:18}}>
-                <p style={{color:'#5c4a32',lineHeight:1.9,fontSize:15}}>
-                  I'm a 21-year-old CSE student from India who fell into cybersecurity
-                  and hasn't looked back. What started as curiosity about how systems
-                  work turned into a genuine interest in finding where they don't.
-                </p>
-                <p style={{color:'#5c4a32',lineHeight:1.9,fontSize:15}}>
-                  I learn best by doing — most of what I know came from breaking
-                  something, understanding why, and then building something better.
-                  The projects on this site are all things I made to solve problems
-                  I actually had.
-                </p>
-                <p style={{color:'#5c4a32',lineHeight:1.9,fontSize:15}}>
-                  Alongside security, I write a fair amount of Python, use Linux
-                  as my daily driver, and spend more time in the terminal than
-                  most people would consider reasonable.
-                  </p>
-                </div>
-              <div style={{display:'flex',gap:10,flexWrap:'wrap',marginTop:28}}>
-                {['Python','Linux','Security','Networking'].map(t=>(
-                  <span key={t} className="l-tag ind">{t}</span>
-                ))}
-                    </div>
-            </div>
-            <div ref={r2} className={`sr ${v2?'in':''}`} style={{transitionDelay:'.1s'}}>
-              <div className="l-card" style={{padding:28}}>
-                <div style={{fontWeight:700,fontSize:13,color:'#92400e',marginBottom:18,borderBottom:'1px solid rgba(180,83,9,.15)',paddingBottom:14,textTransform:'uppercase',letterSpacing:'.08em'}}>
-                  A few quick facts
-                </div>
-                <ul style={{display:'flex',flexDirection:'column',gap:12}}>
-                  {facts.map((f,i)=>(
-                    <li key={i} style={{
-                      display:'flex',alignItems:'flex-start',gap:12,
-                      transition:'all .2s ease',
-                      padding:'6px 8px',borderRadius:6
-                    }}
-                    onMouseEnter={e=>{e.currentTarget.style.background='rgba(180,83,9,.06)';e.currentTarget.style.transform='translateX(4px)';}}
-                    onMouseLeave={e=>{e.currentTarget.style.background='transparent';e.currentTarget.style.transform='translateX(0)';}}>
-                      <span style={{color:'#b45309',fontWeight:700,fontSize:16,lineHeight:1.5}}>→</span>
-                      <span style={{color:'#2c1f0e',fontSize:14,lineHeight:1.6,fontWeight:500}}>{f}</span>
-                        </li>
-                      ))}
-                    </ul>
-                <div style={{marginTop:24,paddingTop:18,borderTop:'1px solid rgba(180,83,9,.12)'}}>
-                  <div style={{fontSize:12,color:'#b45309',marginBottom:12,fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>Find me on</div>
-                  <div style={{display:'flex',gap:10}}>
-                    <a href="https://github.com/crepco" target="_blank" rel="noopener noreferrer"
-                      style={{
-                        display:'flex',alignItems:'center',gap:7,padding:'9px 16px',
-                        border:'1.5px solid rgba(180,83,9,.25)',borderRadius:8,
-                        color:'#92400e',textDecoration:'none',fontSize:13,fontWeight:600,
-                        transition:'all .2s ease', background:'rgba(180,83,9,.05)'
-                      }}
-                      onMouseEnter={e=>{e.currentTarget.style.background='rgba(180,83,9,.1)';e.currentTarget.style.transform='translateY(-2px)';}}
-                      onMouseLeave={e=>{e.currentTarget.style.background='rgba(180,83,9,.05)';e.currentTarget.style.transform='translateY(0)';}}>
-                      <GithubIcon s={15}/> GitHub
-                    </a>
-                    <a href="mailto:hamza0jeelani@gmail.com"
-                      style={{
-                        display:'flex',alignItems:'center',gap:7,padding:'9px 16px',
-                        border:'1.5px solid rgba(180,83,9,.25)',borderRadius:8,
-                        color:'#92400e',textDecoration:'none',fontSize:13,fontWeight:600,
-                        transition:'all .2s ease', background:'rgba(180,83,9,.05)'
-                      }}
-                      onMouseEnter={e=>{e.currentTarget.style.background='rgba(180,83,9,.1)';e.currentTarget.style.transform='translateY(-2px)';}}
-                      onMouseLeave={e=>{e.currentTarget.style.background='rgba(180,83,9,.05)';e.currentTarget.style.transform='translateY(0)';}}>
-                      <MailIcon s={15}/> Email
-                    </a>
-                  </div>
-              </div>
-            </div>
-            </div>
-              </div>
-            </div>
-          </section>
-    );
-  };
-
-  const LightProjectCard = ({project,index}) => {
-    const [ref,v]=useReveal();
-    const [open,setOpen]=useState(false);
-    const [copied,setCopied]=useState(false);
-    const copy=()=>{navigator.clipboard.writeText(project.snippet);setCopied(true);setTimeout(()=>setCopied(false),2000);};
-    return (
-      <div ref={ref} className={`sr ${v?'in':''}`} style={{transitionDelay:index*.1+'s'}}>
-        <div className="l-card" style={{padding:28,height:'100%',display:'flex',flexDirection:'column'}}>
-          <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginBottom:16}}>
-            <h3 style={{fontWeight:700,fontSize:18,color:'#2c1f0e',letterSpacing:'-.01em',flex:1,paddingRight:12}}>{project.name}</h3>
-            <a href={project.github} target="_blank" rel="noopener noreferrer"
-              style={{color:'#92400e',textDecoration:'none',transition:'color .2s',flexShrink:0}}>
-              <ExtLink s={16}/>
-            </a>
-                  </div>
-          <p style={{color:'#5c4a32',fontSize:14,lineHeight:1.75,marginBottom:18,flex:1}}>{project.short}</p>
-          <div style={{display:'flex',gap:7,flexWrap:'wrap',marginBottom:18}}>
-            {project.tech.map(t=><span key={t} className="l-tag slt">{t}</span>)}
-                      </div>
-          <div style={{borderTop:'1px solid rgba(0,0,0,.07)',paddingTop:16}}>
-            <button onClick={()=>setOpen(v=>!v)}
-              style={{display:'flex',alignItems:'center',gap:6,fontSize:13,color:'#b45309',background:'none',border:'none',fontFamily:'Space Grotesk',fontWeight:600,padding:0,cursor:'pointer',transition:'all .2s'}}
-              onMouseEnter={e=>e.currentTarget.style.color='#92400e'}
-              onMouseLeave={e=>e.currentTarget.style.color='#b45309'}>
-              {open?<><ChevU s={14}/> Hide details</>:<><ChevD s={14}/> More details</>}
-            </button>
-            {open&&(
-              <div style={{marginTop:16}}>
-                <p style={{color:'#5c4a32',fontSize:13,lineHeight:1.75,marginBottom:14}}>{project.detail}</p>
-                <div className="l-code">
-                  <div className="l-code-hd">
-                    <span style={{color:'rgba(255,255,255,.3)',fontSize:11,fontFamily:'JetBrains Mono'}}>{project.name.toLowerCase().replace(/ /g,'-')}.py</span>
-                    <button onClick={copy} style={{background:'none',border:'none',color:'rgba(255,255,255,.3)',fontSize:11,display:'flex',alignItems:'center',gap:4,fontFamily:'JetBrains Mono',cursor:'pointer'}}>
-                      <CopyIcon s={12}/> {copied?'copied':'copy'}
-                    </button>
-                      </div>
-                  <pre style={{padding:'14px',fontSize:12,color:'rgba(255,255,255,.6)',overflowX:'auto',margin:0,lineHeight:1.7,fontFamily:'JetBrains Mono'}}><code>{project.snippet}</code></pre>
-                    </div>
-                      </div>
-            )}
-                      </div>
-                    </div>
-                  </div>
-    );
-  };
-
-  const LightProjects = () => (
-    <section id="l-projects" style={{padding:'100px 28px',background:'#f5ede0'}}>
-      <div style={{maxWidth:1080,margin:'0 auto'}}>
-        <div className="l-section-label">Projects</div>
-        <div className="l-accent-line"/>
-        <h2 className="l-section-title" style={{marginBottom:12}}>Things I've built.</h2>
-        <p style={{color:'#6b7280',fontSize:15,lineHeight:1.7,marginBottom:52,maxWidth:520}}>
-          A few projects I made to solve problems I actually had.
-        </p>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(300px,1fr))',gap:22}}>
-          {projects.map((p,i)=><LightProjectCard key={p.id} project={p} index={i}/>)}
-                  </div>
-                  </div>
-    </section>
-  );
-
-  const LightSkills = () => {
-    const [ref,v]=useReveal();
-    return (
-      <section id="l-skills" style={{padding:'100px 28px',background:'#f0e6d2'}}>
-        <div style={{maxWidth:1080,margin:'0 auto'}}>
-          <div className="l-section-label">Skills</div>
-          <div className="l-accent-line"/>
-          <h2 className="l-section-title" style={{marginBottom:12}}>What I work with.</h2>
-            <p style={{color:'#78614a',fontSize:15,lineHeight:1.7,marginBottom:52,maxWidth:480}}>
-            Tools and technologies I use regularly. No made-up proficiency bars.
-          </p>
-          <div ref={ref} className={`sr ${v?'in':''}`} style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:22}}>
-            {Object.entries(stackGroups).map(([cat,{items}])=>(
-              <div key={cat} className="l-card" style={{padding:24}}>
-                <div style={{fontWeight:700,fontSize:12,color:'#92400e',marginBottom:16,textTransform:'uppercase',letterSpacing:'.1em'}}>{cat}</div>
-                <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
-                  {items.map(item=><span key={item} className="l-tag ind">{item}</span>)}
-                  </div>
-              </div>
-                    ))}
-                  </div>
-          <div style={{marginTop:32,padding:'18px 22px',background:'rgba(180,83,9,.04)',border:'1px solid rgba(180,83,9,.12)',borderRadius:10,fontSize:14,color:'#78614a',lineHeight:1.7}}>
-            <span style={{color:'#b45309',fontWeight:700}}>Currently learning: </span>
-            Active Directory security, advanced web application exploitation, and network traffic analysis.
-              </div>
-            </div>
-          </section>
-    );
-  };
-
-  const LightContact = () => {
-    const [ref,v]=useReveal();
-    return (
-      <section id="l-contact" style={{padding:'100px 28px 80px',background:'#f5ede0'}}>
-        <div style={{maxWidth:600,margin:'0 auto',textAlign:'center'}}>
-          <div ref={ref} className={`sr ${v?'in':''}`}>
-            <div className="l-section-label" style={{justifyContent:'center'}}>Get In Touch</div>
-            <div className="l-accent-line" style={{margin:'0 auto 24px'}}/>
-            <h2 className="l-section-title" style={{marginBottom:20}}>Let's talk.</h2>
-            <p style={{color:'#78614a',fontSize:15,lineHeight:1.9,marginBottom:44}}>
-              I'm open to collaborating on interesting projects,
-              discussing security topics, or just having a conversation
-              about tech. Feel free to reach out.
-            </p>
-            <a href="mailto:hamza0jeelani@gmail.com" className="contact-email"
-              style={{display:'inline-flex',alignItems:'center',gap:10,padding:'14px 32px',background:'#b45309',color:'#fff',borderRadius:8,fontSize:15,fontWeight:600,textDecoration:'none',transition:'all .25s',fontFamily:'Space Grotesk',boxShadow:'0 4px 14px rgba(180,83,9,.3)'}}
-              onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-2px)';e.currentTarget.style.boxShadow='0 8px 20px rgba(180,83,9,.4)';}}
-              onMouseLeave={e=>{e.currentTarget.style.transform='translateY(0)';e.currentTarget.style.boxShadow='0 4px 14px rgba(180,83,9,.3)';}}>
-              <MailIcon s={18}/> hamza0jeelani@gmail.com
-            </a>
-            <div style={{display:'flex',justifyContent:'center',gap:14,marginTop:18}}>
-              <a href="https://github.com/crepco" target="_blank" rel="noopener noreferrer"
-                style={{display:'flex',alignItems:'center',gap:8,padding:'10px 20px',border:'1.5px solid rgba(180,83,9,.25)',borderRadius:8,color:'#92400e',textDecoration:'none',fontSize:14,fontWeight:600,transition:'all .2s'}}
-                onMouseEnter={e=>{e.currentTarget.style.background='rgba(180,83,9,.07)';e.currentTarget.style.transform='translateY(-2px)';}}
-                onMouseLeave={e=>{e.currentTarget.style.background='transparent';e.currentTarget.style.transform='translateY(0)';}}>
-                <GithubIcon s={16}/> @crepco
-              </a>
-            </div>
-            <div style={{marginTop:72,paddingTop:28,borderTop:'1px solid rgba(180,83,9,.1)'}}>
-              <p style={{color:'#a08060',fontSize:13}}>Built with React · No template · GitHub Pages</p>
-              <p style={{color:'#a08060',fontSize:12,marginTop:6,display:'flex',alignItems:'center',justifyContent:'center',gap:8}}>
-                © 2026 Hamza Jeelani
-                <span style={{color:'#a08060',opacity:0.5}}>·</span>
-                <VisitCounter dark={false}/>
-              </p>
-            </div>
-              </div>
-            </div>
-          </section>
-    );
-  };
-
-  const LightPortfolio = ({onToggle}) => {
-    const [loaded,setLoaded]=useState(false);
-    const ids=['l-home','l-about','l-projects','l-skills','l-contact'];
-    const active=useScrollSections(ids);
-    useEffect(()=>{
-      setTimeout(()=>setLoaded(true),2300);
-      const obs=new IntersectionObserver(entries=>{
-        entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});
-      },{threshold:.1,rootMargin:'0px 0px -40px 0px'});
-      document.querySelectorAll('.sr').forEach(el=>obs.observe(el));
-      return ()=>obs.disconnect();
-    },[]);
-    return (
-      <div className="l-body light-cursor-mode">
-        <ScrollProgress color="linear-gradient(90deg,#4f46e5,#818cf8)"/>
-        <KonamiEgg dark={false}/>
-        <LightCursor/>
-        <LightNav active={active} onToggle={onToggle}/>
-        <LightHero loaded={loaded}/>
-        <LightAbout/>
-        <LightProjects/>
-        <LightSkills/>
-        <LightContact/>
-        </div>
-      );
-    };
-
   /* ══ Root ════════════════════════════════════════════════════ */
   const Portfolio = () => {
-    const [theme,setTheme]=useState(()=>localStorage.getItem('pf-theme')||'light');
-    const [fading,setFading]=useState(false);
-
-      const showSwitchOverlay=(next)=>{
-      const ov=document.getElementById('theme-switch-overlay');
-      const lbl=document.getElementById('tso-label');
-      const fill=document.getElementById('tso-fill');
-      if(!ov||!lbl||!fill) return;
-      // style for destination theme
-      const isDark=next==='dark';
-      ov.style.background=isDark?'#05050d':'#f5ede0';
-      lbl.style.color=isDark?'#a78bfa':'#b45309';
-      fill.style.background=isDark?'#7c3aed':'#b45309';
-      lbl.textContent=isDark?'→ dark mode':'→ light mode';
-      // reset fill animation
-      fill.style.animation='none';
-      fill.offsetHeight; // reflow
-      fill.style.animation='tsoFill 1.2s ease-out forwards';
-      ov.classList.add('show');
-    };
-    const hideSwitchOverlay=()=>{
-      const ov=document.getElementById('theme-switch-overlay');
-      ov?.classList.remove('show');
-    };
-
-    const toggle=useCallback(()=>{
-      const next=theme==='dark'?'light':'dark';
-      setFading(true);
-      showSwitchOverlay(next);
-      setTimeout(()=>{
-        setTheme(next);
-        localStorage.setItem('pf-theme',next);
-        window.scrollTo(0,0);
-        setFading(false);
-        setTimeout(hideSwitchOverlay,400);
-      },1600);
-    },[theme]);
-
     useEffect(()=>{
-      // hide loader
       setTimeout(()=>{
         document.getElementById('loader')?.classList.add('gone');
       },2000);
     },[]);
-
-    return (
-      <div style={{opacity:fading?0:1,transition:'opacity .25s ease'}}>
-        {theme==='dark'
-          ? <DarkPortfolio onToggle={toggle}/>
-          : <LightPortfolio onToggle={toggle}/>
-        }
-      </div>
-    );
+    return <DarkPortfolio/>;
   };
 
   ReactDOM.createRoot(document.getElementById('root')).render(<Portfolio/>);
