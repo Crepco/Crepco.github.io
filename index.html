@@ -1087,15 +1087,15 @@ cred = manager.get('github.com')`,
     const [inp,setInp]=useState('');
     const bodyRef=useRef(null);
     const cmds={
-      help:   'available: whoami, ls, skills, projects, contact, neofetch, coffee, clear',
+      help:   'available: whoami, ls, skills, projects, contact, neofetch, monster, clear',
       whoami: 'hamza jeelani — 21, india, CSE student turned security researcher',
       ls:     'about/  projects/  skills/  contact/',
       'cat about':'started with python, fell into security, never left. arch linux (yes).',
       skills: 'python, bash, js, burp suite, nmap, wireshark, metasploit, linux, kali, git',
       projects:'spotify-downloader  steganography-tool  password-manager',
       contact:'hamza0jeelani@gmail.com',
-      neofetch:'hamza@portfolio\n─────────────\nOS: Arch Linux\nShell: zsh\nEditor: neovim\nTheme: dark\nCoffee: critical',
-      coffee: '☕ 3 cups. still not enough.',
+      neofetch:'hamza@portfolio\n─────────────\nOS: Arch Linux\nShell: zsh\nEditor: neovim\nTheme: dark\nMonster: critical',
+      monster: '🟢 Monster Energy. fuel for the code.',
       clear:  '__clear__',
     };
     const run=cmd=>{
@@ -1234,7 +1234,7 @@ cred = manager.get('github.com')`,
                   <div><span className="sk">focus</span><span className="sv">offensive security</span></div>
                   <div><span className="sk">platforms</span><span className="sv">TryHackMe · HackTheBox</span></div>
                   <hr className="sys-hr"/>
-                  <div><span className="sk">coffee</span><span className="sv am">⚠ critical level</span></div>
+                  <div><span className="sk">monster</span><span className="sv am">⚠ critical level</span></div>
                   <div style={{marginTop:14,color:'#33334a',fontSize:10}}>
                     {'> '}<span style={{color:'#a78bfa'}}>connection established</span>
                     <span className="blink">_</span>
