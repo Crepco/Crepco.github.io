@@ -581,6 +581,138 @@
       #d-contact { padding-left: 18px !important; padding-right: 18px !important; }
       #d-timeline { padding-left: 18px !important; padding-right: 18px !important; }
     }
+
+    /* ── Glitch effect ────────────────────── */
+    @keyframes glitchSkew {
+      0%   { transform: skew(0deg); }
+      15%  { transform: skew(-3deg, 0.8deg); }
+      30%  { transform: skew(2deg, -0.5deg); }
+      45%  { transform: skew(-1.5deg, 0.3deg); }
+      60%  { transform: skew(2.5deg, -1deg); }
+      75%  { transform: skew(-0.5deg, 0.5deg); }
+      100% { transform: skew(0deg); }
+    }
+    @keyframes glitchSlice {
+      0%   { clip-path: inset(80% -6px 0 0); transform: translate(-4px, -2px); }
+      10%  { clip-path: inset(10% -6px 85% 0); transform: translate(4px, 2px); }
+      20%  { clip-path: inset(50% -6px 30% 0); transform: translate(-3px, 1px); }
+      30%  { clip-path: inset(15% -6px 65% 0); transform: translate(3px, -1px); }
+      40%  { clip-path: inset(70% -6px 5% 0); transform: translate(-2px, 2px); }
+      50%  { clip-path: inset(40% -6px 40% 0); transform: translate(2px, -2px); }
+      60%  { clip-path: inset(5% -6px 80% 0); transform: translate(-4px, 1px); }
+      70%  { clip-path: inset(60% -6px 15% 0); transform: translate(4px, -1px); }
+      80%  { clip-path: inset(25% -6px 55% 0); transform: translate(-2px, 2px); }
+      90%  { clip-path: inset(90% -6px 2% 0); transform: translate(3px, -2px); }
+      100% { clip-path: inset(80% -6px 0 0); transform: translate(-4px, -2px); }
+    }
+
+    /* ── 3D Sphere tags ───────────────────── */
+    .sphere-tag {
+      position: absolute;
+      padding: 5px 14px;
+      border-radius: 5px;
+      font-size: 12px;
+      letter-spacing: .04em;
+      border: 1px solid rgba(124,58,237,.3);
+      color: #a78bfa;
+      background: rgba(124,58,237,.06);
+      white-space: nowrap;
+      transition: border-color 0.3s, color 0.3s, background 0.3s, box-shadow 0.3s;
+      cursor: default;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .sphere-tag:hover {
+      border-color: rgba(167,139,250,.9);
+      color: #ddddf0;
+      background: rgba(124,58,237,.25);
+      box-shadow: 0 0 25px rgba(124,58,237,.4);
+    }
+
+    /* ── Mouse spotlight ──────────────────── */
+    .spotlight-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background: radial-gradient(
+        650px circle at var(--mx, 50%) var(--my, 50%),
+        rgba(124,58,237,.07),
+        transparent 40%
+      );
+    }
+
+    /* ── Floating orb paths ───────────────── */
+    @keyframes orbFloat1 {
+      0%,100% { transform: translate(0,0) scale(1); }
+      25%  { transform: translate(40px,-50px) scale(1.05); }
+      50%  { transform: translate(-25px,30px) scale(0.95); }
+      75%  { transform: translate(20px,40px) scale(1.02); }
+    }
+    @keyframes orbFloat2 {
+      0%,100% { transform: translate(0,0) scale(1); }
+      33%  { transform: translate(-50px,30px) scale(1.08); }
+      66%  { transform: translate(30px,-45px) scale(0.93); }
+    }
+    @keyframes orbFloat3 {
+      0%,100% { transform: translate(0,0) scale(1); }
+      50%  { transform: translate(40px,30px) scale(1.06); }
+    }
+
+    /* ── Section cyber divider ────────────── */
+    .cyber-divider {
+      width: 100%;
+      max-width: 1080px;
+      margin: 0 auto;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(124,58,237,.4), rgba(167,139,250,.25), transparent);
+      position: relative;
+      overflow: visible;
+    }
+    .cyber-divider::after {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: -40px;
+      width: 40px;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #a78bfa);
+      border-radius: 2px;
+      animation: dividerScan 4s ease-in-out infinite;
+    }
+    @keyframes dividerScan {
+      0%   { left: -40px; opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 1; }
+      100% { left: calc(100% + 40px); opacity: 0; }
+    }
+
+    /* ── Animated border card ─────────────── */
+    @property --border-angle {
+      syntax: '<angle>';
+      initial-value: 0deg;
+      inherits: false;
+    }
+    .animated-border {
+      position: relative;
+      background: rgba(12,12,28,.7);
+      border-radius: 8px;
+    }
+    .animated-border::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 9px;
+      padding: 1px;
+      background: conic-gradient(from var(--border-angle), transparent 25%, #7c3aed 50%, transparent 75%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: borderRotate 4s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes borderRotate {
+      to { --border-angle: 360deg; }
+    }
   </style>
 </head>
 <body>
@@ -674,7 +806,7 @@
 </script>
 
   <script type="text/babel">
-  const { useState, useEffect, useRef, useCallback } = React;
+  const { useState, useEffect, useRef, useCallback, useMemo } = React;
   
   // Scroll Animation Observer
   const useScrollAnimation = () => {
@@ -1074,6 +1206,260 @@ cred = manager.get('github.com')`,
       );
     };
 
+  /* ══ Particle Network (canvas) ═══════════════════════════ */
+  const ParticleNetwork = () => {
+    const canvasRef = useRef(null);
+    const mouse = useRef({x:-9999,y:-9999});
+
+    useEffect(() => {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      let raf;
+      const isMobile = window.innerWidth < 768;
+      const COUNT = isMobile ? 30 : 70;
+      const LINK_DIST = 150;
+      const MOUSE_RADIUS = 200;
+      const particles = [];
+
+      const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+      resize();
+      window.addEventListener('resize', resize);
+
+      for (let i = 0; i < COUNT; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          r: Math.random() * 1.8 + 0.6,
+        });
+      }
+
+      const onMove = e => { mouse.current = {x:e.clientX,y:e.clientY}; };
+      window.addEventListener('mousemove', onMove);
+
+      const tick = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          const dx = mouse.current.x - p.x;
+          const dy = mouse.current.y - p.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < MOUSE_RADIUS) {
+            const f = (MOUSE_RADIUS - dist) / MOUSE_RADIUS;
+            p.vx -= (dx / dist) * f * 0.015;
+            p.vy -= (dy / dist) * f * 0.015;
+          }
+
+          p.x += p.vx; p.y += p.vy;
+          p.vx *= 0.995; p.vy *= 0.995;
+          if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+          if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+          p.x = Math.max(0, Math.min(canvas.width, p.x));
+          p.y = Math.max(0, Math.min(canvas.height, p.y));
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(167,139,250,0.4)';
+          ctx.fill();
+
+          for (let j = i + 1; j < particles.length; j++) {
+            const p2 = particles[j];
+            const ldx = p.x - p2.x, ldy = p.y - p2.y;
+            const ld = Math.sqrt(ldx * ldx + ldy * ldy);
+            if (ld < LINK_DIST) {
+              ctx.beginPath();
+              ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y);
+              ctx.strokeStyle = `rgba(124,58,237,${(1 - ld / LINK_DIST) * 0.15})`;
+              ctx.lineWidth = 0.6;
+              ctx.stroke();
+            }
+          }
+
+          if (dist < LINK_DIST * 1.5 && mouse.current.x > 0) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y); ctx.lineTo(mouse.current.x, mouse.current.y);
+            ctx.strokeStyle = `rgba(167,139,250,${(1 - dist / (LINK_DIST * 1.5)) * 0.3})`;
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+          }
+        }
+        raf = requestAnimationFrame(tick);
+      };
+      tick();
+
+      return () => {
+        cancelAnimationFrame(raf);
+        window.removeEventListener('resize', resize);
+        window.removeEventListener('mousemove', onMove);
+      };
+    }, []);
+
+    return <canvas ref={canvasRef} style={{position:'fixed',top:0,left:0,width:'100%',height:'100%',zIndex:1,pointerEvents:'none'}} />;
+  };
+
+  /* ══ Mouse Spotlight ═══════════════════════════════════════ */
+  const SpotlightLayer = () => {
+    const ref = useRef(null);
+    useEffect(() => {
+      const el = ref.current;
+      const fn = e => {
+        el.style.setProperty('--mx', e.clientX + 'px');
+        el.style.setProperty('--my', e.clientY + 'px');
+      };
+      window.addEventListener('mousemove', fn);
+      return () => window.removeEventListener('mousemove', fn);
+    }, []);
+    return <div ref={ref} className="spotlight-layer" />;
+  };
+
+  /* ══ Floating Gradient Orbs ════════════════════════════════ */
+  const FloatingOrbs = () => (
+    <div style={{position:'fixed',inset:0,zIndex:0,pointerEvents:'none',overflow:'hidden'}}>
+      <div style={{position:'absolute',top:'8%',left:'10%',width:550,height:550,borderRadius:'50%',
+        background:'radial-gradient(circle,rgba(124,58,237,0.09),transparent 70%)',
+        filter:'blur(80px)',animation:'orbFloat1 25s ease-in-out infinite'}} />
+      <div style={{position:'absolute',top:'55%',right:'5%',width:450,height:450,borderRadius:'50%',
+        background:'radial-gradient(circle,rgba(167,139,250,0.07),transparent 70%)',
+        filter:'blur(65px)',animation:'orbFloat2 30s ease-in-out infinite'}} />
+      <div style={{position:'absolute',bottom:'10%',left:'35%',width:380,height:380,borderRadius:'50%',
+        background:'radial-gradient(circle,rgba(192,132,252,0.06),transparent 70%)',
+        filter:'blur(55px)',animation:'orbFloat3 20s ease-in-out infinite'}} />
+    </div>
+  );
+
+  /* ══ Film Grain Noise ══════════════════════════════════════ */
+  const NoiseOverlay = () => {
+    const canvasRef = useRef(null);
+    useEffect(() => {
+      const c = canvasRef.current;
+      const ctx = c.getContext('2d');
+      c.width = 200; c.height = 200;
+      const img = ctx.createImageData(200, 200);
+      const gen = () => {
+        for (let i = 0; i < img.data.length; i += 4) {
+          const v = Math.random() * 255;
+          img.data[i] = v; img.data[i+1] = v; img.data[i+2] = v;
+          img.data[i+3] = 14;
+        }
+        ctx.putImageData(img, 0, 0);
+      };
+      gen();
+      const id = setInterval(gen, 90);
+      return () => clearInterval(id);
+    }, []);
+    return <canvas ref={canvasRef} style={{position:'fixed',inset:0,width:'100%',height:'100%',zIndex:9990,pointerEvents:'none',opacity:0.45,mixBlendMode:'overlay'}} />;
+  };
+
+  /* ══ Magnetic Link ═════════════════════════════════════════ */
+  const MagneticLink = ({children, href, style={}, ...props}) => {
+    const ref = useRef(null);
+    const [offset, setOffset] = useState({x:0, y:0});
+    return (
+      <a ref={ref} href={href} {...props}
+        style={{
+          ...style,
+          transform: `translate(${offset.x}px, ${offset.y}px)`,
+          transition: offset.x === 0
+            ? 'transform 0.55s cubic-bezier(0.22,1,0.36,1), border-color .2s, color .2s, background .2s'
+            : 'transform 0.12s ease-out, border-color .2s, color .2s, background .2s',
+        }}
+        onMouseMove={e => {
+          if (!ref.current) return;
+          const r = ref.current.getBoundingClientRect();
+          setOffset({
+            x: (e.clientX - r.left - r.width / 2) * 0.35,
+            y: (e.clientY - r.top - r.height / 2) * 0.35,
+          });
+        }}
+        onMouseLeave={() => setOffset({x:0, y:0})}
+      >
+        {children}
+      </a>
+    );
+  };
+
+  /* ══ Cyber Section Divider ═════════════════════════════════ */
+  const CyberDivider = () => {
+    const [ref, v] = useReveal();
+    return (
+      <div ref={ref} className={`sr ${v ? 'in' : ''}`} style={{padding:'0 24px',position:'relative',zIndex:10}}>
+        <div className="cyber-divider" />
+      </div>
+    );
+  };
+
+  /* ══ 3D Skill Sphere ═══════════════════════════════════════ */
+  const SkillSphere3D = ({items, radius=160}) => {
+    const containerRef = useRef(null);
+    const tagsRef = useRef([]);
+    const rot = useRef({x:0, y:0});
+    const autoAngle = useRef(0);
+    const mouseActive = useRef(false);
+
+    const count = items.length;
+    const golden = Math.PI * (3 - Math.sqrt(5));
+
+    const basePositions = useMemo(() =>
+      items.map((_, i) => {
+        const y = 1 - (i / (count - 1)) * 2;
+        const r = Math.sqrt(1 - y * y);
+        const theta = golden * i;
+        return { x: Math.cos(theta) * r, y, z: Math.sin(theta) * r };
+      })
+    , [count]);
+
+    useEffect(() => {
+      let raf;
+      const tick = () => {
+        if (!mouseActive.current) {
+          autoAngle.current += 0.003;
+          rot.current.y = autoAngle.current;
+        }
+        const ry = rot.current.y, rx = rot.current.x;
+        const cosY = Math.cos(ry), sinY = Math.sin(ry);
+        const cosX = Math.cos(rx), sinX = Math.sin(rx);
+
+        basePositions.forEach((p, i) => {
+          const el = tagsRef.current[i];
+          if (!el) return;
+          const x1 = p.x * cosY - p.z * sinY;
+          const z1 = p.x * sinY + p.z * cosY;
+          const y1 = p.y * cosX - z1 * sinX;
+          const z2 = p.y * sinX + z1 * cosX;
+          const depth = (z2 + 1) / 2;
+          el.style.transform = `translate(-50%,-50%) translate(${x1 * radius}px,${y1 * radius}px) scale(${0.5 + depth * 0.6})`;
+          el.style.opacity = 0.15 + depth * 0.85;
+          el.style.zIndex = Math.round(depth * 10);
+        });
+        raf = requestAnimationFrame(tick);
+      };
+      tick();
+      return () => cancelAnimationFrame(raf);
+    }, [basePositions, radius]);
+
+    const onMove = e => {
+      if (!containerRef.current) return;
+      const r = containerRef.current.getBoundingClientRect();
+      rot.current = {
+        x: (e.clientY - r.top - r.height / 2) / (r.height / 2) * 0.5,
+        y: (e.clientX - r.left - r.width / 2) / (r.width / 2) * 0.7,
+      };
+      autoAngle.current = rot.current.y;
+      mouseActive.current = true;
+    };
+
+    return (
+      <div ref={containerRef} onMouseMove={onMove} onMouseLeave={() => { mouseActive.current = false; }}
+        style={{perspective:800,width:'100%',height:400,position:'relative',display:'flex',alignItems:'center',justifyContent:'center',cursor:'grab'}}>
+        {items.map((item, i) => (
+          <span key={item} ref={el => tagsRef.current[i] = el} className="sphere-tag">{item}</span>
+        ))}
+      </div>
+    );
+  };
+
   /* ══════════════════════════════════════════════════════════
      DARK MODE COMPONENTS
   ══════════════════════════════════════════════════════════ */
@@ -1179,7 +1565,20 @@ cred = manager.get('github.com')`,
     );
   };
 
-  const DarkHero = ({loaded}) => (
+  const DarkHero = ({loaded}) => {
+    const [glitch, setGlitch] = useState(false);
+
+    useEffect(() => {
+      const trigger = () => {
+        setGlitch(true);
+        setTimeout(() => setGlitch(false), 150 + Math.random() * 250);
+      };
+      const id = setInterval(() => { if (Math.random() > 0.25) trigger(); }, 3500 + Math.random() * 2000);
+      setTimeout(trigger, 2200);
+      return () => clearInterval(id);
+    }, []);
+
+    return (
     <section id="d-home" style={{minHeight:'100vh',display:'flex',alignItems:'center',padding:'80px 24px 40px',position:'relative',zIndex:10}}>
       <div style={{maxWidth:1080,margin:'0 auto',width:'100%'}}>
         <div className="hero-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'4rem',alignItems:'center'}}>
@@ -1191,8 +1590,18 @@ cred = manager.get('github.com')`,
             <div style={{fontSize:12,color:'#33334a',marginBottom:14,letterSpacing:'.08em'}}>
               <span style={{color:'#a78bfa'}}>$</span> whoami
             </div>
-            <h1 style={{fontFamily:'Space Grotesk',fontWeight:700,fontSize:'clamp(3rem,8vw,5.5rem)',lineHeight:1,letterSpacing:'-.02em',color:'#ddddf0',marginBottom:16}}>
+            <h1 style={{
+              fontFamily:'Space Grotesk',fontWeight:700,fontSize:'clamp(3rem,8vw,5.5rem)',lineHeight:1,
+              letterSpacing:'-.02em',color:'#ddddf0',marginBottom:16,position:'relative',
+              textShadow: glitch ? '-3px 0 #00ffd5, 3px 0 #ff00c1' : 'none',
+              animation: glitch ? 'glitchSkew 0.15s ease infinite' : 'none',
+            }}>
               Hamza<br/><span style={{color:'#a78bfa'}}>Jeelani</span>
+              {glitch && <span style={{
+                position:'absolute',top:0,left:0,width:'100%',height:'100%',
+                color:'#00ffd5',opacity:0.7,animation:'glitchSlice 0.15s ease infinite',
+                pointerEvents:'none',
+              }} aria-hidden="true">Hamza<br/>Jeelani</span>}
             </h1>
             <div style={{fontSize:16,color:'#8888a8',marginBottom:24,height:26}}>
               <TypingText lines={['security researcher','python developer','linux sysadmin — arch, btw','building things that work']} speed={88}/>
@@ -1206,10 +1615,10 @@ cred = manager.get('github.com')`,
                 {href:'https://github.com/crepco',icon:<GithubIcon s={15}/>,label:'GitHub'},
                 {href:'mailto:hamza0jeelani@gmail.com',icon:<MailIcon s={15}/>,label:'Email'},
               ].map(({href,icon,label})=>(
-                <a key={label} href={href} target={href.startsWith('http')?'_blank':undefined} rel="noopener noreferrer"
-                  style={{display:'flex',alignItems:'center',gap:8,padding:'9px 18px',border:'1px solid rgba(124,58,237,.25)',borderRadius:6,color:'#8888a8',fontSize:12,textDecoration:'none',transition:'all .2s',background:'rgba(12,12,28,.6)'}}>
+                <MagneticLink key={label} href={href} target={href.startsWith('http')?'_blank':undefined} rel="noopener noreferrer"
+                  style={{display:'flex',alignItems:'center',gap:8,padding:'9px 18px',border:'1px solid rgba(124,58,237,.25)',borderRadius:6,color:'#8888a8',fontSize:12,textDecoration:'none',background:'rgba(12,12,28,.6)'}}>
                   {icon} {label}
-                </a>
+                </MagneticLink>
               ))}
                   </div>
                 </div>
@@ -1252,7 +1661,8 @@ cred = manager.get('github.com')`,
         </div>
       </div>
     </section>
-  );
+    );
+  };
 
   const DarkAbout = () => {
     const [r1,v1]=useReveal(); const [r2,v2]=useReveal();
@@ -1444,18 +1854,26 @@ cred = manager.get('github.com')`,
 
   const DarkStack = () => {
     const [ref,v]=useReveal();
+    const allSkills = useMemo(() =>
+      Object.values(stackGroups).flatMap(g => g.items)
+    , []);
     return (
       <section id="d-stack" style={{padding:'100px 24px',position:'relative',zIndex:10}}>
         <div style={{maxWidth:1080,margin:'0 auto'}}>
           <div className="d-section-label">04 — stack</div>
           <h2 className="d-section-title" style={{marginBottom:12}}><ScrambleHeading text="Tools of the Trade"/></h2>
-          <p style={{color:'#8888a8',fontSize:13,lineHeight:1.7,marginBottom:48,maxWidth:500}}>
+          <p style={{color:'#8888a8',fontSize:13,lineHeight:1.7,marginBottom:16,maxWidth:500}}>
             No invented percentages. Here's what I actually use.
           </p>
+          <p style={{color:'#55558a',fontSize:11,marginBottom:32,letterSpacing:'.06em'}}>
+            ↕ drag to rotate the sphere
+          </p>
+          <SkillSphere3D items={allSkills} radius={window.innerWidth < 768 ? 110 : 170} />
+          <div style={{marginTop:48}} />
           <div ref={ref} className={`sr ${v?'in':''}`} style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:20}}>
             {Object.entries(stackGroups).map(([cat,{color,items}])=>(
               <TiltCard key={cat}>
-                <div className="d-card" style={{padding:22}}>
+                <div className="d-card animated-border" style={{padding:22}}>
                   <div style={{fontSize:10,letterSpacing:'.12em',color:'#33334a',marginBottom:14,textTransform:'uppercase'}}>{cat}</div>
                   <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
                     {items.map(item=><span key={item} className={`d-tag ${color}`}>{item}</span>)}
@@ -1525,16 +1943,25 @@ cred = manager.get('github.com')`,
     },[]);
       return (
       <div className="d-body dark-scroll dark-cursor-mode">
+        <FloatingOrbs/>
+        <ParticleNetwork/>
+        <SpotlightLayer/>
+        <NoiseOverlay/>
         <ScrollProgress color="linear-gradient(90deg,#7c3aed,#a78bfa)"/>
         <DarkCursor/>
         <KonamiEgg dark/>
         <DarkTerminal/>
         <DarkNav active={active}/>
         <DarkHero loaded={loaded}/>
+        <CyberDivider/>
         <DarkAbout/>
+        <CyberDivider/>
         <DarkTimeline/>
+        <CyberDivider/>
         <DarkProjects/>
+        <CyberDivider/>
         <DarkStack/>
+        <CyberDivider/>
         <DarkContact/>
         </div>
       );
