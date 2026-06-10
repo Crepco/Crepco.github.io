@@ -1,1983 +1,772 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hamza Jeelani</title>
-  <meta name="description" content="Security researcher and developer from India.">
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <link rel="alternate icon" href="/favicon.ico">
-  <link rel="apple-touch-icon" href="/favicon.svg">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hamza Jeelani — security &amp; systems</title>
+<meta name="description" content="Hamza Jeelani — security student and Python tinkerer from Hyderabad. CTF boxes, tools I actually needed, and a permanently unfinished Hyprland config.">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+<style>
+/* ───────────────────────────────────────────────
+   gruvbox, btw
+─────────────────────────────────────────────── */
+:root {
+  --wall:    #1d2021;   /* wallpaper          */
+  --bg:      #282828;   /* window background  */
+  --bg-soft: #32302f;   /* title bars, insets */
+  --line:    #3c3836;   /* unfocused border   */
+  --line-2:  #504945;
+  --fg:      #ebdbb2;
+  --dim:     #a89984;
+  --faint:   #7c6f64;
+  --orange:  #fe8019;   /* focused window     */
+  --aqua:    #8ec07c;
+  --yellow:  #fabd2f;
+  --red:     #fb4934;
 
-    /* ── Loader ─────────────────────────────── */
-    #loader {
-      position: fixed; inset: 0;
-      background: #05050d;
-      display: flex; align-items: center; justify-content: center;
-      z-index: 9999;
-      transition: opacity 0.6s ease;
-    }
-    #loader.gone { opacity: 0; pointer-events: none; }
-    .ld-name {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700; font-size: 20px;
-      letter-spacing: .12em; color: #ddddf0;
-      margin-bottom: 18px;
-    }
-    .ld-name span { color: #a78bfa; }
-    .ld-track { width: 220px; height: 3px; background: rgba(124,58,237,.2); border-radius: 3px; overflow: hidden; }
-    .ld-fill  { height: 100%; background: linear-gradient(90deg,#7c3aed,#a78bfa); border-radius: 3px; width: 0; transition: width .08s linear; }
-    .ld-text  { margin-top: 10px; font-family:'Space Grotesk',sans-serif; font-size: 11px; color: #7777aa; letter-spacing: .08em; font-weight: 500; }
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --disp: 'Bricolage Grotesque', var(--sans);
 
-    /* ── Scrollbars ─────────────────────────── */
-    .dark-scroll::-webkit-scrollbar { width: 5px; }
-    .dark-scroll::-webkit-scrollbar-track { background: #06060f; }
-    .dark-scroll::-webkit-scrollbar-thumb { background: rgba(124,58,237,.35); border-radius: 3px; }
+  --gap: 14px;          /* hyprland gaps_out  */
+  --radius: 10px;
+}
 
-    /* ── Custom cursor ───────────────────────── */
-    .dark-cursor-mode, .dark-cursor-mode * { cursor: none !important; }
-    .cursor-dot {
-      position: fixed; width: 7px; height: 7px; border-radius: 50%;
-      background: #a78bfa; pointer-events: none; z-index: 9995; mix-blend-mode: difference;
-    }
-    .cursor-ring {
-      position: fixed; width: 26px; height: 26px;
-      border: 1.5px solid rgba(167,139,250,.4); border-radius: 50%;
-      pointer-events: none; z-index: 9994;
-      transition: width .18s ease, height .18s ease, border-color .18s ease;
-    }
-    .cursor-ring.big { width: 38px; height: 38px; border-color: rgba(167,139,250,.7); }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-    /* ── Scroll progress ────────────────────── */
-    .scroll-bar {
-      position: fixed; top: 0; left: 0; height: 2px; z-index: 9993;
-      transition: width .08s ease;
-    }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
 
-    /* ── Blink ──────────────────────────────── */
-    @keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
-    .blink { animation: blink 1s infinite; }
+body {
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  background: var(--wall);
+  color: var(--fg);
+  overflow-x: hidden;
+}
 
-    /* ── Scroll reveal ──────────────────────── */
-    .sr {
-      opacity: 0; transform: translateY(28px);
-      transition: opacity .65s cubic-bezier(.4,0,.2,1), transform .65s cubic-bezier(.4,0,.2,1);
-    }
-    .sr.in { opacity: 1; transform: translateY(0); }
+/* wallpaper: faint warm light, faint grain */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: -1;
+  background:
+    radial-gradient(1100px 700px at 85% -10%, rgba(254,128,25,.07), transparent 60%),
+    radial-gradient(900px 600px at -5% 105%, rgba(142,192,124,.05), transparent 60%);
+}
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: -1;
+  opacity: .04; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
 
-    /* ── Selection ──────────────────────────── */
-    ::selection { background: rgba(124,58,237,.28); color: #fff; }
+::selection { background: rgba(254,128,25,.35); color: #fff; }
 
-    /* ══════════════════════════════════════════
-       DARK THEME
-    ══════════════════════════════════════════ */
-    .d-body {
-      font-family: 'JetBrains Mono', monospace;
-      background: #05050d; color: #ddddf0;
-      overflow-x: hidden; min-height: 100vh;
-    }
+a { color: var(--orange); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
-    .d-nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
-      background: rgba(6,6,15,.82); backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(124,58,237,.15);
-    }
-    .d-nav-inner {
-      max-width: 1080px; margin: 0 auto; padding: 0 24px;
-      height: 54px; display: flex; align-items: center; justify-content: space-between;
-    }
-    .d-nav-brand {
-      font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 16px;
-      color: #ddddf0; background: none; border: none;
-    }
-    .d-nav-brand span { color: #a78bfa; }
-    .d-nav-links { display: flex; align-items: center; gap: 22px; }
-    .d-nav-link {
-      font-size: 12px; color: #7777aa; background: none; border: none;
-      font-family: 'JetBrains Mono', monospace;
-      transition: color .2s; padding-bottom: 2px;
-    }
-    .d-nav-link.active { color: #a78bfa; border-bottom: 1px solid #a78bfa; }
-    /* System card */
-    .sys-card {
-      background: rgba(12,12,28,.9); border: 1px solid rgba(124,58,237,.2);
-      border-radius: 8px; overflow: hidden;
-      backdrop-filter: blur(6px);
-    }
-    .sys-card-bar {
-      background: rgba(124,58,237,.1); border-bottom: 1px solid rgba(124,58,237,.15);
-      padding: 8px 14px; display: flex; align-items: center; gap: 7px;
-    }
-    .dot3 { width: 10px; height: 10px; border-radius: 50%; }
-    .sys-card-body { padding: 18px 20px; line-height: 2.1; font-size: 12px; }
-    .sk { color: #55558a; min-width: 95px; display: inline-block; }
-    .sv { color: #ddddf0; }
-    .sv.gr { color: #10b981; }
-    .sv.am { color: #f59e0b; }
-    .sys-hr { border: none; border-top: 1px solid rgba(124,58,237,.15); margin: 8px 0; }
+:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
 
-    /* Dark cards */
-    .d-card {
-      background: rgba(12,12,28,.7); border: 1px solid rgba(124,58,237,.18);
-      border-radius: 8px; backdrop-filter: blur(4px);
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-    }
-    .d-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.1), transparent);
-      transition: left 0.5s ease;
-    }
-    .d-card:hover {
-      border-color: rgba(167,139,250,.5);
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 20px 60px rgba(124,58,237,.25), 0 0 40px rgba(167, 139, 250, 0.15);
-    }
-    .d-card:hover::before {
-      left: 100%;
-    }
+.skip {
+  position: absolute; left: 16px; top: -48px; z-index: 1000;
+  background: var(--orange); color: var(--wall);
+  font-family: var(--mono); font-size: 12px;
+  padding: 8px 14px; border-radius: 6px;
+  transition: top .15s ease;
+}
+.skip:focus { top: 12px; text-decoration: none; }
 
-    /* Status pill */
-    .d-pill {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 4px 12px; border-radius: 20px; font-size: 11px;
-      letter-spacing: .05em; border: 1px solid;
-    }
-    .d-pill.green { border-color:rgba(16,185,129,.35);color:#10b981;background:rgba(16,185,129,.08); }
-    .d-pill .pulse { width:6px;height:6px;border-radius:50%;background:currentColor;animation:blink 1.6s ease-in-out infinite; }
+.mono { font-family: var(--mono); }
 
-    /* Dark tags */
-    .d-tag {
-      display: inline-flex; padding: 3px 9px; border-radius: 4px; font-size: 11px;
-      letter-spacing: .04em; border: 1px solid; transition: all .2s;
-    }
-    .d-tag.pu { border-color:rgba(124,58,237,.35);color:#a78bfa;background:rgba(124,58,237,.1); }
-    .d-tag.am { border-color:rgba(245,158,11,.3);color:#f59e0b;background:rgba(245,158,11,.07); }
-    .d-tag.gr { border-color:rgba(16,185,129,.3);color:#10b981;background:rgba(16,185,129,.07); }
+/* ───────────────────────────────────────────────
+   top bar (waybar)
+─────────────────────────────────────────────── */
+.bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 18px;
+  background: rgba(29,32,33,.86);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+  font-family: var(--mono); font-size: 12px;
+}
 
-    /* Dark section headers */
-    .d-section-label {
-      font-size: 11px; letter-spacing: .15em; color: #a78bfa;
-      text-transform: uppercase; margin-bottom: 10px;
-      display: flex; align-items: center; gap: 10px;
-    }
-    .d-section-label::after { content:''; flex:1; height:1px; background: linear-gradient(90deg,rgba(124,58,237,.25),transparent); }
-    .d-section-title {
-      font-family: 'Space Grotesk', sans-serif; font-weight: 700;
-      font-size: clamp(1.8rem,4vw,2.8rem); color: #ddddf0; line-height: 1.1;
-    }
+.ws { display: flex; gap: 6px; }
+.ws a {
+  display: flex; align-items: center; justify-content: center;
+  min-width: 28px; height: 28px; padding: 0 8px;
+  border-radius: 7px;
+  color: var(--dim);
+  border: 1px solid transparent;
+  transition: color .15s ease, background .15s ease;
+}
+.ws a:hover { color: var(--fg); text-decoration: none; background: var(--bg-soft); }
+.ws a.on {
+  background: var(--orange); color: var(--wall);
+  font-weight: 500;
+}
+.ws a .ws-name { display: none; margin-left: 6px; }
+.ws a.on .ws-name { display: inline; }
 
-    /* Classified text */
-    .classified {
-      background: #44446a; color: transparent; border-radius: 2px;
-      transition: all .35s ease; padding: 1px 3px;
-    }
-    .classified:hover { background: transparent; color: #f59e0b; }
+.bar-mid { color: var(--faint); display: flex; gap: 14px; align-items: center; }
+.bar-mid .host { color: var(--dim); }
+.bar-mid .host b { color: var(--aqua); font-weight: 500; }
 
-    /* Timeline */
-    .tl-line { position:absolute; left:0; top:0; bottom:0; width:1px; background:linear-gradient(to bottom,#7c3aed,transparent); }
-    .tl-node { width:8px;height:8px;border-radius:50%;background:#a78bfa;border:2px solid #06060f;flex-shrink:0;margin-top:4px;box-shadow:0 0 8px rgba(167,139,250,.5); }
+.bar-right { display: flex; gap: 4px; align-items: center; }
+.bar-right a {
+  display: flex; align-items: center; gap: 7px;
+  color: var(--dim); padding: 6px 10px; border-radius: 7px;
+  transition: color .15s ease, background .15s ease;
+}
+.bar-right a:hover { color: var(--fg); background: var(--bg-soft); text-decoration: none; }
+.bar-right svg { display: block; }
 
-    /* Case status */
-    .case-badge {
-      font-size: 10px; letter-spacing: .1em; padding: 2px 8px;
-      border-radius: 3px; border: 1px solid;
-    }
-    .case-badge.dp { border-color:rgba(16,185,129,.4);color:#10b981; }
+/* ───────────────────────────────────────────────
+   windows
+─────────────────────────────────────────────── */
+.window {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 18px 40px -20px rgba(0,0,0,.55);
+}
 
-    /* Code block */
-    .d-code {
-      background: #06060f; border: 1px solid rgba(124,58,237,.18); border-radius: 6px; overflow: hidden;
-    }
-    .d-code-hd {
-      background: rgba(124,58,237,.08); border-bottom: 1px solid rgba(124,58,237,.15);
-      padding: 6px 12px; display: flex; align-items: center; justify-content: space-between;
-    }
+.titlebar {
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 14px;
+  background: var(--bg-soft);
+  border-bottom: 1px solid var(--line);
+  font-family: var(--mono); font-size: 11.5px;
+  color: var(--dim);
+}
+.titlebar .wdot {
+  width: 8px; height: 8px; border-radius: 3px;
+  background: var(--faint); flex: none;
+}
+.titlebar .meta { margin-left: auto; color: var(--faint); }
 
-    /* Tilt */
-    .tilt { transform-style: preserve-3d; will-change: transform; }
+.pad { padding: 22px 24px; }
 
-    /* Dark terminal widget */
-    .d-term { position:fixed; bottom:22px; right:22px; z-index:400; width:360px; max-width:calc(100vw - 44px); }
-    .d-term-hd {
-      background:rgba(6,6,15,.95); border:1px solid rgba(124,58,237,.2);
-      border-radius:7px 7px 0 0; padding:8px 14px;
-      display:flex; align-items:center; justify-content:space-between;
-      backdrop-filter:blur(8px); cursor:pointer;
-    }
-    .d-term-bd {
-      background:rgba(6,6,15,.97); border:1px solid rgba(124,58,237,.2);
-      border-top:none; border-radius:0 0 7px 7px; padding:14px;
-      backdrop-filter:blur(8px);
-    }
-    .thin-scroll::-webkit-scrollbar { width: 4px; }
-    .thin-scroll::-webkit-scrollbar-track { background: transparent; }
-    .thin-scroll::-webkit-scrollbar-thumb { background: rgba(124,58,237,.3); border-radius:2px; }
+/* ───────────────────────────────────────────────
+   layout
+─────────────────────────────────────────────── */
+main { max-width: 1120px; margin: 0 auto; padding: 76px var(--gap) 0; }
 
-    /* ── Animations ── */
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes scaleIn {
-      from { opacity: 0; transform: scale(0.92); }
-      to   { opacity: 1; transform: scale(1); }
-    }
-    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
-    @keyframes bob   { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
-    @keyframes titleShimmer {
-      0%,100% { background-position: 0% 50%; }
-      50%      { background-position: 100% 50%; }
-    }
-    .bob { animation: bob 2s ease-in-out infinite; }
-    
-    /* New Cool Animations */
-    @keyframes slideInLeft {
-      from { opacity: 0; transform: translateX(-50px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-    @keyframes slideInRight {
-      from { opacity: 0; transform: translateX(50px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-    @keyframes rotateIn {
-      from { opacity: 0; transform: rotate(-10deg) scale(0.9); }
-      to { opacity: 1; transform: rotate(0deg) scale(1); }
-    }
-    @keyframes glowPulse {
-      0%, 100% { box-shadow: 0 0 20px rgba(167, 139, 250, 0.3), 0 0 40px rgba(167, 139, 250, 0.1); }
-      50% { box-shadow: 0 0 30px rgba(167, 139, 250, 0.6), 0 0 60px rgba(167, 139, 250, 0.3); }
-    }
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    @keyframes textReveal {
-      from { clip-path: inset(0 100% 0 0); opacity: 0; }
-      to { clip-path: inset(0 0 0 0); opacity: 1; }
-    }
-    @keyframes cardFlip {
-      from { transform: perspective(1000px) rotateY(0deg); }
-      to { transform: perspective(1000px) rotateY(5deg); }
-    }
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px) rotate(-2deg); }
-      75% { transform: translateX(5px) rotate(2deg); }
-    }
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-15px); }
-    }
-    @keyframes spinSlow {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-    @keyframes scaleBounce {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-    }
-    @keyframes fadeInScale {
-      from { opacity: 0; transform: scale(0.8); }
-      to { opacity: 1; transform: scale(1); }
-    }
-    
-    /* Animation Classes */
-    .animate-slide-left { animation: slideInLeft 0.6s ease-out forwards; }
-    .animate-slide-right { animation: slideInRight 0.6s ease-out forwards; }
-    .animate-rotate-in { animation: rotateIn 0.8s ease-out forwards; }
-    .animate-glow-pulse { animation: glowPulse 2s ease-in-out infinite; }
-    .animate-gradient { 
-      background-size: 200% auto;
-      animation: gradientShift 3s ease infinite;
-    }
-    .animate-text-reveal { animation: textReveal 1s ease-out forwards; }
-    .animate-bounce { animation: bounce 1s ease-in-out infinite; }
-    .animate-shake { animation: shake 0.5s ease-in-out; }
-    .animate-spin-slow { animation: spinSlow 20s linear infinite; }
-    .animate-scale-bounce { animation: scaleBounce 2s ease-in-out infinite; }
-    .animate-fade-scale { animation: fadeInScale 0.6s ease-out forwards; }
-    
-    /* Hover Effects */
-    .hover-lift {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .hover-lift:hover {
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 20px 40px rgba(167, 139, 250, 0.2);
-    }
-    
-    .hover-glow {
-      transition: box-shadow 0.3s ease;
-    }
-    .hover-glow:hover {
-      box-shadow: 0 0 30px rgba(167, 139, 250, 0.5), 0 0 60px rgba(167, 139, 250, 0.2);
-    }
-    
-    .hover-rotate {
-      transition: transform 0.3s ease;
-    }
-    .hover-rotate:hover {
-      transform: rotate(5deg) scale(1.05);
-    }
-    
-    .hover-scale {
-      transition: transform 0.3s ease;
-    }
-    .hover-scale:hover {
-      transform: scale(1.1);
-    }
-    
-    /* Smooth transitions for all interactive elements */
-    a, button, .d-card {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    /* Enhanced button animations */
-    button, a[role="button"] {
-      position: relative;
-      overflow: hidden;
-    }
-    button::before, a[role="button"]::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      border-radius: 50%;
-      background: rgba(167, 139, 250, 0.2);
-      transform: translate(-50%, -50%);
-      transition: width 0.6s, height 0.6s;
-    }
-    button:hover::before, a[role="button"]:hover::before {
-      width: 300px;
-      height: 300px;
-    }
-    
-    /* Text gradient animation */
-    .gradient-text-animated {
-      background: linear-gradient(90deg, #a78bfa, #c084fc, #e879f9, #a78bfa);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: gradientShift 3s ease infinite;
-    }
-    
-    /* Pulse glow effect */
-    .pulse-glow {
-      animation: glowPulse 2s ease-in-out infinite;
-    }
-    
-    /* Floating animation */
-    .float-animation {
-      animation: float 3s ease-in-out infinite;
-    }
-    
-    /* Rotate on hover */
-    .rotate-on-hover {
-      transition: transform 0.3s ease;
-    }
-    .rotate-on-hover:hover {
-      transform: rotate(360deg);
-    }
-    
-    /* Scale bounce on hover */
-    .bounce-on-hover {
-      transition: transform 0.3s ease;
-    }
-    .bounce-on-hover:hover {
-      animation: bounce 0.6s ease-in-out;
-    }
-    
-    /* Stagger animation delays */
-    .stagger-1 { animation-delay: 0.1s; opacity: 0; }
-    .stagger-2 { animation-delay: 0.2s; opacity: 0; }
-    .stagger-3 { animation-delay: 0.3s; opacity: 0; }
-    .stagger-4 { animation-delay: 0.4s; opacity: 0; }
-    .stagger-5 { animation-delay: 0.5s; opacity: 0; }
-    
-    /* Apply fade in to staggered elements */
-    .stagger-1, .stagger-2, .stagger-3, .stagger-4, .stagger-5 {
-      animation: fadeInUp 0.6s ease-out forwards;
-    }
-    
-    /* Smooth scroll reveal */
-    .reveal-on-scroll {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .reveal-on-scroll.revealed {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    
-    /* Icon animations */
-    .icon-spin:hover {
-      animation: spinSlow 2s linear infinite;
-    }
-    
-    /* Link underline animation */
-    .link-underline {
-      position: relative;
-      text-decoration: none;
-    }
-    .link-underline::after {
-      content: '';
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: linear-gradient(90deg, #a78bfa, #c084fc);
-      transition: width 0.3s ease;
-    }
-    .link-underline:hover::after {
-      width: 100%;
-    }
+section { padding-top: calc(var(--gap) * 2); }
 
-    /* Hover shimmer */
-    .shimmer { position:relative; overflow:hidden; }
-    .shimmer::after {
-      content:''; position:absolute; inset:0;
-      background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.04) 50%,transparent 60%);
-      transform:translateX(-100%); transition:transform .5s ease; pointer-events:none;
-    }
-    .shimmer:hover::after { transform:translateX(100%); }
+.sec-head {
+  display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap;
+  margin: 34px 2px 20px;
+}
+.sec-head .tag {
+  font-family: var(--mono); font-size: 12px; color: var(--orange);
+}
+.sec-head h2 {
+  font-family: var(--disp); font-size: clamp(26px, 4vw, 38px);
+  font-weight: 700; letter-spacing: -.01em; color: var(--fg);
+}
 
-    /* Scanline hover */
-    @keyframes scan { 0%{top:-60px} 100%{top:110%} }
-    .scanwrap { position:relative; overflow:hidden; }
-    .scanwrap::before {
-      content:''; position:absolute; left:0; right:0; height:60px;
-      background:linear-gradient(to bottom,transparent,rgba(124,58,237,.05),transparent);
-      top:-60px; pointer-events:none; z-index:2;
-    }
-    .scanwrap:hover::before { animation:scan 1.2s linear forwards; }
+/* ───────────────────────────────────────────────
+   hero — workspace 1
+─────────────────────────────────────────────── */
+.hero {
+  display: grid; grid-template-columns: 1.45fr 1fr; gap: var(--gap);
+  align-items: stretch;
+  padding-top: calc(var(--gap) * 2);
+}
 
-    /* ══════════════════════════════════════════
-       RESPONSIVE — MOBILE & TABLET
-    ══════════════════════════════════════════ */
+.hero-main .pad { padding: clamp(28px, 5vw, 52px); }
+.hero-eyebrow {
+  font-family: var(--mono); font-size: 12.5px; color: var(--dim);
+  margin-bottom: 22px;
+}
+.hero-eyebrow .tz { color: var(--faint); }
 
-    /* ── Hamburger button ───────────────────── */
-    .mob-menu-btn {
-      display: none;
-      background: none; border: none; cursor: pointer;
-      padding: 6px; flex-direction: column; gap: 5px;
-    }
-    .mob-menu-btn span {
-      display: block; width: 22px; height: 2px; border-radius: 2px;
-      transition: all .3s ease;
-    }
-    .mob-menu-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-    .mob-menu-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
-    .mob-menu-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.hero h1 {
+  font-family: var(--disp);
+  font-size: clamp(46px, 7.5vw, 86px);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -.025em;
+  margin-bottom: 18px;
+}
+.hero .claim {
+  font-family: var(--disp);
+  font-size: clamp(18px, 2.4vw, 24px);
+  font-weight: 500;
+  color: var(--aqua);
+  line-height: 1.35;
+  margin-bottom: 18px;
+  max-width: 26ch;
+}
+.hero p.blurb {
+  color: var(--dim); max-width: 52ch; margin-bottom: 30px;
+}
+.hero p.blurb em { color: var(--fg); font-style: normal; }
 
-    /* ── Dark mobile nav drawer ──────────────── */
-    .d-mob-drawer {
-      position: fixed; top: 54px; left: 0; right: 0;
-      background: rgba(5,5,13,.98); backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(124,58,237,.2);
-      padding: 20px 24px 28px;
-      display: flex; flex-direction: column; gap: 4px;
-      z-index: 499;
-      transform: translateY(-110%);
-      transition: transform .35s cubic-bezier(.4,0,.2,1);
-    }
-    .d-mob-drawer.open { transform: translateY(0); }
-    .d-mob-link {
-      font-size: 15px; color: #7777aa;
-      background: none; border: none; text-align: left;
-      padding: 12px 0; cursor: pointer;
-      font-family: 'JetBrains Mono', monospace;
-      border-bottom: 1px solid rgba(124,58,237,.1);
-      transition: color .2s;
-    }
-    .d-mob-link:last-of-type { border-bottom: none; }
-    .d-mob-link:hover, .d-mob-link.active { color: #a78bfa; }
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 13px;
+  padding: 10px 18px; border-radius: 8px;
+  border: 1px solid var(--line-2);
+  color: var(--fg);
+  transition: border-color .15s ease, background .15s ease, transform .15s ease;
+}
+.btn:hover { text-decoration: none; border-color: var(--orange); transform: translateY(-1px); }
+.btn.solid { background: var(--orange); border-color: var(--orange); color: var(--wall); font-weight: 500; }
+.btn.solid:hover { background: #ff9436; }
 
-    /* ── Tablet (≤900px) ─────────────────────── */
-    @media (max-width: 900px) {
-      .d-nav-links { display: none !important; }
-      .mob-menu-btn { display: flex !important; }
+/* fastfetch pane */
+.fetch .pad { padding: 20px 22px; font-family: var(--mono); font-size: 12.5px; }
+.fetch-grid { display: flex; gap: 22px; }
+.fetch pre.arch {
+  color: var(--aqua); font-size: 11px; line-height: 1.5;
+  flex: none; align-self: flex-start; margin-top: 2px;
+  font-family: var(--mono);
+}
+.fetch dl { line-height: 2.05; }
+.fetch .ff-user { color: var(--orange); font-weight: 500; }
+.fetch .ff-sep { color: var(--faint); }
+.fetch dl div { display: flex; gap: 10px; }
+.fetch dt { color: var(--orange); min-width: 76px; }
+.fetch dd { color: var(--fg); }
+.fetch dd .sub { color: var(--faint); }
+.swatches { display: flex; gap: 6px; margin-top: 16px; }
+.swatches i {
+  width: 16px; height: 16px; border-radius: 4px; display: block;
+}
 
-      /* Dark Hero: stack columns */
-      #d-home .hero-grid { grid-template-columns: 1fr !important; }
-      #d-home .hero-sys-card { display: none !important; }
+/* ───────────────────────────────────────────────
+   projects — workspace 2
+─────────────────────────────────────────────── */
+.proj-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap);
+}
 
-      /* Dark About: stack */
-      #d-about .about-grid { grid-template-columns: 1fr !important; }
+.project { display: flex; flex-direction: column; transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease; }
+.project:hover, .project:focus-within {
+  border-color: var(--orange);
+  transform: translateY(-3px);
+  box-shadow: 0 24px 44px -20px rgba(0,0,0,.65);
+}
+.project:hover .wdot, .project:focus-within .wdot { background: var(--orange); }
 
-      /* Reduce section padding */
-      section { padding-top: 72px !important; padding-bottom: 72px !important; }
+.project .titlebar a { color: var(--dim); }
+.project .titlebar a:hover { color: var(--fg); text-decoration: none; }
+.project .stars { color: var(--yellow); }
 
-      /* Dark terminal: hide on tablet/mobile */
-      .d-term { display: none !important; }
-    }
+.project .pad {
+  padding: 18px 20px; flex: 1;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.project h3 {
+  font-family: var(--disp); font-size: 19px; font-weight: 700;
+  letter-spacing: -.01em;
+}
+.project h3 a { color: var(--fg); }
+.project h3 a:hover { color: var(--orange); text-decoration: none; }
+.project p { color: var(--dim); font-size: 13.5px; flex: 1; }
 
-    /* ── Mobile (≤640px) ─────────────────────── */
-    @media (max-width: 640px) {
-      /* Navs */
-      .d-nav-inner { padding: 0 18px !important; }
+.proj-foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  font-family: var(--mono); font-size: 11px;
+}
+.tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.tags span {
+  color: var(--aqua);
+  background: rgba(142,192,124,.08);
+  border: 1px solid rgba(142,192,124,.18);
+  padding: 2px 8px; border-radius: 5px;
+}
+.src { color: var(--faint); white-space: nowrap; }
+.src:hover { color: var(--orange); text-decoration: none; }
 
-      /* Hero sections */
-      #d-home { padding: 80px 18px 40px !important; }
+/* ───────────────────────────────────────────────
+   about — workspace 3
+─────────────────────────────────────────────── */
+.about-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: var(--gap); align-items: start; }
 
-      /* Section padding */
-      section { padding-left: 18px !important; padding-right: 18px !important; }
-      section > div { padding-left: 0 !important; padding-right: 0 !important; }
+.about-md .pad { display: flex; flex-direction: column; gap: 16px; }
+.about-md p { color: var(--dim); }
+.about-md p strong { color: var(--fg); font-weight: 600; }
 
-      /* Light about: stack grid */
-      /* Contact email: shrink text */
-      .contact-email { font-size: 13px !important; padding: 12px 18px !important; }
+blockquote.creed {
+  border-left: 3px solid var(--orange);
+  padding: 6px 0 6px 18px;
+  font-family: var(--disp); font-size: 19px; font-weight: 600;
+  line-height: 1.5; color: var(--fg);
+  margin: 6px 0;
+}
+blockquote.creed .q { color: var(--orange); }
 
-      /* Reduce heading sizes */
-      .d-section-title { font-size: clamp(1.6rem,7vw,2.4rem) !important; }
-    }
+.now ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.now li {
+  display: flex; gap: 12px; align-items: baseline;
+  font-size: 13.5px; color: var(--dim);
+}
+.now li::before {
+  content: '->'; font-family: var(--mono);
+  color: var(--aqua); flex: none; font-size: 12px;
+}
+.now li b { color: var(--fg); font-weight: 600; }
+.now .pad { padding: 20px 22px; }
 
-    /* ── Dark hero: center on mobile ────────── */
-    @media (max-width: 900px) {
-      #d-home .hero-grid { grid-template-columns: 1fr !important; justify-items: center; }
-      #d-home .hero-grid > div:first-child { text-align: center; max-width: 560px; }
-      #d-home .hero-grid > div:first-child p { margin-left: auto; margin-right: auto; }
-      #d-home .hero-grid > div:first-child > div { justify-content: center; }
+/* ───────────────────────────────────────────────
+   stack — workspace 4
+─────────────────────────────────────────────── */
+.stack-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap); }
 
-      /* Dark about: single column */
-      #d-about .about-grid { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
+.pkgs .pad { padding: 16px 18px; font-family: var(--mono); font-size: 12.5px; line-height: 2.1; }
+.pkgs .ln { display: flex; gap: 8px; white-space: nowrap; }
+.pkgs .repo { color: var(--faint); }
+.pkgs .pkg { color: var(--fg); font-weight: 500; }
+.pkgs .ver { color: var(--aqua); }
+.pkgs .note { color: var(--faint); font-style: italic; overflow: hidden; text-overflow: ellipsis; }
 
-      /* Sections: reduce padding */
-      #d-home { padding-top: 80px !important; padding-bottom: 40px !important; }
-      #d-about, #d-timeline, #d-projects, #d-stack, #d-contact { padding-top: 80px !important; padding-bottom: 80px !important; }
+.stack-note {
+  margin-top: var(--gap);
+  font-family: var(--mono); font-size: 12px; color: var(--faint);
+  padding: 0 4px;
+}
 
-      /* Contact email */
-      .contact-email { font-size: 13px !important; padding: 12px 20px !important; word-break: break-all; }
-    }
+/* ───────────────────────────────────────────────
+   contact — workspace 5
+─────────────────────────────────────────────── */
+.contact .pad { padding: clamp(30px, 5vw, 56px); text-align: left; }
+.contact h2 {
+  font-family: var(--disp); font-size: clamp(30px, 5vw, 52px);
+  font-weight: 800; letter-spacing: -.02em; line-height: 1.05;
+  margin-bottom: 14px; max-width: 18ch;
+}
+.contact h2 .amp { color: var(--orange); }
+.contact p { color: var(--dim); max-width: 54ch; margin-bottom: 28px; }
 
-    /* ── Mobile: horizontal padding ─────────── */
-    @media (max-width: 640px) {
-      #d-about { padding-left: 18px !important; padding-right: 18px !important; }
-      #d-projects { padding-left: 18px !important; padding-right: 18px !important; }
-      #d-stack { padding-left: 18px !important; padding-right: 18px !important; }
-      #d-contact { padding-left: 18px !important; padding-right: 18px !important; }
-      #d-timeline { padding-left: 18px !important; padding-right: 18px !important; }
-    }
+/* footer */
+footer {
+  max-width: 1120px; margin: 0 auto;
+  padding: 26px var(--gap) 34px;
+  display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  font-family: var(--mono); font-size: 11.5px; color: var(--faint);
+}
+footer a { color: var(--dim); }
 
-    /* ── Glitch effect ────────────────────── */
-    @keyframes glitchSkew {
-      0%   { transform: skew(0deg); }
-      15%  { transform: skew(-3deg, 0.8deg); }
-      30%  { transform: skew(2deg, -0.5deg); }
-      45%  { transform: skew(-1.5deg, 0.3deg); }
-      60%  { transform: skew(2.5deg, -1deg); }
-      75%  { transform: skew(-0.5deg, 0.5deg); }
-      100% { transform: skew(0deg); }
-    }
-    @keyframes glitchSlice {
-      0%   { clip-path: inset(80% -6px 0 0); transform: translate(-4px, -2px); }
-      10%  { clip-path: inset(10% -6px 85% 0); transform: translate(4px, 2px); }
-      20%  { clip-path: inset(50% -6px 30% 0); transform: translate(-3px, 1px); }
-      30%  { clip-path: inset(15% -6px 65% 0); transform: translate(3px, -1px); }
-      40%  { clip-path: inset(70% -6px 5% 0); transform: translate(-2px, 2px); }
-      50%  { clip-path: inset(40% -6px 40% 0); transform: translate(2px, -2px); }
-      60%  { clip-path: inset(5% -6px 80% 0); transform: translate(-4px, 1px); }
-      70%  { clip-path: inset(60% -6px 15% 0); transform: translate(4px, -1px); }
-      80%  { clip-path: inset(25% -6px 55% 0); transform: translate(-2px, 2px); }
-      90%  { clip-path: inset(90% -6px 2% 0); transform: translate(3px, -2px); }
-      100% { clip-path: inset(80% -6px 0 0); transform: translate(-4px, -2px); }
-    }
+/* ───────────────────────────────────────────────
+   tiling animation
+─────────────────────────────────────────────── */
+@keyframes tile-in {
+  from { opacity: 0; transform: scale(.94) translateY(14px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+html.js .tile { opacity: 0; }
+html.js .tile.open {
+  animation: tile-in .55s cubic-bezier(.22, 1, .36, 1) both;
+}
 
-    /* ── 3D Sphere tags ───────────────────── */
-    .sphere-tag {
-      position: absolute;
-      padding: 5px 14px;
-      border-radius: 5px;
-      font-size: 12px;
-      letter-spacing: .04em;
-      border: 1px solid rgba(124,58,237,.3);
-      color: #a78bfa;
-      background: rgba(124,58,237,.06);
-      white-space: nowrap;
-      transition: border-color 0.3s, color 0.3s, background 0.3s, box-shadow 0.3s;
-      cursor: default;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .sphere-tag:hover {
-      border-color: rgba(167,139,250,.9);
-      color: #ddddf0;
-      background: rgba(124,58,237,.25);
-      box-shadow: 0 0 25px rgba(124,58,237,.4);
-    }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  html.js .tile { opacity: 1; }
+  html.js .tile.open { animation: none; }
+  .project, .btn { transition: none; }
+}
 
-    /* ── Mouse spotlight ──────────────────── */
-    .spotlight-layer {
-      position: fixed;
-      inset: 0;
-      z-index: 2;
-      pointer-events: none;
-      background: radial-gradient(
-        650px circle at var(--mx, 50%) var(--my, 50%),
-        rgba(124,58,237,.07),
-        transparent 40%
-      );
-    }
-
-    /* ── Floating orb paths ───────────────── */
-    @keyframes orbFloat1 {
-      0%,100% { transform: translate(0,0) scale(1); }
-      25%  { transform: translate(40px,-50px) scale(1.05); }
-      50%  { transform: translate(-25px,30px) scale(0.95); }
-      75%  { transform: translate(20px,40px) scale(1.02); }
-    }
-    @keyframes orbFloat2 {
-      0%,100% { transform: translate(0,0) scale(1); }
-      33%  { transform: translate(-50px,30px) scale(1.08); }
-      66%  { transform: translate(30px,-45px) scale(0.93); }
-    }
-    @keyframes orbFloat3 {
-      0%,100% { transform: translate(0,0) scale(1); }
-      50%  { transform: translate(40px,30px) scale(1.06); }
-    }
-
-    /* ── Section cyber divider ────────────── */
-    .cyber-divider {
-      width: 100%;
-      max-width: 1080px;
-      margin: 0 auto;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(124,58,237,.4), rgba(167,139,250,.25), transparent);
-      position: relative;
-      overflow: visible;
-    }
-    .cyber-divider::after {
-      content: '';
-      position: absolute;
-      top: -1px;
-      left: -40px;
-      width: 40px;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, #a78bfa);
-      border-radius: 2px;
-      animation: dividerScan 4s ease-in-out infinite;
-    }
-    @keyframes dividerScan {
-      0%   { left: -40px; opacity: 0; }
-      10%  { opacity: 1; }
-      90%  { opacity: 1; }
-      100% { left: calc(100% + 40px); opacity: 0; }
-    }
-
-    /* ── Animated border card ─────────────── */
-    @property --border-angle {
-      syntax: '<angle>';
-      initial-value: 0deg;
-      inherits: false;
-    }
-    .animated-border {
-      position: relative;
-      background: rgba(12,12,28,.7);
-      border-radius: 8px;
-    }
-    .animated-border::before {
-      content: '';
-      position: absolute;
-      inset: -1px;
-      border-radius: 9px;
-      padding: 1px;
-      background: conic-gradient(from var(--border-angle), transparent 25%, #7c3aed 50%, transparent 75%);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      animation: borderRotate 4s linear infinite;
-      pointer-events: none;
-    }
-    @keyframes borderRotate {
-      to { --border-angle: 360deg; }
-    }
-  </style>
+/* ───────────────────────────────────────────────
+   responsive
+─────────────────────────────────────────────── */
+@media (max-width: 980px) {
+  .proj-grid, .stack-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero { grid-template-columns: 1fr; }
+  .bar-mid .host { display: none; }
+}
+@media (max-width: 620px) {
+  .proj-grid, .stack-grid, .about-grid { grid-template-columns: 1fr; }
+  .bar-mid { display: none; }
+  .ws a .ws-name { display: none !important; }
+  .fetch-grid pre.arch { display: none; }
+}
+</style>
 </head>
 <body>
+<a class="skip" href="#main">skip to content</a>
 
-<!-- Loader -->
-<div id="loader">
-  <div>
-    <div class="ld-name">HAMZA <span>JEELANI</span></div>
-    <div class="ld-track"><div class="ld-fill" id="ldf"></div></div>
-    <div class="ld-text" id="lds">initializing...</div>
-    </div>
+<!-- ── waybar ──────────────────────────────── -->
+<header class="bar">
+  <nav class="ws" aria-label="Workspaces">
+    <a href="#home"     data-ws="home"     class="on">1<span class="ws-name">home</span></a>
+    <a href="#projects" data-ws="projects">2<span class="ws-name">projects</span></a>
+    <a href="#about"    data-ws="about">3<span class="ws-name">about</span></a>
+    <a href="#stack"    data-ws="stack">4<span class="ws-name">stack</span></a>
+    <a href="#contact"  data-ws="contact">5<span class="ws-name">contact</span></a>
+  </nav>
+  <div class="bar-mid" aria-hidden="true">
+    <span class="host"><b>hamza</b>@arch</span>
+    <span id="clock"></span>
   </div>
+  <div class="bar-right">
+    <a href="https://github.com/Crepco" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.4-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0C16.2 4.7 17.2 5 17.2 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.2c0 .4.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>
+      <span>github</span>
+    </a>
+    <a href="mailto:hamza0jeelani@gmail.com" aria-label="Email Hamza">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
+      <span>mail</span>
+    </a>
+  </div>
+</header>
 
-  <div id="root"></div>
+<main id="main">
 
-<!-- source reader? hi. -->
-
-<script>
-  (function(){
-    const b=document.getElementById('ldf'),s=document.getElementById('lds');
-    const steps=[[20,'loading...'],[50,'rendering...'],[80,'almost there...'],[100,'done.']];
-    let i=0;
-    const tick=()=>{
-      if(i>=steps.length)return;
-      b.style.width=steps[i][0]+'%'; s.textContent=steps[i][1]; i++;
-      if(i<steps.length) setTimeout(tick,280+Math.random()*160);
-    };
-    setTimeout(tick,180);
-  })();
-</script>
-
-<script>
-  // Auto-apply scroll reveal animations
-  document.addEventListener('DOMContentLoaded', () => {
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    };
-    
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const element = entry.target;
-          
-          // Add revealed class for CSS animations
-          if (element.classList.contains('reveal-on-scroll')) {
-            element.classList.add('revealed');
-          }
-          
-          // Apply stagger animations
-          if (element.classList.contains('stagger-1') || 
-              element.classList.contains('stagger-2') ||
-              element.classList.contains('stagger-3') ||
-              element.classList.contains('stagger-4') ||
-              element.classList.contains('stagger-5')) {
-            element.style.opacity = '1';
-          }
-          
-          observer.unobserve(element);
-        }
-      });
-    }, observerOptions);
-    
-    // Observe all elements that should animate
-    const elementsToAnimate = document.querySelectorAll(
-      '.reveal-on-scroll, .stagger-1, .stagger-2, .stagger-3, .stagger-4, .stagger-5, [data-animate]'
-    );
-    elementsToAnimate.forEach(el => observer.observe(el));
-    
-    // Add hover effects to cards dynamically
-    const cards = document.querySelectorAll('.d-card');
-    cards.forEach(card => {
-      card.addEventListener('mouseenter', function() {
-        this.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-      });
-    });
-    
-    // Add pulse animation to buttons on hover
-    const buttons = document.querySelectorAll('button, a[role="button"]');
-    buttons.forEach(btn => {
-      btn.addEventListener('mouseenter', function() {
-        if (!this.classList.contains('pulse-glow')) {
-          this.classList.add('pulse-glow');
-        }
-      });
-      btn.addEventListener('mouseleave', function() {
-        this.classList.remove('pulse-glow');
-      });
-    });
-  });
-</script>
-
-  <script type="text/babel">
-  const { useState, useEffect, useRef, useCallback, useMemo } = React;
-  
-  // Scroll Animation Observer
-  const useScrollAnimation = () => {
-    useEffect(() => {
-      const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-      };
-      
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry, index) => {
-          if (entry.isIntersecting) {
-            const element = entry.target;
-            const delay = index * 0.1;
-            
-            // Add animation classes based on data attributes
-            if (element.dataset.animate === 'fade-up') {
-              element.style.animation = `fadeInUp 0.8s ease-out ${delay}s forwards`;
-            } else if (element.dataset.animate === 'slide-left') {
-              element.style.animation = `slideInLeft 0.6s ease-out ${delay}s forwards`;
-            } else if (element.dataset.animate === 'slide-right') {
-              element.style.animation = `slideInRight 0.6s ease-out ${delay}s forwards`;
-            } else if (element.dataset.animate === 'scale') {
-              element.style.animation = `fadeInScale 0.6s ease-out ${delay}s forwards`;
-            } else if (element.dataset.animate === 'rotate') {
-              element.style.animation = `rotateIn 0.8s ease-out ${delay}s forwards`;
-            } else {
-              // Default fade in
-              element.style.opacity = '0';
-              element.style.transform = 'translateY(30px)';
-              setTimeout(() => {
-                element.style.transition = 'all 0.6s ease-out';
-                element.style.opacity = '1';
-                element.style.transform = 'translateY(0)';
-              }, delay * 1000);
-            }
-            
-            observer.unobserve(element);
-          }
-        });
-      }, observerOptions);
-      
-      // Observe all elements with data-animate attribute
-      const animatedElements = document.querySelectorAll('[data-animate]');
-      animatedElements.forEach(el => {
-        el.style.opacity = '0';
-        observer.observe(el);
-      });
-      
-      return () => observer.disconnect();
-    }, []);
-  };
-
-  /* ══ Icons ══════════════════════════════════════════════════ */
-  const GithubIcon = ({s=18}) => (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
-      </svg>
-    );
-  const MailIcon = ({s=18}) => (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-      <polyline points="22,6 12,13 2,6"/>
-      </svg>
-    );
-  const TermIcon = ({s=15}) => (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/>
-      </svg>
-    );
-  const ChevD = ({s=15}) => (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="6 9 12 15 18 9"/>
-      </svg>
-    );
-  const ChevU = ({s=15}) => (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="18 15 12 9 6 15"/>
-      </svg>
-    );
-  const ExtLink = ({s=14}) => (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-      <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
-      </svg>
-    );
-  const CopyIcon = ({s=13}) => (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-      </svg>
-    );
-  const SunIcon = ({s=16}) => (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="5"/>
-      <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-      <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-      </svg>
-    );
-  const MoonIcon = ({s=16}) => (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-      </svg>
-    );
-  const ArrowRight = ({s=16}) => (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-      </svg>
-    );
-
-  /* ══ Shared data ════════════════════════════════════════════ */
-  const projects = [
-    {
-      id: '001', name: 'Spotify Playlist Downloader',
-      short: 'Downloads entire Spotify playlists with metadata and multi-format support.',
-      desc: 'Started because I needed my music offline. Ended up building a proper tool with accurate metadata, format options, and retry logic for rate-limited API calls.',
-      tech: ['Python','Web APIs','CSS'],
-      github: 'https://github.com/Crepco/spotify-playlist-downlaod',
-      stars: 10,
-      snippet: `import spotify_downloader
-
-playlist = spotify_downloader.get_playlist(playlist_id)
-spotify_downloader.download(
-    playlist, output_dir='./music',
-    format='mp3', quality='320kbps'
-)`,
-      detail: 'The real challenge was handling rate limiting. Built exponential backoff with local caching to avoid re-fetching tracks and maintain download progress across sessions.',
-    },
-    {
-      id: '002', name: 'Steganography Tool',
-      short: 'Embeds and extracts hidden data in images using LSB encoding.',
-      desc: 'Built to understand how steganography works at a low level. Supports optional AES-256 encryption before embedding, so even if the carrier is detected, the content stays protected.',
-      tech: ['Python','Image Processing','Cryptography'],
-      github: 'https://github.com/Crepco/Steganography-',
-      stars: 4,
-      snippet: `from steganography import Steganography
-
-steg = Steganography()
-steg.encode('cover.png', 'secret.txt', 'output.png',
-            encrypt=True, key='passphrase')
-
-message = steg.decode('output.png', key='passphrase')`,
-      detail: 'LSB encoding is detectable via chi-square statistical analysis, so I layered AES-256 encryption before embedding. Without the key, even detecting the stego reveals nothing useful.',
-    },
-    {
-      id: '003', name: 'Password Manager',
-      short: 'Local, encrypted password manager. No cloud, no subscriptions.',
-      desc: 'Tired of cloud password managers holding credentials. Built a local vault with AES-256 encryption, PBKDF2 key derivation, and a password generator.',
-      tech: ['Python','AES-256','Security'],
-      github: 'https://github.com/Crepco/Password_Manager',
-      stars: 2,
-      snippet: `manager = PasswordManager(master_password)
-
-manager.add('github.com', {
-    'username': 'crepco',
-    'password': manager.generate(length=32)
-})
-cred = manager.get('github.com')`,
-      detail: 'Key derivation uses 600,000 PBKDF2-HMAC-SHA256 iterations (OWASP recommendation). The vault is an opaque encrypted blob — without the master password, brute force is computationally infeasible.',
-    },
-  ];
-
-  const timelineData = [
-    { year: '2025', entries: [
-      { q:'Late 2025', e:'Built a steganography tool to understand how data hiding works at the bit level. Added encryption as a second layer.', tags:['Python','Cryptography'] },
-      { q:'Mid 2025',  e:'Started taking web application security seriously — OWASP Top 10, Burp Suite workflows, understanding request manipulation.', tags:['WebSec','Burp Suite'] },
-      { q:'Early 2025',e:'Switched daily driver to Arch Linux. More educational than expected. Still running it.', tags:['Linux','Sysadmin'] },
-    ]},
-    { year: '2024', entries: [
-      { q:'Late 2024', e:'Built a local password manager with AES-256 after deciding I didn\'t want a cloud service holding my credentials.', tags:['Python','Security'] },
-      { q:'Mid 2024',  e:'Deep-dive into networking — Wireshark, packet analysis, TCP/IP handshakes, DNS internals.', tags:['Networking','Wireshark'] },
-      { q:'Early 2024',e:'Built the Spotify downloader. A practical problem that taught me a lot about API rate limiting and retry strategies.', tags:['Python','APIs'] },
-    ]},
-  ];
-
-  const stackGroups = {
-    'Languages':         { color:'pu', items:['Python','JavaScript','Bash','HTML/CSS','SQL'] },
-    'Security Tools':    { color:'am', items:['Burp Suite','Nmap','Wireshark','Metasploit','Hydra','John The Ripper','Nikto','SQLmap'] },
-    'Systems & Tooling': { color:'pu', items:['Arch Linux','Kali Linux','Git','MySQL','Django','Neovim','VS Code'] },
-  };
-
-  /* ══ Shared hooks ═══════════════════════════════════════════ */
-  const useReveal = (thresh=0.12) => {
-    const ref=useRef(null); const [v,setV]=useState(false);
-    useEffect(()=>{
-      const o=new IntersectionObserver(([e])=>{if(e.isIntersecting){setV(true);o.disconnect();}},{threshold:thresh});
-      if(ref.current) o.observe(ref.current);
-      return ()=>o.disconnect();
-    },[thresh]);
-    return [ref,v];
-  };
-
-  const useScrollSections = (ids) => {
-    const [active,setActive]=useState(ids[0]);
-    useEffect(()=>{
-      const fn=()=>{
-        const mid=window.scrollY+window.innerHeight/2;
-        for(const id of ids){
-          const el=document.getElementById(id);
-          if(el&&mid>=el.offsetTop&&mid<el.offsetTop+el.offsetHeight){setActive(id);break;}
-        }
-      };
-      window.addEventListener('scroll',fn,{passive:true}); fn();
-      return ()=>window.removeEventListener('scroll',fn);
-    },[ids.join()]);
-    return active;
-  };
-
-  const goto = id => document.getElementById(id)?.scrollIntoView({behavior:'smooth'});
-
-  /* ══ Scramble text (dark only) ══════════════════════════════ */
-  const CHARS='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-  const ScrambleHeading = ({text,className=''}) => {
-    const [disp,setDisp]=useState(text);
-    const [done,setDone]=useState(false);
-    const ref=useRef(null);
-    useEffect(()=>{
-      if(done) return;
-      const obs=new IntersectionObserver(([e])=>{
-        if(e.isIntersecting){
-          obs.disconnect(); setDone(true);
-          let fr=0; const total=text.length*4;
-          const run=()=>{
-            setDisp(text.split('').map((ch,i)=>{
-              if(ch===' ') return ' ';
-              if(i<fr/4) return ch;
-              return CHARS[Math.floor(Math.random()*CHARS.length)];
-            }).join(''));
-            fr++; if(fr<=total) requestAnimationFrame(run); else setDisp(text);
-          };
-          requestAnimationFrame(run);
-        }
-      },{threshold:.4});
-      if(ref.current) obs.observe(ref.current);
-      return ()=>obs.disconnect();
-    },[text,done]);
-    return <span ref={ref} className={className}>{disp}</span>;
-  };
-
-  /* ══ Typing text (dark hero) ════════════════════════════════ */
-  const TypingText = ({lines,speed=90}) => {
-    const [txt,setTxt]=useState('');
-    const [li,setLi]=useState(0);
-    const [ci,setCi]=useState(0);
-    const [del,setDel]=useState(false);
-    useEffect(()=>{
-      const cur=lines[li];
-      const t=setTimeout(()=>{
-        if(!del){
-          if(ci<cur.length){setTxt(cur.slice(0,ci+1));setCi(ci+1);}
-          else setTimeout(()=>setDel(true),1800);
-        } else {
-          if(ci>0){setTxt(cur.slice(0,ci-1));setCi(ci-1);}
-          else{setDel(false);setLi((li+1)%lines.length);}
-        }
-      },del?speed/2:speed);
-      return ()=>clearTimeout(t);
-    },[ci,li,del,lines,speed]);
-    return <span>{txt}<span className="blink" style={{color:'#a78bfa'}}>_</span></span>;
-  };
-
-  /* ══ Visit counter (global) ═════════════════════════════════ */
-  const VisitCounter = ({dark=false}) => {
-    const [count,setCount]=useState(0);
-    const [loading,setLoading]=useState(true);
-    useEffect(()=>{
-      // Use CountAPI for global visit tracking
-      const namespace='crepco-portfolio';
-      const key='visits';
-      const apiUrl=`https://api.countapi.xyz/hit/${namespace}/${key}`;
-      
-      // Increment counter and get updated count
-      fetch(apiUrl)
-        .then(res=>res.json())
-        .then(data=>{
-          if(data.value!==undefined){
-            setCount(data.value);
-            setLoading(false);
-          } else {
-            // Fallback: try to get current count
-            fetch(`https://api.countapi.xyz/get/${namespace}/${key}`)
-              .then(r=>r.json())
-              .then(d=>{
-                if(d.value!==undefined){
-                  setCount(d.value);
-                }
-                setLoading(false);
-              })
-              .catch(()=>setLoading(false));
-          }
-        })
-        .catch(err=>{
-          console.error('Visit counter error:',err);
-          setLoading(false);
-        });
-    },[]);
-    
-    if(loading) return null;
-    if(count===0) return null;
-    
-    const color=dark?'#33334a':'#a08060';
-    return (
-      <span style={{color,fontSize:11,fontFamily:'Space Grotesk, sans-serif'}}>
-        {count.toLocaleString()} {count===1?'visit':'visits'}
-      </span>
-    );
-  };
-
-  /* ══ Scroll progress ════════════════════════════════════════ */
-  const ScrollProgress = ({color}) => {
-    const [pct,setPct]=useState(0);
-    useEffect(()=>{
-      const fn=()=>{
-        const h=document.documentElement.scrollHeight-window.innerHeight;
-        setPct(h>0?(window.scrollY/h)*100:0);
-      };
-      window.addEventListener('scroll',fn,{passive:true});
-      return ()=>window.removeEventListener('scroll',fn);
-    },[]);
-    return <div className="scroll-bar" style={{width:pct+'%',background:color}} />;
-  };
-
-  /* ══ Dark cursor ════════════════════════════════════════════ */
-  const DarkCursor = () => {
-    const dotRef=useRef(null); const ringRef=useRef(null);
-    const pos=useRef({x:0,y:0}); const ring=useRef({x:0,y:0});
-    useEffect(()=>{
-      let raf;
-      const onMove=e=>{pos.current={x:e.clientX,y:e.clientY};};
-      const big=()=>ringRef.current?.classList.add('big');
-      const sm=()=>ringRef.current?.classList.remove('big');
-      const tick=()=>{
-        ring.current.x+=(pos.current.x-ring.current.x)*.12;
-        ring.current.y+=(pos.current.y-ring.current.y)*.12;
-        if(dotRef.current){dotRef.current.style.left=pos.current.x-3.5+'px';dotRef.current.style.top=pos.current.y-3.5+'px';}
-        if(ringRef.current){ringRef.current.style.left=ring.current.x-13+'px';ringRef.current.style.top=ring.current.y-13+'px';}
-        raf=requestAnimationFrame(tick);
-      };
-      tick();
-      window.addEventListener('mousemove',onMove);
-      document.querySelectorAll('a,button').forEach(el=>{el.addEventListener('mouseenter',big);el.addEventListener('mouseleave',sm);});
-      return ()=>{cancelAnimationFrame(raf);window.removeEventListener('mousemove',onMove);};
-    },[]);
-    return <><div ref={dotRef} className="cursor-dot"/><div ref={ringRef} className="cursor-ring"/></>;
-  };
-
-  /* ══ Tilt card ══════════════════════════════════════════════ */
-  const TiltCard = ({children,className='',style={}}) => {
-    const ref=useRef(null); const [t,setT]=useState({x:0,y:0}); const [h,setH]=useState(false);
-      return (
-      <div ref={ref} className={`tilt ${className}`}
-        style={{...style, transform:`perspective(900px) rotateX(${t.x}deg) rotateY(${t.y}deg) scale(${h?1.02:1})`,
-          transition:h?'transform .08s ease-out':'transform .35s ease'}}
-        onMouseMove={e=>{
-          if(!ref.current)return;
-          const r=ref.current.getBoundingClientRect();
-          setT({x:((e.clientY-r.top-r.height/2)/(r.height/2))*-6, y:((e.clientX-r.left-r.width/2)/(r.width/2))*6});
-        }}
-        onMouseEnter={()=>setH(true)}
-        onMouseLeave={()=>{setT({x:0,y:0});setH(false);}}>
-        {children}
-      </div>
-    );
-  };
-
-  /* ══ Konami egg ═════════════════════════════════════════════ */
-  const KonamiEgg = ({dark}) => {
-    const [show,setShow]=useState(false);
-    const seq=useRef([]);
-    const code=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
-    useEffect(()=>{
-      const fn=e=>{
-        seq.current=[...seq.current.slice(-9),e.key];
-        if(seq.current.length===10&&seq.current.every((k,i)=>k===code[i])){
-          setShow(true);seq.current=[];setTimeout(()=>setShow(false),5000);
-        }
-      };
-      window.addEventListener('keydown',fn);
-      return ()=>window.removeEventListener('keydown',fn);
-    },[]);
-    if(!show) return null;
-    const bg=dark?'rgba(6,6,15,.95)':'rgba(248,247,244,.97)';
-    const border=dark?'1px solid #a78bfa':'1px solid #4f46e5';
-    const ac=dark?'#a78bfa':'#4f46e5';
-    const tx=dark?'#ddddf0':'#1a1a2e';
-    const tx2=dark?'#7777aa':'#6b7280';
-      return (
-      <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:10000}} onClick={()=>setShow(false)}>
-        <div style={{background:bg,border,borderRadius:10,padding:'2.5rem 3rem',textAlign:'center',maxWidth:340}}>
-          <div style={{fontSize:38,marginBottom:14}}>🔓</div>
-          <div style={{fontFamily:'Space Grotesk',fontWeight:700,fontSize:20,color:ac,marginBottom:8}}>Access Granted</div>
-          <div style={{fontSize:13,color:tx2,marginBottom:12,lineHeight:1.6}}>You found the Konami code.<br/>Impressive use of free time.</div>
-          <div style={{fontSize:11,color:tx2}}>click anywhere to close</div>
+  <!-- ── workspace 1: home ─────────────────── -->
+  <section id="home" aria-label="Intro">
+    <div class="hero">
+      <div class="window tile hero-main">
+        <div class="titlebar"><span class="wdot"></span>~/hamza <span class="meta">workspace 1</span></div>
+        <div class="pad">
+          <div class="hero-eyebrow">Hyderabad, India <span class="tz">· UTC+5:30</span></div>
+          <h1>Hamza Jeelani</h1>
+          <p class="claim">I take things apart to see why they work.</p>
+          <p class="blurb">
+            Security student and Python tinkerer. My days go to CTF boxes, my
+            projects to <em>tools I actually needed</em>, and my nights to convincing
+            myself the Hyprland config is finished. It isn't.
+          </p>
+          <div class="btn-row">
+            <a class="btn solid" href="mailto:hamza0jeelani@gmail.com">email me</a>
+            <a class="btn" href="https://github.com/Crepco" target="_blank" rel="noopener noreferrer">github &nearr;</a>
           </div>
         </div>
-      );
-    };
+      </div>
 
-  /* ══ Particle Network (canvas) ═══════════════════════════ */
-  const ParticleNetwork = () => {
-    const canvasRef = useRef(null);
-    const mouse = useRef({x:-9999,y:-9999});
-
-    useEffect(() => {
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext('2d');
-      let raf;
-      const isMobile = window.innerWidth < 768;
-      const COUNT = isMobile ? 30 : 70;
-      const LINK_DIST = 150;
-      const MOUSE_RADIUS = 200;
-      const particles = [];
-
-      const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
-      resize();
-      window.addEventListener('resize', resize);
-
-      for (let i = 0; i < COUNT; i++) {
-        particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * 0.4,
-          vy: (Math.random() - 0.5) * 0.4,
-          r: Math.random() * 1.8 + 0.6,
-        });
-      }
-
-      const onMove = e => { mouse.current = {x:e.clientX,y:e.clientY}; };
-      window.addEventListener('mousemove', onMove);
-
-      const tick = () => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for (let i = 0; i < particles.length; i++) {
-          const p = particles[i];
-          const dx = mouse.current.x - p.x;
-          const dy = mouse.current.y - p.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          if (dist < MOUSE_RADIUS) {
-            const f = (MOUSE_RADIUS - dist) / MOUSE_RADIUS;
-            p.vx -= (dx / dist) * f * 0.015;
-            p.vy -= (dy / dist) * f * 0.015;
-          }
-
-          p.x += p.vx; p.y += p.vy;
-          p.vx *= 0.995; p.vy *= 0.995;
-          if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-          if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-          p.x = Math.max(0, Math.min(canvas.width, p.x));
-          p.y = Math.max(0, Math.min(canvas.height, p.y));
-
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-          ctx.fillStyle = 'rgba(167,139,250,0.4)';
-          ctx.fill();
-
-          for (let j = i + 1; j < particles.length; j++) {
-            const p2 = particles[j];
-            const ldx = p.x - p2.x, ldy = p.y - p2.y;
-            const ld = Math.sqrt(ldx * ldx + ldy * ldy);
-            if (ld < LINK_DIST) {
-              ctx.beginPath();
-              ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y);
-              ctx.strokeStyle = `rgba(124,58,237,${(1 - ld / LINK_DIST) * 0.15})`;
-              ctx.lineWidth = 0.6;
-              ctx.stroke();
-            }
-          }
-
-          if (dist < LINK_DIST * 1.5 && mouse.current.x > 0) {
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y); ctx.lineTo(mouse.current.x, mouse.current.y);
-            ctx.strokeStyle = `rgba(167,139,250,${(1 - dist / (LINK_DIST * 1.5)) * 0.3})`;
-            ctx.lineWidth = 0.8;
-            ctx.stroke();
-          }
-        }
-        raf = requestAnimationFrame(tick);
-      };
-      tick();
-
-      return () => {
-        cancelAnimationFrame(raf);
-        window.removeEventListener('resize', resize);
-        window.removeEventListener('mousemove', onMove);
-      };
-    }, []);
-
-    return <canvas ref={canvasRef} style={{position:'fixed',top:0,left:0,width:'100%',height:'100%',zIndex:1,pointerEvents:'none'}} />;
-  };
-
-  /* ══ Mouse Spotlight ═══════════════════════════════════════ */
-  const SpotlightLayer = () => {
-    const ref = useRef(null);
-    useEffect(() => {
-      const el = ref.current;
-      const fn = e => {
-        el.style.setProperty('--mx', e.clientX + 'px');
-        el.style.setProperty('--my', e.clientY + 'px');
-      };
-      window.addEventListener('mousemove', fn);
-      return () => window.removeEventListener('mousemove', fn);
-    }, []);
-    return <div ref={ref} className="spotlight-layer" />;
-  };
-
-  /* ══ Floating Gradient Orbs ════════════════════════════════ */
-  const FloatingOrbs = () => (
-    <div style={{position:'fixed',inset:0,zIndex:0,pointerEvents:'none',overflow:'hidden'}}>
-      <div style={{position:'absolute',top:'8%',left:'10%',width:550,height:550,borderRadius:'50%',
-        background:'radial-gradient(circle,rgba(124,58,237,0.09),transparent 70%)',
-        filter:'blur(80px)',animation:'orbFloat1 25s ease-in-out infinite'}} />
-      <div style={{position:'absolute',top:'55%',right:'5%',width:450,height:450,borderRadius:'50%',
-        background:'radial-gradient(circle,rgba(167,139,250,0.07),transparent 70%)',
-        filter:'blur(65px)',animation:'orbFloat2 30s ease-in-out infinite'}} />
-      <div style={{position:'absolute',bottom:'10%',left:'35%',width:380,height:380,borderRadius:'50%',
-        background:'radial-gradient(circle,rgba(192,132,252,0.06),transparent 70%)',
-        filter:'blur(55px)',animation:'orbFloat3 20s ease-in-out infinite'}} />
+      <aside class="window tile fetch" aria-label="System info, fastfetch style">
+        <div class="titlebar"><span class="wdot"></span>fastfetch</div>
+        <div class="pad">
+          <div class="fetch-grid">
+            <pre class="arch" aria-hidden="true">      /\
+     /  \
+    /    \
+   /  __  \
+  /  |  |  \
+ /_-&#39;&#39;  &#39;&#39;-_\</pre>
+            <dl>
+              <div style="margin-bottom:4px"><span class="ff-user">hamza</span><span class="ff-sep">@</span><span class="ff-user">arch</span></div>
+              <div><dt>os</dt><dd>Arch Linux <span class="sub">(btw)</span></dd></div>
+              <div><dt>wm</dt><dd>Hyprland</dd></div>
+              <div><dt>shell</dt><dd>zsh</dd></div>
+              <div><dt>editor</dt><dd>neovim</dd></div>
+              <div><dt>uptime</dt><dd>21 years</dd></div>
+              <div><dt>focus</dt><dd>offensive security</dd></div>
+              <div><dt>training</dt><dd>THM · HackTheBox</dd></div>
+            </dl>
+          </div>
+          <div class="swatches" aria-hidden="true">
+            <i style="background:#3c3836"></i><i style="background:#fb4934"></i><i style="background:#b8bb26"></i><i style="background:#fabd2f"></i><i style="background:#83a598"></i><i style="background:#d3869b"></i><i style="background:#8ec07c"></i><i style="background:#ebdbb2"></i>
+          </div>
+        </div>
+      </aside>
     </div>
-  );
+  </section>
 
-  /* ══ Film Grain Noise ══════════════════════════════════════ */
-  const NoiseOverlay = () => {
-    const canvasRef = useRef(null);
-    useEffect(() => {
-      const c = canvasRef.current;
-      const ctx = c.getContext('2d');
-      c.width = 200; c.height = 200;
-      const img = ctx.createImageData(200, 200);
-      const gen = () => {
-        for (let i = 0; i < img.data.length; i += 4) {
-          const v = Math.random() * 255;
-          img.data[i] = v; img.data[i+1] = v; img.data[i+2] = v;
-          img.data[i+3] = 14;
-        }
-        ctx.putImageData(img, 0, 0);
-      };
-      gen();
-      const id = setInterval(gen, 90);
-      return () => clearInterval(id);
-    }, []);
-    return <canvas ref={canvasRef} style={{position:'fixed',inset:0,width:'100%',height:'100%',zIndex:9990,pointerEvents:'none',opacity:0.45,mixBlendMode:'overlay'}} />;
-  };
+  <!-- ── workspace 2: projects ─────────────── -->
+  <section id="projects" aria-label="Projects">
+    <div class="sec-head">
+      <span class="tag">[2]</span>
+      <h2>Built because I needed them</h2>
+    </div>
+    <div class="proj-grid">
 
-  /* ══ Magnetic Link ═════════════════════════════════════════ */
-  const MagneticLink = ({children, href, style={}, ...props}) => {
-    const ref = useRef(null);
-    const [offset, setOffset] = useState({x:0, y:0});
-    return (
-      <a ref={ref} href={href} {...props}
-        style={{
-          ...style,
-          transform: `translate(${offset.x}px, ${offset.y}px)`,
-          transition: offset.x === 0
-            ? 'transform 0.55s cubic-bezier(0.22,1,0.36,1), border-color .2s, color .2s, background .2s'
-            : 'transform 0.12s ease-out, border-color .2s, color .2s, background .2s',
-        }}
-        onMouseMove={e => {
-          if (!ref.current) return;
-          const r = ref.current.getBoundingClientRect();
-          setOffset({
-            x: (e.clientX - r.left - r.width / 2) * 0.35,
-            y: (e.clientY - r.top - r.height / 2) * 0.35,
-          });
-        }}
-        onMouseLeave={() => setOffset({x:0, y:0})}
-      >
-        {children}
-      </a>
-    );
-  };
-
-  /* ══ Cyber Section Divider ═════════════════════════════════ */
-  const CyberDivider = () => {
-    const [ref, v] = useReveal();
-    return (
-      <div ref={ref} className={`sr ${v ? 'in' : ''}`} style={{padding:'0 24px',position:'relative',zIndex:10}}>
-        <div className="cyber-divider" />
-      </div>
-    );
-  };
-
-  /* ══ 3D Skill Sphere ═══════════════════════════════════════ */
-  const SkillSphere3D = ({items, radius=160}) => {
-    const containerRef = useRef(null);
-    const tagsRef = useRef([]);
-    const rot = useRef({x:0, y:0});
-    const autoAngle = useRef(0);
-    const mouseActive = useRef(false);
-
-    const count = items.length;
-    const golden = Math.PI * (3 - Math.sqrt(5));
-
-    const basePositions = useMemo(() =>
-      items.map((_, i) => {
-        const y = 1 - (i / (count - 1)) * 2;
-        const r = Math.sqrt(1 - y * y);
-        const theta = golden * i;
-        return { x: Math.cos(theta) * r, y, z: Math.sin(theta) * r };
-      })
-    , [count]);
-
-    useEffect(() => {
-      let raf;
-      const tick = () => {
-        if (!mouseActive.current) {
-          autoAngle.current += 0.003;
-          rot.current.y = autoAngle.current;
-        }
-        const ry = rot.current.y, rx = rot.current.x;
-        const cosY = Math.cos(ry), sinY = Math.sin(ry);
-        const cosX = Math.cos(rx), sinX = Math.sin(rx);
-
-        basePositions.forEach((p, i) => {
-          const el = tagsRef.current[i];
-          if (!el) return;
-          const x1 = p.x * cosY - p.z * sinY;
-          const z1 = p.x * sinY + p.z * cosY;
-          const y1 = p.y * cosX - z1 * sinX;
-          const z2 = p.y * sinX + z1 * cosX;
-          const depth = (z2 + 1) / 2;
-          el.style.transform = `translate(-50%,-50%) translate(${x1 * radius}px,${y1 * radius}px) scale(${0.5 + depth * 0.6})`;
-          el.style.opacity = 0.15 + depth * 0.85;
-          el.style.zIndex = Math.round(depth * 10);
-        });
-        raf = requestAnimationFrame(tick);
-      };
-      tick();
-      return () => cancelAnimationFrame(raf);
-    }, [basePositions, radius]);
-
-    const onMove = e => {
-      if (!containerRef.current) return;
-      const r = containerRef.current.getBoundingClientRect();
-      rot.current = {
-        x: (e.clientY - r.top - r.height / 2) / (r.height / 2) * 0.5,
-        y: (e.clientX - r.left - r.width / 2) / (r.width / 2) * 0.7,
-      };
-      autoAngle.current = rot.current.y;
-      mouseActive.current = true;
-    };
-
-    return (
-      <div ref={containerRef} onMouseMove={onMove} onMouseLeave={() => { mouseActive.current = false; }}
-        style={{perspective:800,width:'100%',height:400,position:'relative',display:'flex',alignItems:'center',justifyContent:'center',cursor:'grab'}}>
-        {items.map((item, i) => (
-          <span key={item} ref={el => tagsRef.current[i] = el} className="sphere-tag">{item}</span>
-        ))}
-      </div>
-    );
-  };
-
-  /* ══════════════════════════════════════════════════════════
-     DARK MODE COMPONENTS
-  ══════════════════════════════════════════════════════════ */
-
-  const DarkTerminal = () => {
-    const [open,setOpen]=useState(false);
-    const [history,setHistory]=useState([
-      {cmd:'whoami',out:'hamza — security researcher, developer'},
-      {cmd:'pwd',out:'/home/hamza/portfolio'},
-    ]);
-    const [inp,setInp]=useState('');
-    const bodyRef=useRef(null);
-    const cmds={
-      help:   'available: whoami, ls, skills, projects, contact, neofetch, monster, clear',
-      whoami: 'hamza jeelani — 21, india, CSE student turned security researcher',
-      ls:     'about/  projects/  skills/  contact/',
-      'cat about':'started with python, fell into security, never left. arch linux (yes).',
-      skills: 'python, bash, js, burp suite, nmap, wireshark, metasploit, linux, kali, git',
-      projects:'spotify-downloader  steganography-tool  password-manager',
-      contact:'hamza0jeelani@gmail.com',
-      neofetch:'hamza@portfolio\n─────────────\nOS: Arch Linux\nShell: zsh\nEditor: neovim\nTheme: dark\nMonster: critical',
-      monster: '🟢 Monster Energy. fuel for the code.',
-      clear:  '__clear__',
-    };
-    const run=cmd=>{
-      const t=cmd.trim().toLowerCase();
-      if(!t)return;
-      if(t==='clear'){setHistory([]);setInp('');return;}
-      const out=cmds[t]||`command not found: ${t}  (try 'help')`;
-      setHistory(h=>[...h,{cmd,out}]);
-      setInp('');
-    };
-    useEffect(()=>{
-      if(open&&bodyRef.current) bodyRef.current.scrollTop=bodyRef.current.scrollHeight;
-    },[history,open]);
-      return (
-      <div className="d-term">
-        <div className="d-term-hd" onClick={()=>setOpen(v=>!v)}>
-          <div style={{display:'flex',alignItems:'center',gap:8,color:'#a78bfa',fontSize:12}}>
-            <TermIcon /> <span>terminal</span>
-            </div>
-          <span style={{color:'#44445a'}}>{open?<ChevD/>:<ChevU/>}</span>
-          </div>
-        {open&&(
-          <div className="d-term-bd">
-            <div ref={bodyRef} className="thin-scroll" style={{height:200,overflowY:'auto',marginBottom:10,fontSize:12,lineHeight:1.7}}>
-              <div style={{color:'#33334a',marginBottom:8,fontSize:11}}>type 'help' for commands</div>
-              {history.map((h,i)=>(
-                <div key={i} style={{marginBottom:4}}>
-                  <div><span style={{color:'#33334a'}}>$ </span><span style={{color:'#a78bfa'}}>{h.cmd}</span></div>
-                  {h.out&&<div style={{color:'#8888a8',marginLeft:10,whiteSpace:'pre-line'}}>{h.out}</div>}
-          </div>
-              ))}
-            </div>
-            <div style={{display:'flex',alignItems:'center',gap:6,fontSize:12}}>
-              <span style={{color:'#33334a'}}>$</span>
-              <input value={inp} onChange={e=>setInp(e.target.value)}
-                onKeyDown={e=>e.key==='Enter'&&run(inp)}
-                style={{flex:1,background:'transparent',border:'none',outline:'none',color:'#a78bfa',fontFamily:'JetBrains Mono',fontSize:12}}
-                autoFocus placeholder="enter command..."/>
-            </div>
-            </div>
-          )}
+      <article class="window tile project">
+        <div class="titlebar"><span class="wdot"></span>DART
+          <span class="meta stars" data-repo="DART">★ 4</span>
         </div>
-      );
-    };
-
-  const DarkNav = ({active}) => {
-    const ids=['d-home','d-about','d-timeline','d-projects','d-stack','d-contact'];
-    const labels=['home','about','log','projects','stack','contact'];
-    const [open,setOpen]=useState(false);
-    const close=()=>setOpen(false);
-    const nav=(id)=>{goto(id);close();};
-    return (
-      <>
-      <nav className="d-nav">
-        <div className="d-nav-inner">
-          <button className="d-nav-brand" onClick={()=>nav('d-home')}>
-            hamza<span>.</span>
-          </button>
-          <div className="d-nav-links">
-            {ids.map((id,i)=>(
-              <button key={id} className={`d-nav-link ${active===id?'active':''}`} onClick={()=>goto(id)}>
-                ./{labels[i]}
-              </button>
-            ))}
-          </div>
-          <button className={`mob-menu-btn ${open?'open':''}`} onClick={()=>setOpen(o=>!o)} aria-label="menu">
-            <span style={{background:'#7777aa'}}/>
-            <span style={{background:'#7777aa'}}/>
-            <span style={{background:'#7777aa'}}/>
-          </button>
-        </div>
-      </nav>
-      <div className={`d-mob-drawer ${open?'open':''}`}>
-        {ids.map((id,i)=>(
-          <button key={id} className={`d-mob-link ${active===id?'active':''}`} onClick={()=>nav(id)}>
-            ./{labels[i]}
-          </button>
-        ))}
-      </div>
-      </>
-    );
-  };
-
-  const DarkHero = ({loaded}) => {
-    const [glitch, setGlitch] = useState(false);
-
-    useEffect(() => {
-      const trigger = () => {
-        setGlitch(true);
-        setTimeout(() => setGlitch(false), 150 + Math.random() * 250);
-      };
-      const id = setInterval(() => { if (Math.random() > 0.25) trigger(); }, 3500 + Math.random() * 2000);
-      setTimeout(trigger, 2200);
-      return () => clearInterval(id);
-    }, []);
-
-    return (
-    <section id="d-home" style={{minHeight:'100vh',display:'flex',alignItems:'center',padding:'80px 24px 40px',position:'relative',zIndex:10}}>
-      <div style={{maxWidth:1080,margin:'0 auto',width:'100%'}}>
-        <div className="hero-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'4rem',alignItems:'center'}}>
-          {/* Left */}
-          <div style={{opacity:loaded?1:0,transition:'opacity .9s ease .1s'}}>
-            <div style={{marginBottom:18}}>
-              <span className="d-pill green"><span className="pulse"/>open to work</span>
-                    </div>
-            <div style={{fontSize:12,color:'#33334a',marginBottom:14,letterSpacing:'.08em'}}>
-              <span style={{color:'#a78bfa'}}>$</span> whoami
-            </div>
-            <h1 style={{
-              fontFamily:'Space Grotesk',fontWeight:700,fontSize:'clamp(3rem,8vw,5.5rem)',lineHeight:1,
-              letterSpacing:'-.02em',color:'#ddddf0',marginBottom:16,position:'relative',
-              textShadow: glitch ? '-3px 0 #00ffd5, 3px 0 #ff00c1' : 'none',
-              animation: glitch ? 'glitchSkew 0.15s ease infinite' : 'none',
-            }}>
-              Hamza<br/><span style={{color:'#a78bfa'}}>Jeelani</span>
-              {glitch && <span style={{
-                position:'absolute',top:0,left:0,width:'100%',height:'100%',
-                color:'#00ffd5',opacity:0.7,animation:'glitchSlice 0.15s ease infinite',
-                pointerEvents:'none',
-              }} aria-hidden="true">Hamza<br/>Jeelani</span>}
-            </h1>
-            <div style={{fontSize:16,color:'#8888a8',marginBottom:24,height:26}}>
-              <TypingText lines={['security researcher','python developer','linux sysadmin — arch, btw','building things that work']} speed={88}/>
-            </div>
-            <p style={{color:'#8888a8',fontSize:13,lineHeight:1.85,maxWidth:440,marginBottom:36}}>
-              21, from India. CSE student who took a detour into cybersecurity and never came back.
-              I break things to understand them, then build tools around what I find.
-            </p>
-            <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
-              {[
-                {href:'https://github.com/crepco',icon:<GithubIcon s={15}/>,label:'GitHub'},
-                {href:'mailto:hamza0jeelani@gmail.com',icon:<MailIcon s={15}/>,label:'Email'},
-              ].map(({href,icon,label})=>(
-                <MagneticLink key={label} href={href} target={href.startsWith('http')?'_blank':undefined} rel="noopener noreferrer"
-                  style={{display:'flex',alignItems:'center',gap:8,padding:'9px 18px',border:'1px solid rgba(124,58,237,.25)',borderRadius:6,color:'#8888a8',fontSize:12,textDecoration:'none',background:'rgba(12,12,28,.6)'}}>
-                  {icon} {label}
-                </MagneticLink>
-              ))}
-                  </div>
-                </div>
-          {/* System Profile */}
-          <div className="hero-sys-card" style={{opacity:loaded?1:0,transition:'opacity .9s ease .3s'}}>
-            <TiltCard>
-              <div className="sys-card scanwrap shimmer">
-                <div className="sys-card-bar">
-                  <div className="dot3" style={{background:'#ef4444'}}/>
-                  <div className="dot3" style={{background:'#f59e0b'}}/>
-                  <div className="dot3" style={{background:'#10b981'}}/>
-                  <span style={{marginLeft:8,color:'#33334a',fontSize:11}}>system.profile — hamza@portfolio</span>
-              </div>
-                <div className="sys-card-body">
-                  <div><span className="sk">operator</span><span className="sv">Hamza Jeelani</span></div>
-                  <div><span className="sk">role</span><span className="sv">CSE Student / Sec. Researcher</span></div>
-                  <div><span className="sk">location</span><span className="sv">India</span></div>
-                  <div><span className="sk">os</span><span className="sv">Arch Linux (btw)</span></div>
-                  <div><span className="sk">shell</span><span className="sv">zsh + neovim</span></div>
-                  <hr className="sys-hr"/>
-                  <div><span className="sk">status</span><span className="sv gr">● ACTIVE</span></div>
-                  <div><span className="sk">focus</span><span className="sv">offensive security</span></div>
-                  <div><span className="sk">platforms</span><span className="sv">TryHackMe · HackTheBox</span></div>
-                  <hr className="sys-hr"/>
-                  <div><span className="sk">monster</span><span className="sv am">⚠ critical level</span></div>
-                  <div style={{marginTop:14,color:'#33334a',fontSize:10}}>
-                    {'> '}<span style={{color:'#a78bfa'}}>connection established</span>
-                    <span className="blink">_</span>
+        <div class="pad">
+          <h3><a href="https://github.com/Crepco/DART" target="_blank" rel="noopener noreferrer">DART</a></h3>
+          <p>An autonomous vision-guided turret. OpenCV detects and tracks moving
+             targets, an Arduino over serial drives the pan-tilt servos that follow
+             them. Phase two gives it a real mount.</p>
+          <div class="proj-foot">
+            <div class="tags"><span>python</span><span>opencv</span><span>arduino</span></div>
+            <a class="src" href="https://github.com/Crepco/DART" target="_blank" rel="noopener noreferrer">source &nearr;</a>
           </div>
         </div>
-              </div>
-            </TiltCard>
+      </article>
+
+      <article class="window tile project">
+        <div class="titlebar"><span class="wdot"></span>spotify-playlist-download
+          <span class="meta stars" data-repo="spotify-playlist-downlaod">★ 12</span>
+        </div>
+        <div class="pad">
+          <h3><a href="https://github.com/Crepco/spotify-playlist-downlaod" target="_blank" rel="noopener noreferrer">Spotify Playlist Downloader</a></h3>
+          <p>I wanted my playlists offline, so I built it. Pulls entire playlists
+             with proper metadata and survives Spotify's rate limiting with retry
+             and backoff logic.</p>
+          <div class="proj-foot">
+            <div class="tags"><span>python</span><span>web apis</span></div>
+            <a class="src" href="https://github.com/Crepco/spotify-playlist-downlaod" target="_blank" rel="noopener noreferrer">source &nearr;</a>
           </div>
         </div>
-        {/* Scroll hint */}
-        <div style={{position:'absolute',bottom:36,left:'50%',transform:'translateX(-50%)',opacity:loaded?.45:0,transition:'opacity 1s ease 1.5s'}} className="bob">
-          <div style={{width:22,height:36,border:'1.5px solid rgba(167,139,250,.4)',borderRadius:12,display:'flex',justifyContent:'center',padding:'5px 0'}}>
-            <div style={{width:4,height:8,background:'#a78bfa',borderRadius:4}}/>
+      </article>
+
+      <article class="window tile project">
+        <div class="titlebar"><span class="wdot"></span>steganography
+          <span class="meta stars" data-repo="Steganography-">★ 6</span>
+        </div>
+        <div class="pad">
+          <h3><a href="https://github.com/Crepco/Steganography-" target="_blank" rel="noopener noreferrer">Steganography Tool</a></h3>
+          <p>Hides messages inside images with LSB encoding, with optional AES-256
+             on top — so even if someone detects the carrier, the payload tells
+             them nothing.</p>
+          <div class="proj-foot">
+            <div class="tags"><span>python</span><span>crypto</span></div>
+            <a class="src" href="https://github.com/Crepco/Steganography-" target="_blank" rel="noopener noreferrer">source &nearr;</a>
           </div>
+        </div>
+      </article>
+
+      <article class="window tile project">
+        <div class="titlebar"><span class="wdot"></span>music_remover
+          <span class="meta stars" data-repo="music_remover">★ 3</span>
+        </div>
+        <div class="pad">
+          <h3><a href="https://github.com/Crepco/music_remover" target="_blank" rel="noopener noreferrer">Music Remover</a></h3>
+          <p>Strips the instrumental out of a track and keeps the vocals. Started
+             as a curiosity about audio signal processing, ended as a tool I keep
+             reaching for.</p>
+          <div class="proj-foot">
+            <div class="tags"><span>python</span><span>audio dsp</span></div>
+            <a class="src" href="https://github.com/Crepco/music_remover" target="_blank" rel="noopener noreferrer">source &nearr;</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="window tile project">
+        <div class="titlebar"><span class="wdot"></span>password_manager
+          <span class="meta stars" data-repo="Password_Manager">★ 2</span>
+        </div>
+        <div class="pad">
+          <h3><a href="https://github.com/Crepco/Password_Manager" target="_blank" rel="noopener noreferrer">Password Manager</a></h3>
+          <p>A local vault: AES-256 encryption, PBKDF2 key derivation, no cloud,
+             no subscription. Built after deciding my credentials shouldn't live
+             on someone else's server.</p>
+          <div class="proj-foot">
+            <div class="tags"><span>python</span><span>aes-256</span></div>
+            <a class="src" href="https://github.com/Crepco/Password_Manager" target="_blank" rel="noopener noreferrer">source &nearr;</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="window tile project">
+        <div class="titlebar"><span class="wdot"></span>linux-rice
+          <span class="meta stars" data-repo="linux-rice">★ 1</span>
+        </div>
+        <div class="pad">
+          <h3><a href="https://github.com/Crepco/linux-rice" target="_blank" rel="noopener noreferrer">linux-rice</a></h3>
+          <p>My Hyprland dotfiles — and the reason this site looks the way it does.
+             Tiled windows, gruvbox everywhere, permanently 90% finished.</p>
+          <div class="proj-foot">
+            <div class="tags"><span>hyprland</span><span>qml</span></div>
+            <a class="src" href="https://github.com/Crepco/linux-rice" target="_blank" rel="noopener noreferrer">source &nearr;</a>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ── workspace 3: about ────────────────── -->
+  <section id="about" aria-label="About">
+    <div class="sec-head">
+      <span class="tag">[3]</span>
+      <h2>The short version</h2>
+    </div>
+    <div class="about-grid">
+      <div class="window tile about-md">
+        <div class="titlebar"><span class="wdot"></span>about.md</div>
+        <div class="pad">
+          <p>
+            I started with Python because I was lazy in the right way — automating
+            anything I didn't want to do twice. Somewhere along the line I realised
+            <strong>breaking software teaches you more about it than building it</strong>,
+            and that detour became the whole road.
+          </p>
+          <p>
+            Most of what I make starts as a personal itch: playlists I wanted
+            offline, credentials I didn't want in someone's cloud, a desktop that
+            had to look exactly right. I'm a CSE student now, working toward
+            security research full-time.
+          </p>
+          <blockquote class="creed">
+            <span class="q">"</span>Read the source. Understand the system.
+            Own your stack.<span class="q">"</span>
+          </blockquote>
         </div>
       </div>
-    </section>
-    );
-  };
-
-  const DarkAbout = () => {
-    const [r1,v1]=useReveal(); const [r2,v2]=useReveal();
-      return (
-      <section id="d-about" style={{padding:'100px 24px',position:'relative',zIndex:10}}>
-        <div style={{maxWidth:1080,margin:'0 auto'}}>
-          <div className="d-section-label">01 — about</div>
-          <h2 className="d-section-title" style={{marginBottom:56}}><ScrambleHeading text="WHOIS hamza"/></h2>
-          <div className="about-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'3.5rem',alignItems:'start'}}>
-            {/* WHOIS block */}
-            <div ref={r1} className={`sr ${v1?'in':''}`}>
-              <div className="d-code">
-                <div className="d-code-hd">
-                  <span style={{color:'#33334a',fontSize:11}}>$ whois hamza.jeelani</span>
-          </div>
-                <div style={{padding:'18px 20px',fontSize:12,lineHeight:2,fontFamily:'JetBrains Mono'}}>
-                  <div style={{color:'#33334a',marginBottom:8,fontSize:10,borderBottom:'1px solid rgba(124,58,237,.15)',paddingBottom:8,letterSpacing:'.1em'}}>
-                    RECORD: HJ-2004-IN ─── UNRESTRICTED
-          </div>
-                  {[
-                    ['Full Name','Hamza Jeelani'],['Age','21'],['Location','India'],
-                  ].map(([k,v])=>(
-                    <div key={k}><span style={{color:'#55558a',minWidth:100,display:'inline-block'}}>{k}</span><span style={{color:'#ddddf0'}}>{v}</span></div>
-                  ))}
-                  <div><span style={{color:'#55558a',minWidth:100,display:'inline-block'}}>Status</span><span style={{color:'#10b981'}}>CSE Student → Researcher</span></div>
-                  <div style={{marginTop:8,borderTop:'1px solid rgba(124,58,237,.15)',paddingTop:8}}>
-                    <span style={{color:'#55558a',minWidth:100,display:'inline-block'}}>Focus</span>
-                    <span style={{color:'#ddddf0'}}>Penetration Testing<br/>
-                      <span style={{marginLeft:100,display:'inline-block'}}>Network Security</span><br/>
-                      <span style={{marginLeft:100,display:'inline-block'}}>Security Tooling</span>
-                    </span>
+      <div class="window tile now">
+        <div class="titlebar"><span class="wdot"></span>right now</div>
+        <div class="pad">
+          <ul>
+            <li><b>Active Directory</b> — enumeration and attack paths</li>
+            <li><b>Web exploitation</b> — OWASP Top 10, Burp workflows</li>
+            <li><b>Network analysis</b> — Wireshark, packet-level debugging</li>
+            <li><b>CTFs</b> — grinding boxes on TryHackMe &amp; HackTheBox</li>
+          </ul>
         </div>
-                  <div style={{marginTop:8,borderTop:'1px solid rgba(124,58,237,.15)',paddingTop:8}}>
-                    <div style={{color:'#55558a',marginBottom:6}}>Interests</div>
-                    <div style={{color:'#ddddf0',paddingLeft:12}}>
-                      <div>├── Offensive Security</div>
-                      <div>├── Linux Administration</div>
-                      <div>├── Network Analysis</div>
-                      <div>└── Building things that actually work</div>
-                    </div>
-                  </div>
-                  <div style={{marginTop:8,color:'#33334a',fontSize:10,borderTop:'1px solid rgba(124,58,237,.15)',paddingTop:8}}>─── END OF RECORD ───</div>
-                </div>
-              </div>
-            </div>
-            {/* Bio */}
-            <div ref={r2} className={`sr ${v2?'in':''}`} style={{display:'flex',flexDirection:'column',gap:18}}>
-              <p style={{color:'#8888a8',lineHeight:1.9,fontSize:13}}>
-                Started with Python because I wanted to automate repetitive tasks.
-                Ended up in security because breaking things is more interesting
-                than building them. Now I do both.
-              </p>
-              <p style={{color:'#8888a8',lineHeight:1.9,fontSize:13}}>
-                I learn best by doing — which usually means breaking something,
-                understanding why it broke, then building a better version.
-                Most of my projects started as solutions to problems I personally ran into.
-              </p>
-              <p style={{color:'#8888a8',lineHeight:1.9,fontSize:13}}>
-                Currently working through offensive security training on TryHackMe
-                and HackTheBox while building tools in Python on the side.
-              </p>
-              {/* Classified block */}
-              <div style={{background:'rgba(12,12,28,.6)',border:'1px solid rgba(124,58,237,.15)',borderRadius:6,padding:'14px 16px'}}>
-                <div style={{fontSize:10,color:'#33334a',letterSpacing:'.1em',marginBottom:8,fontFamily:'JetBrains Mono'}}>// classified — hover text to reveal</div>
-                <p style={{fontSize:12,color:'#8888a8',lineHeight:1.8}}>
-                  Confession:{' '}
-                  <span className="classified">I use Arch Linux</span>
-                  {' '}and{' '}
-                  <span className="classified">talk about it constantly</span>.
-                  My dotfiles are{' '}
-                  <span className="classified">genuinely over-engineered</span>.
-                </p>
-              </div>
-              <div style={{display:'flex',gap:8,flexWrap:'wrap',marginTop:4}}>
-                {['TryHackMe','HackTheBox','Python','Linux'].map(p=>(
-                  <span key={p} className="d-tag pu">{p}</span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  };
-
-  const DarkTimeline = () => {
-    const [ref,visible]=useReveal();
-      return (
-      <section id="d-timeline" style={{padding:'100px 24px',position:'relative',zIndex:10}}>
-        <div style={{maxWidth:780,margin:'0 auto'}}>
-          <div className="d-section-label">02 — activity log</div>
-          <h2 className="d-section-title" style={{marginBottom:56}}><ScrambleHeading text="What I've Been Up To"/></h2>
-          <div ref={ref} className={`sr ${visible?'in':''}`}>
-            {timelineData.map(yr=>(
-              <div key={yr.year} style={{marginBottom:48}}>
-                <div style={{fontFamily:'Space Grotesk',fontWeight:700,fontSize:26,color:'#ddddf0',marginBottom:20,borderBottom:'1px solid rgba(124,58,237,.15)',paddingBottom:10}}>
-                  {yr.year}
-            </div>
-                <div style={{position:'relative',paddingLeft:22}}>
-                  <div className="tl-line"/>
-                  <div style={{display:'flex',flexDirection:'column',gap:18}}>
-                    {yr.entries.map((e,i)=>(
-                      <div key={i} style={{display:'flex',gap:14,alignItems:'flex-start'}}>
-                        <div className="tl-node" style={{marginLeft:-4}}/>
-                        <div style={{flex:1}}>
-                          <div style={{fontSize:11,color:'#a78bfa',letterSpacing:'.1em',marginBottom:4}}>{e.q}</div>
-                          <p style={{color:'#8888a8',fontSize:13,lineHeight:1.7,marginBottom:8}}>{e.e}</p>
-                          <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
-                            {e.tags.map(t=><span key={t} className="d-tag pu">{t}</span>)}
-          </div>
-          </div>
-        </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  };
-
-  const DarkProjectCard = ({project,index}) => {
-    const [open,setOpen]=useState(false);
-    const [copied,setCopied]=useState(false);
-    const [ref,v]=useReveal();
-    const copy=()=>{navigator.clipboard.writeText(project.snippet);setCopied(true);setTimeout(()=>setCopied(false),2000);};
-      return (
-      <div ref={ref} className={`sr ${v?'in':''}`} style={{transitionDelay:index*.12+'s'}}>
-        <TiltCard>
-          <div className="d-card scanwrap shimmer" style={{padding:28}}>
-            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:6}}>
-              <span style={{fontSize:10,letterSpacing:'.12em',color:'#33334a'}}>CASE #{project.id}</span>
-              <div style={{display:'flex',gap:8,alignItems:'center'}}>
-                <span className="case-badge dp">DEPLOYED</span>
-                <span style={{color:'#33334a',fontSize:12}}>★ {project.stars}</span>
-              </div>
-            </div>
-            <h3 style={{fontFamily:'Space Grotesk',fontWeight:700,fontSize:19,color:'#ddddf0',marginBottom:10}}>{project.name}</h3>
-            <p style={{color:'#8888a8',fontSize:13,lineHeight:1.7,marginBottom:16}}>{project.desc}</p>
-            <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:20}}>
-              {project.tech.map(t=><span key={t} className="d-tag pu">{t}</span>)}
-            </div>
-            <div style={{display:'flex',gap:10,borderTop:'1px solid rgba(124,58,237,.15)',paddingTop:16}}>
-              <a href={project.github} target="_blank" rel="noopener noreferrer"
-                style={{display:'flex',alignItems:'center',gap:6,fontSize:12,color:'#8888a8',textDecoration:'none',padding:'6px 12px',border:'1px solid rgba(124,58,237,.2)',borderRadius:5,transition:'all .2s'}}>
-                <GithubIcon s={13}/> Source
-              </a>
-              <button onClick={()=>setOpen(v=>!v)}
-                style={{display:'flex',alignItems:'center',gap:6,fontSize:12,color:'#8888a8',background:'none',border:'1px solid rgba(124,58,237,.2)',borderRadius:5,padding:'6px 12px',fontFamily:'JetBrains Mono',transition:'all .2s'}}>
-                {open?<><ChevU s={13}/> Less</>:<><ChevD s={13}/> Details</>}
-            </button>
-          </div>
-            {open&&(
-              <div style={{marginTop:20,paddingTop:20,borderTop:'1px solid rgba(124,58,237,.15)'}}>
-                <p style={{color:'#8888a8',fontSize:13,lineHeight:1.7,marginBottom:16}}>{project.detail}</p>
-                <div className="d-code">
-                  <div className="d-code-hd">
-                    <span style={{color:'#33334a',fontSize:11}}>python — {project.name.toLowerCase().replace(/ /g,'-')}.py</span>
-                    <button onClick={copy} style={{background:'none',border:'none',color:'#33334a',fontSize:11,display:'flex',alignItems:'center',gap:4,fontFamily:'JetBrains Mono',cursor:'pointer',transition:'color .2s'}}>
-                      <CopyIcon/> {copied?'copied':'copy'}
-                    </button>
-          </div>
-                  <pre style={{padding:'14px',fontSize:12,color:'#8888a8',overflowX:'auto',margin:0,lineHeight:1.7}}><code>{project.snippet}</code></pre>
-                </div>
-              </div>
-            )}
-          </div>
-        </TiltCard>
       </div>
-    );
-  };
+    </div>
+  </section>
 
-  const DarkProjects = () => (
-    <section id="d-projects" style={{padding:'100px 24px',position:'relative',zIndex:10}}>
-      <div style={{maxWidth:880,margin:'0 auto'}}>
-        <div className="d-section-label">03 — projects</div>
-        <h2 className="d-section-title" style={{marginBottom:12}}><ScrambleHeading text="Case Files"/></h2>
-        <p style={{color:'#8888a8',fontSize:13,lineHeight:1.7,marginBottom:52,maxWidth:500}}>
-          Things I built because I needed them. Details explain the technical decisions.
+  <!-- ── workspace 4: stack ────────────────── -->
+  <section id="stack" aria-label="Tools and stack">
+    <div class="sec-head">
+      <span class="tag">[4]</span>
+      <h2>Daily drivers</h2>
+    </div>
+    <div class="stack-grid">
+      <div class="window tile pkgs">
+        <div class="titlebar"><span class="wdot"></span>pacman -Qs lang</div>
+        <div class="pad">
+          <div class="ln"><span class="repo">local/</span><span class="pkg">python</span><span class="ver">3.13</span><span class="note"># daily driver</span></div>
+          <div class="ln"><span class="repo">local/</span><span class="pkg">javascript</span><span class="ver">es2024</span></div>
+          <div class="ln"><span class="repo">local/</span><span class="pkg">bash</span><span class="ver">5.2</span></div>
+          <div class="ln"><span class="repo">local/</span><span class="pkg">sql</span><span class="ver">mysql</span></div>
+          <div class="ln"><span class="repo">local/</span><span class="pkg">html-css</span><span class="ver">handwritten</span></div>
+        </div>
+      </div>
+      <div class="window tile pkgs">
+        <div class="titlebar"><span class="wdot"></span>pacman -Qs sec</div>
+        <div class="pad">
+          <div class="ln"><span class="repo">local/</span><span class="pkg">burpsuite</span><span class="note"># web</span></div>
+          <div class="ln"><span class="repo">local/</span><span class="pkg">nmap</span><span class="ver">7.95</span></div>
+          <div class="ln"><span class="repo">local/</span><span class="pkg">wireshark</span><span class="note"># packets</span></div>
+          <div class="ln"><span class="repo">local/</span><span class="pkg">metasploit</span></div>
+          <div class="ln"><span class="repo">local/</span><span class="pkg">sqlmap</span> <span class="pkg" style="margin-left:0">· gobuster</span></div>
+        </div>
+      </div>
+      <div class="window tile pkgs">
+        <div class="titlebar"><span class="wdot"></span>pacman -Qs env</div>
+        <div class="pad">
+          <div class="ln"><span class="repo">local/</span><span class="pkg">arch</span><span class="ver">rolling</span><span class="note"># btw</span></div>
+          <div class="ln"><span class="repo">local/</span><span class="pkg">kali</span><span class="note"># for work</span></div>
+          <div class="ln"><span class="repo">local/</span><span class="pkg">hyprland</span> <span class="pkg" style="margin-left:0">· neovim</span></div>
+          <div class="ln"><span class="repo">local/</span><span class="pkg">git</span> <span class="pkg" style="margin-left:0">· django</span> <span class="pkg" style="margin-left:0">· react</span></div>
+          <div class="ln"><span class="repo">local/</span><span class="pkg">mysql</span> <span class="pkg" style="margin-left:0">· node</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="stack-note"># honesty clause: python and linux are daily use — everything else depends on the box in front of me.</p>
+  </section>
+
+  <!-- ── workspace 5: contact ──────────────── -->
+  <section id="contact" aria-label="Contact">
+    <div class="sec-head">
+      <span class="tag">[5]</span>
+      <h2>Say hello</h2>
+    </div>
+    <div class="window tile contact">
+      <div class="titlebar"><span class="wdot"></span>~/inbox <span class="meta">workspace 5</span></div>
+      <div class="pad">
+        <h2>Mail is fastest. <span class="amp">Always</span> reading.</h2>
+        <p>
+          Open to security research, collaborating on tools, or arguing about
+          window managers. If you've read this far, we probably have something
+          to talk about.
         </p>
-        <div style={{display:'flex',flexDirection:'column',gap:18}}>
-          {projects.map((p,i)=><DarkProjectCard key={p.id} project={p} index={i}/>)}
+        <div class="btn-row">
+          <a class="btn solid" href="mailto:hamza0jeelani@gmail.com">hamza0jeelani@gmail.com</a>
+          <a class="btn" href="https://github.com/Crepco" target="_blank" rel="noopener noreferrer">github.com/Crepco &nearr;</a>
         </div>
       </div>
-    </section>
-  );
+    </div>
+  </section>
 
-  const DarkStack = () => {
-    const [ref,v]=useReveal();
-    const allSkills = useMemo(() =>
-      Object.values(stackGroups).flatMap(g => g.items)
-    , []);
-    return (
-      <section id="d-stack" style={{padding:'100px 24px',position:'relative',zIndex:10}}>
-        <div style={{maxWidth:1080,margin:'0 auto'}}>
-          <div className="d-section-label">04 — stack</div>
-          <h2 className="d-section-title" style={{marginBottom:12}}><ScrambleHeading text="Tools of the Trade"/></h2>
-          <p style={{color:'#8888a8',fontSize:13,lineHeight:1.7,marginBottom:16,maxWidth:500}}>
-            No invented percentages. Here's what I actually use.
-          </p>
-          <p style={{color:'#55558a',fontSize:11,marginBottom:32,letterSpacing:'.06em'}}>
-            ↕ drag to rotate the sphere
-          </p>
-          <SkillSphere3D items={allSkills} radius={window.innerWidth < 768 ? 110 : 170} />
-          <div style={{marginTop:48}} />
-          <div ref={ref} className={`sr ${v?'in':''}`} style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:20}}>
-            {Object.entries(stackGroups).map(([cat,{color,items}])=>(
-              <TiltCard key={cat}>
-                <div className="d-card animated-border" style={{padding:22}}>
-                  <div style={{fontSize:10,letterSpacing:'.12em',color:'#33334a',marginBottom:14,textTransform:'uppercase'}}>{cat}</div>
-                  <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
-                    {items.map(item=><span key={item} className={`d-tag ${color}`}>{item}</span>)}
-                  </div>
-                </div>
-              </TiltCard>
-            ))}
-          </div>
-          <div style={{marginTop:36,padding:'18px 22px',background:'rgba(12,12,28,.6)',border:'1px solid rgba(124,58,237,.15)',borderRadius:8,fontSize:12,color:'#8888a8',lineHeight:1.7}}>
-            <span style={{color:'#a78bfa'}}>// note: </span>
-            Proficiency varies by tool. Python and Linux are daily use. Security tools depend on the context.
-            Currently going deeper on{' '}<span className="d-tag pu" style={{margin:'0 4px'}}>Active Directory</span>{' '}and{' '}
-            <span className="d-tag pu" style={{margin:'0 4px'}}>web app exploitation</span>.
-          </div>
-        </div>
-      </section>
-    );
+</main>
+
+<footer>
+  <span>© 2026 Hamza Jeelani</span>
+  <span>one html file · no frameworks · <a href="https://github.com/Crepco/linux-rice" target="_blank" rel="noopener noreferrer">gruvbox, btw</a></span>
+</footer>
+
+<script>
+document.documentElement.classList.add('js');
+
+/* ── tiles open like hyprland windows ─────── */
+(() => {
+  const tiles = document.querySelectorAll('.tile');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      const el = entry.target;
+      // stagger relative to siblings revealed in the same batch
+      const group = el.closest('section') || document.body;
+      const batch = [...group.querySelectorAll('.tile:not(.open)')];
+      el.style.animationDelay = `${Math.max(0, batch.indexOf(el)) * 80}ms`;
+      el.classList.add('open');
+      io.unobserve(el);
+    });
+  }, { threshold: 0.12 });
+  tiles.forEach((t) => io.observe(t));
+})();
+
+/* ── waybar clock ─────────────────────────── */
+(() => {
+  const el = document.getElementById('clock');
+  if (!el) return;
+  const fmt = () => {
+    const d = new Date();
+    const day = d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+    const time = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    el.textContent = `${day.toLowerCase()}  ${time}`;
   };
+  fmt();
+  setInterval(fmt, 15000);
+})();
 
-  const DarkContact = () => {
-    const [ref,v]=useReveal();
-    return (
-      <section id="d-contact" style={{padding:'100px 24px 80px',position:'relative',zIndex:10}}>
-        <div style={{maxWidth:640,margin:'0 auto',textAlign:'center'}}>
-          <div className="d-section-label" style={{justifyContent:'center'}}>05 — contact</div>
-          <h2 className="d-section-title" style={{marginBottom:16}}><ScrambleHeading text="Get In Touch"/></h2>
-          <div ref={ref} className={`sr ${v?'in':''}`}>
-            <p style={{color:'#8888a8',fontSize:14,lineHeight:1.9,marginBottom:48}}>
-              Open to collaborating on security research, development projects,
-              or anything technically interesting. Found a bug in my code? Please tell me.
-            </p>
-            <a href="mailto:hamza0jeelani@gmail.com" className="contact-email"
-              style={{display:'inline-flex',alignItems:'center',gap:10,padding:'14px 32px',border:'1px solid rgba(167,139,250,.5)',borderRadius:7,color:'#a78bfa',fontSize:14,textDecoration:'none',background:'rgba(124,58,237,.1)',transition:'all .25s',fontFamily:'JetBrains Mono'}}>
-              <MailIcon s={17}/> hamza0jeelani@gmail.com
-            </a>
-            <div style={{display:'flex',justifyContent:'center',gap:14,marginTop:20}}>
-              <a href="https://github.com/crepco" target="_blank" rel="noopener noreferrer"
-                style={{display:'flex',alignItems:'center',gap:8,fontSize:12,color:'#8888a8',textDecoration:'none',padding:'7px 16px',border:'1px solid rgba(124,58,237,.2)',borderRadius:6,background:'rgba(12,12,28,.5)',transition:'all .2s'}}>
-                <GithubIcon s={14}/> @crepco
-              </a>
-                </div>
-            <div style={{marginTop:72,paddingTop:28,borderTop:'1px solid rgba(124,58,237,.12)'}}>
-              <p style={{color:'#33334a',fontSize:12}}>Built with React · GitHub Pages · No template used</p>
-              <p style={{color:'#33334a',fontSize:11,marginTop:6,display:'flex',alignItems:'center',justifyContent:'center',gap:8}}>
-                © 2026 Hamza Jeelani
-                <span style={{color:'#33334a',opacity:0.5}}>·</span>
-                <VisitCounter dark={true}/>
-              </p>
-                </div>
-            </div>
-        </div>
-      </section>
-      );
-    };
-
-  const DarkPortfolio = () => {
-    const [loaded,setLoaded]=useState(false);
-    const ids=['d-home','d-about','d-timeline','d-projects','d-stack','d-contact'];
-    const active=useScrollSections(ids);
-    useEffect(()=>{
-      setTimeout(()=>setLoaded(true),2300);
-      const obs=new IntersectionObserver(entries=>{
-        entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});
-      },{threshold:.1,rootMargin:'0px 0px -40px 0px'});
-      document.querySelectorAll('.sr').forEach(el=>obs.observe(el));
-      return ()=>obs.disconnect();
-    },[]);
-      return (
-      <div className="d-body dark-scroll dark-cursor-mode">
-        <FloatingOrbs/>
-        <ParticleNetwork/>
-        <SpotlightLayer/>
-        <NoiseOverlay/>
-        <ScrollProgress color="linear-gradient(90deg,#7c3aed,#a78bfa)"/>
-        <DarkCursor/>
-        <KonamiEgg dark/>
-        <DarkTerminal/>
-        <DarkNav active={active}/>
-        <DarkHero loaded={loaded}/>
-        <CyberDivider/>
-        <DarkAbout/>
-        <CyberDivider/>
-        <DarkTimeline/>
-        <CyberDivider/>
-        <DarkProjects/>
-        <CyberDivider/>
-        <DarkStack/>
-        <CyberDivider/>
-        <DarkContact/>
-        </div>
-      );
-    };
-
-  /* ══ Root ════════════════════════════════════════════════════ */
-  const Portfolio = () => {
-    useEffect(()=>{
-      setTimeout(()=>{
-        document.getElementById('loader')?.classList.add('gone');
-      },2000);
-    },[]);
-    return <DarkPortfolio/>;
+/* ── active workspace tracks scroll ───────── */
+(() => {
+  const links = [...document.querySelectorAll('.ws a')];
+  const sections = links
+    .map((a) => document.getElementById(a.dataset.ws))
+    .filter(Boolean);
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    const mid = window.scrollY + window.innerHeight * 0.4;
+    let current = sections[0];
+    for (const s of sections) if (s.offsetTop <= mid) current = s;
+    if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 4) {
+      current = sections[sections.length - 1];
+    }
+    links.forEach((a) => a.classList.toggle('on', a.dataset.ws === current.id));
   };
+  window.addEventListener('scroll', () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
+  }, { passive: true });
+  update();
+})();
 
-  ReactDOM.createRoot(document.getElementById('root')).render(<Portfolio/>);
-  </script>
+/* ── live star counts from github ─────────── */
+(() => {
+  fetch('https://api.github.com/users/Crepco/repos?per_page=100')
+    .then((r) => (r.ok ? r.json() : Promise.reject()))
+    .then((repos) => {
+      const stars = Object.fromEntries(repos.map((r) => [r.name, r.stargazers_count]));
+      document.querySelectorAll('[data-repo]').forEach((el) => {
+        const n = stars[el.dataset.repo];
+        if (typeof n === 'number') el.textContent = `★ ${n}`;
+      });
+    })
+    .catch(() => { /* keep the static counts */ });
+})();
+</script>
 </body>
 </html>
