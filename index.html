@@ -681,6 +681,85 @@ html.dying #gcover {
 }
 
 /* ───────────────────────────────────────────────
+   lab — workspace 5 (the hardware bench)
+─────────────────────────────────────────────── */
+.lab-grid { display: grid; grid-template-columns: 1.45fr 1fr; gap: var(--gap); align-items: stretch; }
+.lab-grid-2 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap); margin-top: var(--gap); }
+
+/* copper traces drifting behind the bench */
+section .pcb { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .35; }
+.pcb svg { width: 100%; height: 100%; display: block; }
+
+/* the obligatory blink sketch */
+.blinky {
+  margin-left: auto; display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 11px; color: var(--faint);
+}
+.blinky i {
+  width: 9px; height: 9px; border-radius: 50%; flex: none;
+  background: var(--orange); box-shadow: 0 0 9px rgba(254,128,25,.9);
+  animation: blink-led 1s steps(1) infinite;
+}
+@keyframes blink-led { 50% { background: #4a3526; box-shadow: none; } }
+
+/* oscilloscope */
+.scope .pad { padding: 14px 16px 12px; }
+#scope-cv {
+  display: block; width: 100%; height: 220px;
+  background: #141617; border: 1px solid var(--line); border-radius: 6px;
+}
+.scope-ui { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-top: 12px; }
+.scope-btn {
+  font-family: var(--mono); font-size: 11px;
+  background: var(--bg-soft); color: var(--dim);
+  border: 1px solid var(--line-2); border-radius: 6px; padding: 4px 10px;
+  transition: color .15s ease, border-color .15s ease, background .15s ease;
+}
+.scope-btn:hover { color: var(--fg); border-color: var(--orange); }
+.scope-btn.on { background: var(--orange); border-color: var(--orange); color: var(--wall); font-weight: 500; }
+.scope-read { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--aqua); white-space: nowrap; }
+.scope-read .trig { color: var(--yellow); animation: blink-soft 1.2s steps(2, start) infinite; }
+
+/* serial monitor */
+.serial { display: flex; flex-direction: column; }
+.serial .pad { flex: 1; min-height: 0; padding: 0; }
+.serial .titlebar .meta { margin-left: 12px; }
+.io-wrap { margin-left: auto; display: flex; align-items: center; gap: 5px; font-size: 10.5px; color: var(--faint); }
+.io-led { display: inline-block; width: 7px; height: 7px; border-radius: 2px; background: var(--line-2); }
+.io-led.on { background: var(--aqua); box-shadow: 0 0 6px rgba(142,192,124,.85); }
+#serial-log {
+  height: 100%; min-height: 240px; max-height: 360px; overflow-y: auto;
+  font-family: var(--mono); font-size: 11.5px; line-height: 1.8;
+  padding: 12px 16px;
+}
+#serial-log .st { color: var(--faint); }
+#serial-log .g { color: var(--aqua); }
+#serial-log .y { color: var(--yellow); }
+#serial-log .r { color: var(--red); }
+
+/* i2c bus scan */
+.i2c .pad { padding: 16px 18px; }
+.i2c pre {
+  font-family: var(--mono); font-size: 10.5px; line-height: 1.9;
+  color: var(--dim); overflow-x: auto;
+}
+.i2c .hit { color: var(--orange); font-weight: 600; }
+.i2c .legend { margin-top: 10px; font-family: var(--mono); font-size: 11px; color: var(--faint); }
+
+@media (max-width: 980px) {
+  .lab-grid { grid-template-columns: 1fr; }
+  .lab-grid-2 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 620px) {
+  .lab-grid-2 { grid-template-columns: 1fr; }
+  .blinky { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pcb .pulse { display: none; }
+  .blinky i, .scope-read .trig { animation: none; }
+}
+
+/* ───────────────────────────────────────────────
    responsive
 ─────────────────────────────────────────────── */
 @media (max-width: 980px) {
@@ -720,7 +799,8 @@ html.dying #gcover {
     <a href="#projects" data-ws="projects">2<span class="ws-name">projects</span></a>
     <a href="#about"    data-ws="about">3<span class="ws-name">about</span></a>
     <a href="#stack"    data-ws="stack">4<span class="ws-name">stack</span></a>
-    <a href="#contact"  data-ws="contact">5<span class="ws-name">contact</span></a>
+    <a href="#lab"      data-ws="lab">5<span class="ws-name">lab</span></a>
+    <a href="#contact"  data-ws="contact">6<span class="ws-name">contact</span></a>
   </nav>
   <div class="bar-mid" aria-hidden="true">
     <span class="host"><b>hamza</b>@arch</span>
@@ -790,6 +870,7 @@ html.dying #gcover {
               <div><dt>uptime</dt><dd>21 years</dd></div>
               <div><dt>focus</dt><dd>offensive security</dd></div>
               <div><dt>training</dt><dd>THM · HackTheBox</dd></div>
+              <div><dt>bench</dt><dd>uno · esp32 <span class="sub">· a ch340 clone</span></dd></div>
             </dl>
           </div>
           <div class="swatches" aria-hidden="true">
@@ -945,6 +1026,7 @@ html.dying #gcover {
             <li><b>Web exploitation</b> — OWASP Top 10, Burp workflows</li>
             <li><b>Network analysis</b> — Wireshark, packet-level debugging</li>
             <li><b>CTFs</b> — grinding boxes on TryHackMe &amp; HackTheBox</li>
+            <li><b>Embedded systems</b> — Arduino, ESP32, UART/I2C, a soldering iron</li>
           </ul>
         </div>
       </div>
@@ -993,15 +1075,103 @@ html.dying #gcover {
     <p class="stack-note"># honesty clause: python and linux are daily use — everything else depends on the box in front of me.</p>
   </section>
 
-  <!-- ── workspace 5: contact ──────────────── -->
-  <section id="contact" aria-label="Contact">
+  <!-- ── workspace 5: lab ──────────────────── -->
+  <section id="lab" aria-label="Hardware lab">
     <span class="ws-num" aria-hidden="true">5</span>
+    <div class="pcb" aria-hidden="true">
+      <svg viewBox="0 0 1200 560" preserveAspectRatio="xMidYMid slice" fill="none">
+        <g stroke-linecap="round">
+          <path id="tr1" d="M -20 70 H 420 q 14 0 14 14 V 330 q 0 14 14 14 H 780" stroke="#8ec07c" stroke-width="2" stroke-opacity=".5"/>
+          <path id="tr2" d="M 1220 130 H 940 q -14 0 -14 14 V 460 q 0 14 -14 14 H 420" stroke="#fe8019" stroke-width="2" stroke-opacity=".45"/>
+          <path id="tr3" d="M 240 580 V 360 q 0 -14 14 -14 H 1066 q 14 0 14 -14 V 60" stroke="#fabd2f" stroke-width="1.5" stroke-opacity=".4"/>
+        </g>
+        <g fill="#1d2021" stroke="#504945" stroke-width="1.5">
+          <circle cx="780" cy="344" r="4"/>
+          <circle cx="420" cy="474" r="4"/>
+          <circle cx="1080" cy="60" r="4"/>
+        </g>
+        <circle class="pulse" r="3.5" fill="#8ec07c"><animateMotion dur="7s" repeatCount="indefinite"><mpath href="#tr1"/></animateMotion></circle>
+        <circle class="pulse" r="3.5" fill="#fe8019"><animateMotion dur="9s" repeatCount="indefinite"><mpath href="#tr2"/></animateMotion></circle>
+        <circle class="pulse" r="3" fill="#fabd2f"><animateMotion dur="11s" repeatCount="indefinite"><mpath href="#tr3"/></animateMotion></circle>
+      </svg>
+    </div>
     <div class="sec-head tile">
       <span class="tag">[5]</span>
+      <h2>Now breaking hardware too</h2>
+      <span class="blinky" aria-hidden="true"><i></i>blink.ino — delay(500)</span>
+    </div>
+    <div class="lab-grid">
+      <div class="window tile scope">
+        <div class="titlebar"><span class="wdot"></span>scope — ch1 <span class="meta">1V/div · 2ms/div</span></div>
+        <div class="pad">
+          <canvas id="scope-cv" height="220" aria-label="Oscilloscope, decorative"></canvas>
+          <div class="scope-ui" role="group" aria-label="Waveform select">
+            <button class="scope-btn on" data-wave="sine">sine</button>
+            <button class="scope-btn" data-wave="square">square</button>
+            <button class="scope-btn" data-wave="saw">saw</button>
+            <button class="scope-btn" data-wave="pwm">servo pwm</button>
+            <span class="scope-read" id="scope-read">ƒ 1.00kHz · 3.30Vpp · <span class="trig">TRIG'D</span></span>
+          </div>
+        </div>
+      </div>
+      <aside class="window tile serial" aria-label="Live serial monitor, simulated">
+        <div class="titlebar"><span class="wdot"></span>tio /dev/ttyACM0
+          <span class="io-wrap" aria-hidden="true"><i class="io-led" id="tx-led"></i>tx <i class="io-led" id="rx-led"></i>rx</span>
+          <span class="meta">115200-8N1</span>
+        </div>
+        <div class="pad"><div id="serial-log"></div></div>
+      </aside>
+    </div>
+    <div class="lab-grid-2">
+      <div class="window tile i2c">
+        <div class="titlebar"><span class="wdot"></span>i2cdetect -y 1</div>
+        <div class="pad">
+          <pre aria-hidden="true">     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+00:          -- -- -- -- -- -- -- -- -- -- -- -- --
+10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+30: -- -- -- -- -- -- -- -- -- -- -- -- <span class="hit">3c</span> -- -- --
+40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+60: -- -- -- -- -- -- -- -- <span class="hit">68</span> -- -- -- -- -- -- --
+70: -- -- -- -- -- -- -- --</pre>
+          <div class="legend"><span class="hit">0x3c</span> ssd1306 oled · <span class="hit">0x68</span> mpu6050 imu</div>
+        </div>
+      </div>
+      <div class="window tile pkgs">
+        <div class="titlebar"><span class="wdot"></span>pacman -Qs embedded</div>
+        <div class="pad">
+          <div class="ln"><span class="repo">local/</span><span class="pkg">arduino-cli</span><span class="ver">1.3</span><span class="note"># uno + nano</span></div>
+          <div class="ln"><span class="repo">local/</span><span class="pkg">esp-idf</span><span class="note"># wifi goes brr</span></div>
+          <div class="ln"><span class="repo">local/</span><span class="pkg">platformio</span></div>
+          <div class="ln"><span class="repo">local/</span><span class="pkg">kicad</span><span class="ver">9.0</span><span class="note"># traces</span></div>
+          <div class="ln"><span class="repo">local/</span><span class="pkg">avrdude</span> <span class="pkg" style="margin-left:0">· minicom</span></div>
+        </div>
+      </div>
+      <div class="window tile now">
+        <div class="titlebar"><span class="wdot"></span>learning.md</div>
+        <div class="pad">
+          <ul>
+            <li><b>GPIO + interrupts</b> — buttons that don't bounce (eventually)</li>
+            <li><b>UART · I2C · SPI</b> — making chips talk to each other</li>
+            <li><b>Soldering</b> — joints improving, burns healing</li>
+            <li><b>Datasheets</b> — reading them like novels now</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <p class="stack-note"># status: one board bricked so far, then resurrected. the magic smoke stays inside *most* days.</p>
+  </section>
+
+  <!-- ── workspace 6: contact ──────────────── -->
+  <section id="contact" aria-label="Contact">
+    <span class="ws-num" aria-hidden="true">6</span>
+    <div class="sec-head tile">
+      <span class="tag">[6]</span>
       <h2>Say hello</h2>
     </div>
     <div class="window tile contact">
-      <div class="titlebar"><span class="wdot"></span>~/inbox <span class="meta">workspace 5</span></div>
+      <div class="titlebar"><span class="wdot"></span>~/inbox <span class="meta">workspace 6</span></div>
       <div class="pad">
         <h2>Mail is fastest. <span class="amp">Always</span> reading.</h2>
         <p>
@@ -1046,7 +1216,7 @@ html.dying #gcover {
   <div class="window">
     <div class="titlebar"><span class="wdot"></span>hyprland — binds <span class="meta">[?]</span></div>
     <div class="pad">
-      <div class="b-row"><span class="keys"><kbd>1</kbd>…<kbd>5</kbd></span><span>switch workspace</span></div>
+      <div class="b-row"><span class="keys"><kbd>1</kbd>…<kbd>6</kbd></span><span>switch workspace</span></div>
       <div class="b-row"><span class="keys"><kbd>t</kbd></span><span>open terminal</span></div>
       <div class="b-row"><span class="keys"><kbd>?</kbd></span><span>toggle this panel</span></div>
       <div class="b-row"><span class="keys"><kbd>esc</kbd></span><span>close floating windows</span></div>
@@ -1258,6 +1428,7 @@ const toast = (() => {
     '<span class="fail">[FAILED]</span> Started <span class="svc">sleep-schedule.service</span> — see journalctl',
     ok + 'Started <span class="svc">caffeine.daemon</span> instead',
     ok + 'Mounted <span class="svc">~/ctf-boxes</span>',
+    ok + 'Attached <span class="svc">ch341-uart</span> on <span class="svc">ttyUSB0</span> — turret online',
     ok + 'Reached target <span class="svc">Graphical Interface</span>',
     '',
     '<span class="svc">Arch Linux 6.21.0-arch1</span> (tty1)',
@@ -1609,6 +1780,25 @@ addEventListener('booted', () => {
     '<span class="o">wm</span> Hyprland · <span class="o">shell</span> zsh · <span class="o">editor</span> nvim',
     '<span class="o">uptime</span> 21 years · <span class="o">focus</span> offensive security',
   ].join('\n');
+  const I2C = [
+    '     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f',
+    '00:          -- -- -- -- -- -- -- -- -- -- -- -- --',
+    '10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --',
+    '20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --',
+    '30: -- -- -- -- -- -- -- -- -- -- -- -- <span class="o">3c</span> -- -- --',
+    '40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --',
+    '50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --',
+    '60: -- -- -- -- -- -- -- -- <span class="o">68</span> -- -- -- -- -- -- --',
+    '70: -- -- -- -- -- -- -- --',
+    '<span class="dim">0x3c ssd1306 oled · 0x68 mpu6050 imu — the turret&#39;s eyes and inner ear</span>',
+  ].join('\n');
+  const DMESG = [
+    '<span class="dim">[ 4242.001]</span> usb 1-2: new full-speed USB device using xhci_hcd',
+    '<span class="dim">[ 4242.180]</span> usb 1-2: Product: <span class="o">USB-Serial CH340</span>',
+    '<span class="dim">[ 4242.231]</span> ch341 1-2:1.0: ch341-uart converter detected',
+    '<span class="dim">[ 4242.233]</span> usb 1-2: ch341-uart now attached to <span class="ok">ttyUSB0</span>',
+    '<span class="dim">[ 4243.108]</span> dart-turret: pan-tilt online, tracking armed',
+  ].join('\n');
 
   const hollywood = () => {
     if (busy) return; busy = true;
@@ -1718,14 +1908,15 @@ addEventListener('booted', () => {
           '<span class="o">ls</span>              look around\n' +
           '<span class="o">cat</span> <span class="dim">&lt;file&gt;</span>      read a file\n' +
           '<span class="o">neofetch</span>        flex\n' +
-          '<span class="o">open</span> <span class="dim">&lt;ws&gt;</span>       jump: home projects about stack contact\n' +
+          '<span class="o">open</span> <span class="dim">&lt;ws&gt;</span>       jump: home projects about stack lab contact\n' +
           '<span class="o">hack</span>            hollywood mode\n' +
+          '<span class="o">i2cdetect dmesg tio</span> bench diagnostics\n' +
           '<span class="o">matrix</span>          crank the rain\n' +
           '<span class="o">crt</span>             1998 mode\n' +
           '<span class="o">clear exit</span>      housekeeping\n' +
           '<span class="dim">sudo rm -rf /   do NOT run this</span>');
       case 'ls':
-        return void print('<span class="ok">projects/</span>  <span class="ok">stack/</span>  <span class="ok">.config/</span>  about.md  creed.txt  flag.txt  .zshrc');
+        return void print('<span class="ok">projects/</span>  <span class="ok">stack/</span>  <span class="ok">lab/</span>  <span class="ok">.config/</span>  about.md  creed.txt  flag.txt  .zshrc');
       case 'cat': {
         if (!arg) return void print('cat: missing operand');
         if (arg === '.config' || arg.endsWith('/')) return void print(`cat: ${esc(arg)}: Is a directory`, 'err');
@@ -1766,6 +1957,13 @@ addEventListener('booted', () => {
         return void print(/sandwich/.test(low)
           ? (asRoot ? 'okay.' : 'what? make it yourself.')
           : 'make: *** no targets specified. Stop.');
+      case 'i2cdetect': return void print(I2C);
+      case 'dmesg': return void print(DMESG);
+      case 'tio': case 'screen': case 'minicom': case 'serial':
+        document.getElementById('lab')?.scrollIntoView({ behavior: 'smooth' });
+        return void print('<span class="dim">connected to /dev/ttyACM0 @ 115200 —</span> live feed on workspace <span class="o">5</span>.');
+      case 'arduino-cli':
+        return void print('Port          Type    Board\n/dev/ttyACM0  serial  Arduino Uno <span class="dim">(busy — the turret has it)</span>');
       case 'btw': case 'arch': return void print('yes. arch. <span class="o">btw</span>.');
       case 'konami': case 'secret': case 'hint':
         return void print('try <span class="o">↑ ↑ ↓ ↓ ← → ← → b a</span> — outside this terminal.');
@@ -1782,7 +1980,7 @@ addEventListener('booted', () => {
     exec(line);
   };
 
-  const NAMES = ['help', 'ls', 'cat', 'neofetch', 'open', 'hack', 'matrix', 'crt', 'clear', 'whoami', 'exit', 'sudo', 'reboot', 'history', 'echo', 'pwd', 'uname', 'date', 'konami'];
+  const NAMES = ['help', 'ls', 'cat', 'neofetch', 'open', 'hack', 'matrix', 'crt', 'clear', 'whoami', 'exit', 'sudo', 'reboot', 'history', 'echo', 'pwd', 'uname', 'date', 'konami', 'i2cdetect', 'dmesg', 'tio', 'arduino-cli'];
   input.addEventListener('keydown', (e) => {
     e.stopPropagation();
     if (e.key === 'Enter') { const v = input.value; input.value = ''; run(v); }
@@ -1803,7 +2001,7 @@ addEventListener('booted', () => {
 /* ── global keybinds + konami code ────────── */
 (() => {
   const binds = document.getElementById('binds');
-  const WS = ['home', 'projects', 'about', 'stack', 'contact'];
+  const WS = ['home', 'projects', 'about', 'stack', 'lab', 'contact'];
   const SEQ = ['arrowup', 'arrowup', 'arrowdown', 'arrowdown', 'arrowleft', 'arrowright', 'arrowleft', 'arrowright', 'b', 'a'];
   let pos = 0;
   addEventListener('keydown', (e) => {
@@ -1822,12 +2020,156 @@ addEventListener('booted', () => {
         : 'CRT mode off. back to the future.');
     }
 
-    if (k >= '1' && k <= '5') document.getElementById(WS[+k - 1])?.scrollIntoView({ behavior: 'smooth' });
+    if (k >= '1' && k <= '6') document.getElementById(WS[+k - 1])?.scrollIntoView({ behavior: 'smooth' });
     else if (k === 't' || k === '`') { e.preventDefault(); window.__term?.open(); }
     else if (k === '?') binds.hidden = !binds.hidden;
     else if (k === 'escape') { binds.hidden = true; window.__term?.close(); }
   });
   binds.addEventListener('click', (e) => { if (e.target === binds) binds.hidden = true; });
+})();
+
+/* ── oscilloscope (workspace 5) ───────────── */
+(() => {
+  const cv = document.getElementById('scope-cv');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  const readEl = document.getElementById('scope-read');
+  const btns = [...document.querySelectorAll('.scope-btn')];
+  const INFO = {
+    sine: 'ƒ 1.00kHz · 3.30Vpp',
+    square: 'ƒ 460Hz · 5.00Vpp',
+    saw: 'ƒ 2.20kHz · 3.30Vpp',
+    pwm: 'ƒ 50Hz · 4.98Vpp · duty sweep',
+  };
+  let mode = 'sine', vis = false, w = 0, h = 0;
+
+  const sig = (x, t) => {
+    switch (mode) {
+      case 'square': return Math.sign(Math.sin(x * 6 * Math.PI + t * 4)) * .72;
+      case 'saw': return ((x * 5 + t * .9) % 1) * 1.5 - .75;
+      case 'pwm': {
+        const duty = .5 + .32 * Math.sin(t * 1.1);   // a servo sweeping
+        return ((x * 4 + t * .5) % 1) < duty ? .72 : -.72;
+      }
+      default: return Math.sin(x * 6 * Math.PI + t * 4) * .68;
+    }
+  };
+
+  const draw = (t) => {
+    ctx.clearRect(0, 0, w, h);
+    // graticule
+    ctx.strokeStyle = 'rgba(235,219,178,.07)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let i = 1; i < 10; i++) { const x = (w / 10) * i; ctx.moveTo(x, 0); ctx.lineTo(x, h); }
+    for (let i = 1; i < 6; i++) { const y = (h / 6) * i; ctx.moveTo(0, y); ctx.lineTo(w, y); }
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(235,219,178,.14)';
+    ctx.beginPath();
+    ctx.moveTo(0, h / 2); ctx.lineTo(w, h / 2);
+    ctx.moveTo(w / 2, 0); ctx.lineTo(w / 2, h);
+    ctx.stroke();
+    // phosphor trace
+    ctx.strokeStyle = '#b8bb26';
+    ctx.lineWidth = 2;
+    ctx.shadowColor = 'rgba(184,187,38,.8)';
+    ctx.shadowBlur = 9;
+    ctx.beginPath();
+    for (let px = 0; px <= w; px += 2) {
+      const y = h / 2 - sig(px / w, t) * (h / 2 - 14) + (REDUCED ? 0 : (Math.random() - .5) * 1.4);
+      px === 0 ? ctx.moveTo(px, y) : ctx.lineTo(px, y);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+  };
+
+  const resize = () => {
+    const dpr = Math.min(2, devicePixelRatio || 1);
+    w = cv.clientWidth; h = cv.clientHeight;
+    cv.width = w * dpr; cv.height = h * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (REDUCED) draw(0);
+  };
+
+  btns.forEach((b) => b.addEventListener('click', () => {
+    mode = b.dataset.wave;
+    btns.forEach((x) => x.classList.toggle('on', x === b));
+    readEl.innerHTML = INFO[mode] + ' · <span class="trig">TRIG&#39;D</span>';
+    if (REDUCED) draw(0);
+  }));
+
+  resize();
+  addEventListener('resize', resize);
+  new IntersectionObserver((es) => { vis = es[0].isIntersecting; }).observe(cv);
+  if (REDUCED) { draw(0); return; }
+  let last = 0;
+  const loop = (ts) => {
+    requestAnimationFrame(loop);
+    if (!vis || document.hidden || ts - last < 33) return;
+    last = ts;
+    draw(ts / 1000);
+  };
+  requestAnimationFrame(loop);
+})();
+
+/* ── live serial monitor: dart telemetry ──── */
+(() => {
+  const log = document.getElementById('serial-log');
+  if (!log) return;
+  const rxLed = document.getElementById('rx-led');
+  const txLed = document.getElementById('tx-led');
+  let paused = false, vis = false, lost = false;
+  log.addEventListener('mouseenter', () => { paused = true; });
+  log.addEventListener('mouseleave', () => { paused = false; });
+  new IntersectionObserver((es) => { vis = es[0].isIntersecting; }).observe(log);
+
+  const t0 = performance.now();
+  const blink = (led) => {
+    led.classList.add('on');
+    setTimeout(() => led.classList.remove('on'), 110);
+  };
+  const line = (html) => {
+    const d = document.createElement('div');
+    d.innerHTML = `<span class="st">[${((performance.now() - t0) / 1000).toFixed(3).padStart(9)}]</span> ${html}`;
+    log.appendChild(d);
+    while (log.childElementCount > 90) log.firstElementChild.remove();
+    if (!paused) log.scrollTop = log.scrollHeight;
+    blink(rxLed);
+  };
+
+  ['dart-turret v2.1 — hello from the uno',
+   'mpu6050 @0x68… <span class="g">ok</span>',
+   'ssd1306 @0x3c… <span class="g">ok</span>',
+   'servos centered — pan 90° tilt 45°',
+   '<span class="g">tracking armed</span>',
+  ].forEach((l, i) => setTimeout(() => line(l), 500 + i * 350));
+
+  const telemetry = () => {
+    const r = Math.random();
+    if (lost) {
+      lost = false;
+      line(`<span class="g">target reacquired</span> (x=${rand(80, 560) | 0},y=${rand(60, 420) | 0})`);
+    } else if (r < .07) {
+      lost = true;
+      line('<span class="r">target lost</span> — rescanning…');
+    } else if (r < .15) {
+      line(`<span class="y">WARN</span> frame drop — host cpu ${rand(82, 97) | 0}%`);
+    } else if (r < .45) {
+      const a = rand(40, 140) | 0;
+      line(`servo pan ${a}°→${a + (rand(-6, 6) | 0)}° tilt ${rand(20, 70) | 0}°`);
+      blink(txLed);
+    } else if (r < .7) {
+      line(`track (x=${rand(80, 560) | 0},y=${rand(60, 420) | 0}) conf=0.${rand(78, 98) | 0}`);
+    } else {
+      line(`temp ${rand(33, 41).toFixed(1)}°C · vcc 4.${rand(88, 99) | 0}V · loop ${rand(8, 19) | 0}ms`);
+    }
+  };
+  const tick = () => {
+    setTimeout(tick, rand(380, 950));
+    if (!vis || document.hidden) return;
+    telemetry();
+  };
+  setTimeout(tick, 2500);
 })();
 </script>
 </body>
