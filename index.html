@@ -404,6 +404,283 @@ html.js .tile.open {
 }
 
 /* ───────────────────────────────────────────────
+   boot sequence
+─────────────────────────────────────────────── */
+html.booting { overflow: hidden; }
+
+#boot {
+  position: fixed; inset: 0; z-index: 10000;
+  background: #0d0e0f;
+  font-family: var(--mono); font-size: 12.5px; line-height: 1.7;
+  padding: 26px 30px;
+  overflow: hidden;
+}
+#boot.off { transition: opacity .4s ease; opacity: 0; pointer-events: none; }
+#boot-log { white-space: pre-wrap; color: var(--dim); }
+#boot-log .svc { color: var(--fg); }
+#boot-log .k { color: var(--yellow); }
+#boot-log .fail { color: var(--red); }
+.boot-hint {
+  position: absolute; bottom: 18px; right: 24px;
+  color: var(--faint); font-size: 11px;
+  animation: blink-soft 1.3s steps(2, start) infinite;
+}
+@keyframes blink-soft { 50% { opacity: .2; } }
+
+/* shared terminal palette */
+#boot-log .ok, #term-out .ok { color: var(--aqua); }
+#boot-log .o, #term-out .o { color: var(--orange); }
+#term-out .err { color: var(--red); }
+#term-out .warn { color: var(--yellow); }
+#term-out .dim { color: var(--faint); }
+#term-out .big { font-weight: 600; letter-spacing: .06em; }
+
+/* gruvbox scrollbars */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 5px; border: 2px solid var(--wall); }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* ───────────────────────────────────────────────
+   matrix rain + spark canvases
+─────────────────────────────────────────────── */
+#rain {
+  position: fixed; inset: 0; z-index: -1;
+  opacity: .13; pointer-events: none;
+  transition: opacity .8s ease;
+}
+html.rave #rain { opacity: .55; }
+#fx { position: fixed; inset: 0; z-index: 9997; pointer-events: none; }
+
+/* ───────────────────────────────────────────────
+   custom cursor — terminal caret + lagging frame
+─────────────────────────────────────────────── */
+@media (pointer: fine) {
+  html.cur, html.cur * { cursor: none !important; }
+  .cur-dot, .cur-ring {
+    position: fixed; top: 0; left: 0; z-index: 10001;
+    pointer-events: none; will-change: transform;
+  }
+  .cur-dot { width: 7px; height: 16px; background: var(--orange); mix-blend-mode: difference; }
+  .cur-ring {
+    width: 34px; height: 34px; margin: -17px 0 0 -17px;
+    border: 1.5px solid rgba(254,128,25,.55); border-radius: 9px;
+    transition: width .18s ease, height .18s ease, margin .18s ease, border-color .18s ease;
+  }
+  html.cur-hot .cur-ring {
+    width: 52px; height: 52px; margin: -26px 0 0 -26px;
+    border-color: var(--aqua);
+  }
+}
+
+/* ───────────────────────────────────────────────
+   draggable windows (tiling always wins)
+─────────────────────────────────────────────── */
+.titlebar { cursor: grab; user-select: none; }
+.window.dragging {
+  position: relative; z-index: 600;
+  box-shadow: 0 50px 100px -30px rgba(0,0,0,.9);
+}
+.window.dragging .titlebar { cursor: grabbing; }
+html.js .tile.settled { animation: none; opacity: 1; }
+
+/* 3d tilt + glare on projects */
+.proj-grid { perspective: 1100px; }
+.project { position: relative; }
+.project::after {
+  content: ''; position: absolute; inset: 0; z-index: 2;
+  pointer-events: none; opacity: 0; transition: opacity .25s ease;
+  background: radial-gradient(420px circle at var(--gx, 50%) var(--gy, 50%),
+              rgba(235,219,178,.09), transparent 65%);
+}
+.project:hover::after { opacity: 1; }
+.project.tilting { transition: border-color .2s ease, box-shadow .2s ease; }
+
+/* typed caret on the hero claim */
+.tcaret {
+  display: inline-block; width: .55ch; height: 1.05em;
+  background: var(--aqua); margin-left: 3px; vertical-align: -.12em;
+  animation: blink-soft 1s steps(2, start) infinite;
+}
+
+/* occasional chromatic glitch on the name */
+.glitchable { position: relative; z-index: 0; }
+.glitching::before, .glitching::after {
+  content: attr(data-text);
+  position: absolute; inset: 0; z-index: -1;
+  pointer-events: none; opacity: .8;
+}
+.glitching::before { color: var(--red);  animation: glitch-a .38s steps(4, jump-none) both; }
+.glitching::after  { color: var(--aqua); animation: glitch-b .38s steps(4, jump-none) both; }
+@keyframes glitch-a {
+  0%   { transform: translate(-4px, -2px); clip-path: inset(10% 0 62% 0); }
+  33%  { transform: translate(3px, 1px);   clip-path: inset(44% 0 28% 0); }
+  66%  { transform: translate(-5px, 2px);  clip-path: inset(70% 0 6% 0); }
+  100% { transform: translate(2px, -1px);  clip-path: inset(24% 0 50% 0); }
+}
+@keyframes glitch-b {
+  0%   { transform: translate(4px, 2px);   clip-path: inset(58% 0 18% 0); }
+  33%  { transform: translate(-3px, -2px); clip-path: inset(12% 0 74% 0); }
+  66%  { transform: translate(5px, -1px);  clip-path: inset(38% 0 40% 0); }
+  100% { transform: translate(-2px, 1px);  clip-path: inset(80% 0 4% 0); }
+}
+
+/* ───────────────────────────────────────────────
+   waybar extras — sys monitors, term launcher
+─────────────────────────────────────────────── */
+.bar-mid .sys { color: var(--faint); }
+.bar-mid .sys b { color: var(--aqua); font-weight: 500; }
+.bar-mid .sys.hot b { color: var(--red); }
+.bar-right button {
+  display: flex; align-items: center; gap: 7px;
+  color: var(--dim); padding: 6px 10px; border-radius: 7px;
+  background: none; border: 0; font: inherit;
+  transition: color .15s ease, background .15s ease;
+}
+.bar-right button:hover { color: var(--fg); background: var(--bg-soft); }
+
+/* ───────────────────────────────────────────────
+   floating terminal
+─────────────────────────────────────────────── */
+#term {
+  position: fixed; z-index: 900;
+  left: 50%; top: 13vh;
+  width: min(680px, 94vw);
+  transform: translateX(-50%);
+  border-color: var(--line-2);
+  box-shadow: 0 50px 110px -24px rgba(0,0,0,.85);
+  flex-direction: column;
+}
+#term:not([hidden]) { display: flex; }
+#term.opening { animation: term-pop .32s cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes term-pop {
+  from { opacity: 0; transform: translateX(-50%) scale(.92) translateY(16px); }
+  to   { opacity: 1; transform: translateX(-50%) scale(1) translateY(0); }
+}
+#term .term-body {
+  font-family: var(--mono); font-size: 12.5px; line-height: 1.65;
+  padding: 14px 16px;
+  height: min(340px, 52vh);
+  overflow-y: auto;
+  background: rgba(29,32,33,.96);
+}
+#term-out { white-space: pre-wrap; word-break: break-word; color: var(--fg); }
+.term-line { display: flex; gap: 8px; margin-top: 2px; }
+.term-line .prompt { color: var(--dim); white-space: nowrap; }
+.term-line .prompt b { color: var(--aqua); font-weight: 500; }
+#term-in {
+  flex: 1; min-width: 0; background: none; border: 0; outline: 0;
+  font: inherit; color: var(--fg); caret-color: var(--orange);
+}
+@media (pointer: coarse) { #term-in, #term .term-body { font-size: 16px; } }
+
+.titlebar .tb-x {
+  margin-left: 10px; width: 20px; height: 20px; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  background: none; border: 0; border-radius: 5px;
+  color: var(--dim); font: inherit; font-size: 10px;
+}
+.titlebar .tb-x:hover { background: var(--red); color: var(--wall); }
+
+/* ───────────────────────────────────────────────
+   keybind cheatsheet + toast
+─────────────────────────────────────────────── */
+#binds {
+  position: fixed; inset: 0; z-index: 950;
+  background: rgba(13,14,15,.6);
+  backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+  place-items: center; padding: 20px;
+}
+#binds:not([hidden]) { display: grid; }
+#binds .window { width: min(460px, 100%); animation: pop-in .25s cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes pop-in { from { opacity: 0; transform: scale(.94) translateY(10px); } }
+#binds .pad { display: flex; flex-direction: column; gap: 11px; font-family: var(--mono); font-size: 12.5px; }
+#binds .b-row { display: flex; align-items: baseline; gap: 14px; color: var(--dim); }
+#binds .keys { min-width: 150px; display: flex; gap: 4px; flex-wrap: wrap; }
+#binds .hint { color: var(--faint); font-style: italic; margin-top: 6px; }
+#binds .hint .o { color: var(--orange); font-style: normal; }
+
+kbd {
+  font-family: var(--mono); font-size: 11px; color: var(--fg);
+  background: var(--bg-soft);
+  border: 1px solid var(--line-2); border-bottom-width: 2px;
+  border-radius: 5px; padding: 1px 7px;
+}
+
+#toast {
+  position: fixed; right: 16px; bottom: 16px; z-index: 920;
+  max-width: min(380px, calc(100vw - 32px));
+  font-family: var(--mono); font-size: 12px;
+  border-left: 3px solid var(--orange);
+}
+#toast .pad { padding: 12px 16px; color: var(--dim); }
+#toast .ok { color: var(--aqua); }
+#toast.show { animation: toast-in .4s cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes toast-in { from { opacity: 0; transform: translateY(16px) scale(.97); } }
+
+/* ───────────────────────────────────────────────
+   CRT mode (konami / `crt`)
+─────────────────────────────────────────────── */
+#crt { position: fixed; inset: 0; z-index: 9990; pointer-events: none; display: none; }
+html.crt #crt { display: block; }
+#crt::before {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,.25) 0 1px, transparent 1px 3px);
+}
+#crt::after {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, transparent 58%, rgba(0,0,0,.42) 100%);
+}
+#crt .roll {
+  position: absolute; left: 0; right: 0; height: 140px; top: -20%;
+  background: linear-gradient(180deg, transparent, rgba(235,219,178,.05), transparent);
+  animation: crt-roll 6s linear infinite;
+}
+@keyframes crt-roll { to { top: 120%; } }
+#crt .flick { position: absolute; inset: 0; background: rgba(235,219,178,.025); animation: crt-flick .12s steps(2) infinite; }
+@keyframes crt-flick { 50% { opacity: 0; } }
+html.crt body { text-shadow: 0 0 2px rgba(235,219,178,.35); }
+
+/* ───────────────────────────────────────────────
+   the forbidden command
+─────────────────────────────────────────────── */
+html.dying { overflow: hidden; }
+html.dying main { animation: quake .35s linear infinite; }
+@keyframes quake {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-7px, 4px) rotate(.2deg); }
+  40% { transform: translate(6px, -3px) rotate(-.3deg); }
+  60% { transform: translate(-5px, -6px) rotate(.25deg); }
+  80% { transform: translate(7px, 4px) rotate(-.2deg); }
+}
+#gcover { position: fixed; inset: 0; z-index: 9998; pointer-events: none; display: none; mix-blend-mode: screen; }
+html.dying #gcover {
+  display: block;
+  background: repeating-linear-gradient(0deg,
+    transparent 0 9px, rgba(251,73,52,.10) 9px 11px,
+    transparent 11px 27px, rgba(131,165,152,.08) 27px 29px);
+  animation: gflash .09s steps(2) infinite;
+}
+@keyframes gflash {
+  0%   { transform: translateY(0); opacity: .9; }
+  50%  { transform: translateY(-8px) skewX(1.5deg); opacity: .35; }
+  100% { transform: translateY(6px); opacity: .8; }
+}
+#panic {
+  position: fixed; inset: 0; z-index: 9999; display: none;
+  background: #0d0e0f; color: var(--dim);
+  font-family: var(--mono); font-size: 12.5px; line-height: 1.75;
+  padding: 9vh 7vw; white-space: pre-wrap; overflow: hidden;
+}
+#panic .r { color: var(--red); font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+  #rain, .cur-dot, .cur-ring, #crt .roll, #crt .flick { display: none !important; }
+  .glitching::before, .glitching::after { content: none; animation: none; }
+  #term.opening, #binds .window, #toast.show { animation: none; }
+  html.dying main { animation: none; }
+}
+
+/* ───────────────────────────────────────────────
    responsive
 ─────────────────────────────────────────────── */
 @media (max-width: 980px) {
@@ -415,6 +692,7 @@ html.js .tile.open {
   .proj-grid, .stack-grid, .about-grid { grid-template-columns: 1fr; }
   .bar-mid { display: none; }
   .ws a .ws-name { display: none !important; }
+  .bar-right a > span, .bar-right button .bl { display: none; }
   .fetch-grid pre.arch { display: none; }
 }
 </style>
@@ -422,11 +700,18 @@ html.js .tile.open {
 <body>
 <a class="skip" href="#main">skip to content</a>
 
+<!-- ── boot sequence ───────────────────────── -->
+<div id="boot" aria-hidden="true">
+  <div id="boot-log"></div>
+  <div class="boot-hint">[ press any key to skip ]</div>
+</div>
+
 <div class="wall" aria-hidden="true">
   <div class="layer dots" data-wall="-0.03" data-mouse="8"></div>
   <div class="layer glow-a" data-wall="-0.06" data-mouse="24"></div>
   <div class="layer glow-b" data-wall="-0.10" data-mouse="-32"></div>
 </div>
+<canvas id="rain" aria-hidden="true"></canvas>
 
 <!-- ── waybar ──────────────────────────────── -->
 <header class="bar">
@@ -439,9 +724,14 @@ html.js .tile.open {
   </nav>
   <div class="bar-mid" aria-hidden="true">
     <span class="host"><b>hamza</b>@arch</span>
+    <span class="sys">cpu <b id="cpu">3%</b></span>
+    <span class="sys">mem <b id="mem">1.2G</b></span>
     <span id="clock"></span>
   </div>
   <div class="bar-right">
+    <button id="term-btn" title="terminal — or press t" aria-label="Open terminal">
+      <span aria-hidden="true">&gt;_</span><span class="bl">term</span>
+    </button>
     <a href="https://github.com/Crepco" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.4-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0C16.2 4.7 17.2 5 17.2 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.2c0 .4.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>
       <span>github</span>
@@ -464,7 +754,7 @@ html.js .tile.open {
         <div class="titlebar"><span class="wdot"></span>~/hamza <span class="meta">workspace 1</span></div>
         <div class="pad">
           <div class="hero-eyebrow">Hyderabad, India <span class="tz">· UTC+5:30</span></div>
-          <h1>Hamza Jeelani</h1>
+          <h1 class="glitchable" data-text="Hamza Jeelani">Hamza Jeelani</h1>
           <p class="claim">I take things apart to see why they work.</p>
           <p class="blurb">
             Security student and Python tinkerer. My days go to CTF boxes, my
@@ -732,8 +1022,46 @@ html.js .tile.open {
 
 <footer>
   <span>© 2026 Hamza Jeelani</span>
+  <span><kbd>?</kbd> keybinds · <kbd>t</kbd> terminal · the konami code does something</span>
   <span>one html file · no frameworks · <a href="https://github.com/Crepco/linux-rice" target="_blank" rel="noopener noreferrer">gruvbox, btw</a></span>
 </footer>
+
+<!-- ── crazy mode overlays ─────────────────── -->
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<div id="term" class="window" role="dialog" aria-label="Terminal" hidden>
+  <div class="titlebar"><span class="wdot"></span>kitty: zsh ~ <span class="meta">float</span>
+    <button class="tb-x" id="term-x" aria-label="Close terminal">✕</button>
+  </div>
+  <div class="term-body">
+    <div id="term-out"></div>
+    <div class="term-line">
+      <label class="prompt" for="term-in"><b>hamza@arch</b>:~$</label>
+      <input id="term-in" autocomplete="off" autocapitalize="off" spellcheck="false">
+    </div>
+  </div>
+</div>
+
+<div id="binds" hidden role="dialog" aria-label="Keybinds">
+  <div class="window">
+    <div class="titlebar"><span class="wdot"></span>hyprland — binds <span class="meta">[?]</span></div>
+    <div class="pad">
+      <div class="b-row"><span class="keys"><kbd>1</kbd>…<kbd>5</kbd></span><span>switch workspace</span></div>
+      <div class="b-row"><span class="keys"><kbd>t</kbd></span><span>open terminal</span></div>
+      <div class="b-row"><span class="keys"><kbd>?</kbd></span><span>toggle this panel</span></div>
+      <div class="b-row"><span class="keys"><kbd>esc</kbd></span><span>close floating windows</span></div>
+      <div class="b-row"><span class="keys"><kbd>↑↑↓↓←→←→ba</kbd></span><span>???</span></div>
+      <div class="b-row"><span class="keys">drag a titlebar</span><span>tiling always wins</span></div>
+      <div class="hint">the terminal accepts <span class="o">sudo</span>. use it responsibly. or don't.</div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="window" hidden><div class="pad" id="toast-msg"></div></div>
+
+<div id="crt" aria-hidden="true"><div class="roll"></div><div class="flick"></div></div>
+<div id="gcover" aria-hidden="true"></div>
+<div id="panic" aria-hidden="true"></div>
 
 <script>
 document.documentElement.classList.add('js');
@@ -750,10 +1078,12 @@ document.documentElement.classList.add('js');
       const batch = [...group.querySelectorAll('.tile:not(.open)')];
       el.style.animationDelay = `${Math.max(0, batch.indexOf(el)) * 80}ms`;
       el.classList.add('open');
+      // once the entrance settles, drop the fill-mode so drag/tilt transforms work
+      el.addEventListener('animationend', () => el.classList.add('settled'), { once: true });
       io.unobserve(el);
     });
   }, { threshold: 0.12 });
-  tiles.forEach((t) => io.observe(t));
+  addEventListener('booted', () => tiles.forEach((t) => io.observe(t)), { once: true });
 })();
 
 /* ── waybar clock ─────────────────────────── */
@@ -872,6 +1202,632 @@ document.documentElement.classList.add('js');
       });
     })
     .catch(() => { /* keep the static counts */ });
+})();
+
+/* ═══════════════════════════════════════════════
+   crazy mode — boot, terminal, rain, cursor,
+   sparks, tilt, drag, keybinds, the forbidden rm
+   ═══════════════════════════════════════════════ */
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const FINE = matchMedia('(pointer: fine)').matches;
+const rand = (a, b) => a + Math.random() * (b - a);
+
+/* ── hyprctl notify ───────────────────────── */
+const toast = (() => {
+  const el = document.getElementById('toast');
+  const msg = document.getElementById('toast-msg');
+  let timer;
+  return (html, ms = 4000) => {
+    msg.innerHTML = html;
+    el.hidden = false;
+    el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+    clearTimeout(timer);
+    timer = setTimeout(() => { el.hidden = true; }, ms);
+  };
+})();
+
+/* ── boot sequence ────────────────────────── */
+(() => {
+  const boot = document.getElementById('boot');
+  const log = document.getElementById('boot-log');
+  let done = false;
+  const finish = () => {
+    if (done) return;
+    done = true;
+    document.documentElement.classList.remove('booting');
+    boot.classList.add('off');
+    setTimeout(() => boot.remove(), 450);
+    dispatchEvent(new Event('booted'));
+  };
+  if (REDUCED) {
+    boot.remove();
+    setTimeout(() => dispatchEvent(new Event('booted')), 0);
+    return;
+  }
+  document.documentElement.classList.add('booting');
+
+  const ok = '<span class="ok">[  OK  ]</span> ';
+  const lines = [
+    '<span class="k">:: running early hook [udev]</span>',
+    '<span class="k">:: triggering uevents…</span>',
+    ok + 'Mounted <span class="svc">/dev/hamza</span> on <span class="svc">/portfolio</span>',
+    ok + 'Started <span class="svc">Network Manager</span>',
+    ok + 'Reached target <span class="svc">Sound Card</span>',
+    ok + 'Started <span class="svc">hyprland.service</span> — tiling engaged',
+    ok + 'Loaded <span class="svc">gruvbox.theme</span> (btw)',
+    '<span class="fail">[FAILED]</span> Started <span class="svc">sleep-schedule.service</span> — see journalctl',
+    ok + 'Started <span class="svc">caffeine.daemon</span> instead',
+    ok + 'Mounted <span class="svc">~/ctf-boxes</span>',
+    ok + 'Reached target <span class="svc">Graphical Interface</span>',
+    '',
+    '<span class="svc">Arch Linux 6.21.0-arch1</span> (tty1)',
+    '',
+    '<span class="o">arch</span> login: hamza',
+    'Password: ········',
+    'Last login: just now. Welcome back.',
+    '<span class="k">$ exec Hyprland</span>',
+  ];
+  let i = 0, t;
+  const step = () => {
+    if (i >= lines.length) { t = setTimeout(finish, 380); return; }
+    const d = document.createElement('div');
+    d.innerHTML = lines[i] || '&nbsp;';
+    log.appendChild(d);
+    i++;
+    t = setTimeout(step, lines[i - 1] === '' ? 170 : rand(30, 115));
+  };
+  t = setTimeout(step, 240);
+  const skip = () => { clearTimeout(t); finish(); };
+  boot.addEventListener('pointerdown', skip);
+  addEventListener('keydown', skip, { once: true });
+  setTimeout(finish, 6000); // belt and suspenders
+})();
+
+addEventListener('booted', () => {
+  setTimeout(() => toast('<span class="dim">tip:</span> <kbd>?</kbd> keybinds · <kbd>t</kbd> opens a real terminal', 5000), 2400);
+}, { once: true });
+
+/* ── waybar sys monitors (vibes-based) ────── */
+(() => {
+  const cpu = document.getElementById('cpu'), mem = document.getElementById('mem');
+  if (!cpu || !mem) return;
+  let c = 4, m = 1.3;
+  setInterval(() => {
+    const spike = Math.random() < 0.07;
+    c = spike ? rand(62, 94) : Math.max(1, Math.min(23, c + rand(-4, 4)));
+    m = Math.max(0.9, Math.min(3.9, m + rand(-0.15, 0.15)));
+    cpu.textContent = `${c | 0}%`;
+    mem.textContent = `${m.toFixed(1)}G`;
+    cpu.parentElement.classList.toggle('hot', c > 50);
+  }, 1800);
+})();
+
+/* ── gruvbox matrix rain ──────────────────── */
+(() => {
+  if (REDUCED) return;
+  const cv = document.getElementById('rain');
+  const ctx = cv.getContext('2d');
+  const CHARS = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿ0123456789ABCDEF<>/\\|{}[]$#@%&';
+  const SIZE = 16;
+  let w, h, cols, drops;
+  const resize = () => {
+    w = cv.width = innerWidth; h = cv.height = innerHeight;
+    cols = Math.floor(w / SIZE);
+    drops = Array.from({ length: cols }, () => rand(-h / SIZE, 0));
+  };
+  resize();
+  addEventListener('resize', resize);
+  let last = 0;
+  const tick = (t) => {
+    requestAnimationFrame(tick);
+    if (document.hidden) return;
+    const rave = document.documentElement.classList.contains('rave');
+    if (t - last < (rave ? 33 : 66)) return;
+    last = t;
+    ctx.fillStyle = 'rgba(29,32,33,.25)';
+    ctx.fillRect(0, 0, w, h);
+    ctx.font = SIZE + 'px monospace';
+    for (let i = 0; i < cols; i++) {
+      if (!rave && i % 2) continue;
+      const y = drops[i] * SIZE;
+      ctx.fillStyle = Math.random() < .04 ? '#fe8019' : (rave ? '#b8bb26' : '#8ec07c');
+      ctx.fillText(CHARS[(Math.random() * CHARS.length) | 0], i * SIZE, y);
+      if (y > h && Math.random() > .975) drops[i] = 0;
+      drops[i]++;
+    }
+  };
+  requestAnimationFrame(tick);
+})();
+
+/* ── custom cursor: caret + lagging frame ─── */
+(() => {
+  if (!FINE || REDUCED) return;
+  const dot = document.createElement('div'); dot.className = 'cur-dot';
+  const ring = document.createElement('div'); ring.className = 'cur-ring';
+  document.body.append(dot, ring);
+  document.documentElement.classList.add('cur');
+  let x = innerWidth / 2, y = innerHeight / 2, rx = x, ry = y, seen = false;
+  addEventListener('mousemove', (e) => {
+    x = e.clientX; y = e.clientY; seen = true;
+    const hot = e.target.closest?.('a, button, input, .titlebar, kbd');
+    document.documentElement.classList.toggle('cur-hot', !!hot);
+  }, { passive: true });
+  const loop = () => {
+    requestAnimationFrame(loop);
+    if (!seen) return;
+    rx += (x - rx) * 0.22; ry += (y - ry) * 0.22;
+    dot.style.transform = `translate(${x - 3}px, ${y - 8}px)`;
+    ring.style.transform = `translate(${rx}px, ${ry}px)`;
+  };
+  requestAnimationFrame(loop);
+})();
+
+/* ── click sparks ─────────────────────────── */
+(() => {
+  if (REDUCED) return;
+  const cv = document.getElementById('fx');
+  const ctx = cv.getContext('2d');
+  const fit = () => { cv.width = innerWidth; cv.height = innerHeight; };
+  fit();
+  addEventListener('resize', fit);
+  const P = [];
+  const COLORS = ['#fe8019', '#fabd2f', '#8ec07c', '#fb4934', '#83a598', '#d3869b'];
+  let running = false;
+  const loop = () => {
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    for (let i = P.length - 1; i >= 0; i--) {
+      const p = P[i];
+      p.x += p.vx; p.y += p.vy; p.vy += 0.22; p.vx *= .985; p.life--;
+      if (p.life <= 0) { P.splice(i, 1); continue; }
+      ctx.globalAlpha = Math.min(1, p.life / 24);
+      ctx.fillStyle = p.c;
+      ctx.fillRect(p.x, p.y, p.s, p.s);
+    }
+    ctx.globalAlpha = 1;
+    if (P.length) requestAnimationFrame(loop); else running = false;
+  };
+  window.__burst = (x, y, n = 14, pow = 1) => {
+    for (let i = 0; i < n; i++) {
+      const a = rand(0, Math.PI * 2), v = rand(1.5, 5.5) * pow;
+      P.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 2,
+               s: rand(2, 4.5), life: rand(26, 52), c: COLORS[(Math.random() * COLORS.length) | 0] });
+    }
+    if (!running) { running = true; requestAnimationFrame(loop); }
+  };
+  addEventListener('pointerdown', (e) => {
+    if (e.target.closest('#term, input, textarea')) return;
+    window.__burst(e.clientX, e.clientY, 12);
+  });
+})();
+
+/* ── 3d tilt + glare on project windows ───── */
+(() => {
+  if (!FINE || REDUCED) return;
+  document.querySelectorAll('.project').forEach((card) => {
+    let raf = 0;
+    card.addEventListener('pointermove', (e) => {
+      if (card.classList.contains('dragging')) return;
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+      card.style.setProperty('--gx', (px * 100).toFixed(1) + '%');
+      card.style.setProperty('--gy', (py * 100).toFixed(1) + '%');
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        card.classList.add('tilting');
+        card.style.transform =
+          `translateY(-4px) rotateX(${((0.5 - py) * 7).toFixed(2)}deg) rotateY(${((px - 0.5) * 9).toFixed(2)}deg)`;
+      });
+    });
+    card.addEventListener('pointerleave', () => {
+      cancelAnimationFrame(raf);
+      card.classList.remove('tilting');
+      card.style.transform = '';
+    });
+  });
+})();
+
+/* ── drag any titlebar — tiling always wins ─ */
+(() => {
+  if (!FINE || REDUCED) return;
+  let st = null;
+  document.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0) return;
+    const tb = e.target.closest('.titlebar');
+    if (!tb || e.target.closest('a, button')) return;
+    const win = tb.closest('.window');
+    if (!win) return;
+    const isTerm = win.id === 'term';
+    st = { win, isTerm, sx: e.clientX, sy: e.clientY, dx: 0, dy: 0, vx: 0, lx: e.clientX, ol: 0, ot: 0 };
+    if (isTerm) {
+      const r = win.getBoundingClientRect();
+      win.style.left = r.left + 'px';
+      win.style.top = r.top + 'px';
+      win.style.transform = 'none';
+      st.ol = r.left; st.ot = r.top;
+    }
+    win.classList.add('dragging');
+    win.getAnimations?.().forEach((a) => a.cancel());
+    tb.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+  document.addEventListener('pointermove', (e) => {
+    if (!st) return;
+    st.vx = e.clientX - st.lx; st.lx = e.clientX;
+    st.dx = e.clientX - st.sx; st.dy = e.clientY - st.sy;
+    if (st.isTerm) {
+      st.win.style.left = st.ol + st.dx + 'px';
+      st.win.style.top = Math.max(8, st.ot + st.dy) + 'px';
+    } else {
+      const rot = Math.max(-7, Math.min(7, st.vx * 0.6));
+      st.win.style.transform = `translate(${st.dx}px, ${st.dy}px) rotate(${rot.toFixed(2)}deg) scale(1.02)`;
+    }
+  });
+  const drop = () => {
+    if (!st) return;
+    const { win, isTerm, dx, dy } = st;
+    win.classList.remove('dragging');
+    st = null;
+    if (isTerm) return;       // the terminal floats; everything else re-tiles
+    const cur = win.style.transform;
+    win.style.transform = '';
+    if (cur) win.animate(
+      [{ transform: cur },
+       { transform: `translate(${(-dx * 0.07).toFixed(1)}px, ${(-dy * 0.07).toFixed(1)}px) rotate(${(dx * 0.01).toFixed(2)}deg)` },
+       { transform: 'none' }],
+      { duration: 520, easing: 'cubic-bezier(.22, 1, .36, 1)' });
+  };
+  document.addEventListener('pointerup', drop);
+  document.addEventListener('pointercancel', drop);
+})();
+
+/* ── scramble-decode headings ─────────────── */
+(() => {
+  const GLYPHS = '!<>-_\\/[]{}—=+*^?#$01';
+  const targets = [...document.querySelectorAll('.hero h1, .sec-head h2')];
+  const scrambleStr = (text) =>
+    [...text].map((c) => (c === ' ' ? ' ' : GLYPHS[(Math.random() * GLYPHS.length) | 0])).join('');
+  targets.forEach((el) => {
+    const text = el.textContent.trim().replace(/\s+/g, ' ');
+    el.dataset.final = text;
+    el.setAttribute('aria-label', text);
+    el.innerHTML = '<span class="scr" aria-hidden="true"></span>';
+    el.querySelector('.scr').textContent = REDUCED ? text : scrambleStr(text);
+  });
+  if (REDUCED) return;
+  const decode = (el) => {
+    const text = el.dataset.final;
+    const span = el.querySelector('.scr');
+    const reveal = [...text].map(() => rand(6, 26) | 0);
+    let frame = 0;
+    const tick = () => {
+      let done = 0, s = '';
+      for (let i = 0; i < text.length; i++) {
+        if (text[i] === ' ') { s += ' '; done++; }
+        else if (frame >= reveal[i]) { s += text[i]; done++; }
+        else s += GLYPHS[(Math.random() * GLYPHS.length) | 0];
+      }
+      span.textContent = s;
+      frame++;
+      if (done < text.length) requestAnimationFrame(tick);
+    };
+    tick();
+  };
+  const io = new IntersectionObserver((es) => {
+    es.forEach((en) => {
+      if (!en.isIntersecting) return;
+      io.unobserve(en.target);
+      decode(en.target);
+    });
+  }, { threshold: 0.3 });
+  addEventListener('booted', () => targets.forEach((t) => io.observe(t)), { once: true });
+})();
+
+/* ── periodic chromatic glitch on the name ── */
+(() => {
+  if (REDUCED) return;
+  const h1 = document.querySelector('.hero h1');
+  if (!h1) return;
+  const go = () => {
+    h1.classList.add('glitching');
+    setTimeout(() => h1.classList.remove('glitching'), 380);
+    setTimeout(go, rand(3800, 9000));
+  };
+  addEventListener('booted', () => setTimeout(go, 3500), { once: true });
+})();
+
+/* ── the claim types itself ───────────────── */
+(() => {
+  if (REDUCED) return;
+  const el = document.querySelector('.hero .claim');
+  if (!el) return;
+  const text = el.textContent.trim();
+  el.setAttribute('aria-label', text);
+  el.innerHTML = '<span aria-hidden="true"></span><span class="tcaret" aria-hidden="true"></span>';
+  const span = el.firstChild;
+  addEventListener('booted', () => {
+    let i = 0;
+    const tick = () => {
+      span.textContent = text.slice(0, ++i);
+      if (i < text.length) setTimeout(tick, rand(18, 55));
+      else setTimeout(() => el.querySelector('.tcaret')?.remove(), 2600);
+    };
+    setTimeout(tick, 700);
+  }, { once: true });
+})();
+
+/* ── floating terminal ────────────────────── */
+(() => {
+  const term = document.getElementById('term');
+  const out = document.getElementById('term-out');
+  const input = document.getElementById('term-in');
+  const tbody = term.querySelector('.term-body');
+  const hist = []; let hi = 0; let busy = false;
+
+  const esc = (s) => s.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  const print = (html = '&nbsp;', cls = '') => {
+    const d = document.createElement('div');
+    if (cls) d.className = cls;
+    d.innerHTML = html;
+    out.appendChild(d);
+    tbody.scrollTop = tbody.scrollHeight;
+    return d;
+  };
+
+  const open = () => {
+    if (!term.hidden) { input.focus(); return; }
+    term.hidden = false;
+    if (!term.style.left) {
+      term.classList.add('opening');
+      setTimeout(() => term.classList.remove('opening'), 360);
+    }
+    if (!out.childElementCount) {
+      print('<span class="dim">kitty 0.40.1 — type</span> help <span class="dim">to look around, or do something reckless.</span>');
+    }
+    input.focus();
+  };
+  const close = () => { term.hidden = true; };
+  window.__term = { open, close };
+
+  document.getElementById('term-btn').addEventListener('click', open);
+  document.getElementById('term-x').addEventListener('click', close);
+  tbody.addEventListener('pointerup', () => { if (!getSelection().toString()) input.focus(); });
+
+  const FILES = {
+    'about.md': 'security student in hyderabad. python first, exploits second,\nsleep a distant third. breaking things politely since the start.',
+    'creed.txt': '"Read the source. Understand the system. Own your stack."',
+    'flag.txt': '<span class="ok">flag{cur10s1ty_p4ys_0ff}</span>\n<span class="dim">nice. mail it to me for bragging rights.</span>',
+    '.zshrc': 'alias please="sudo"\nalias yolo="git push --force"\n<span class="dim"># 412 more lines i forgot exist</span>',
+  };
+  const NEOFETCH = [
+    '<span class="ok">      /\\',
+    '     /  \\',
+    '    /    \\',
+    '   /  __  \\',
+    '  /  |  |  \\',
+    " /_-''    ''-_\\</span>",
+    '<span class="o">hamza</span>@<span class="o">arch</span> — Arch Linux (btw)',
+    '<span class="o">wm</span> Hyprland · <span class="o">shell</span> zsh · <span class="o">editor</span> nvim',
+    '<span class="o">uptime</span> 21 years · <span class="o">focus</span> offensive security',
+  ].join('\n');
+
+  const hollywood = () => {
+    if (busy) return; busy = true;
+    print('<span class="warn">[hollywood] initiating completely real intrusion…</span>');
+    let n = 0;
+    const iv = setInterval(() => {
+      const ip = () => `${rand(10, 250) | 0}.${rand(0, 255) | 0}.${rand(0, 255) | 0}.${rand(1, 254) | 0}`;
+      const hex = Array.from({ length: 5 }, () => ((Math.random() * 0xffff) | 0).toString(16).padStart(4, '0')).join(' ');
+      const pool = [
+        `<span class="dim">[${ip()}]</span> handshake <span class="ok">ACCEPTED</span>`,
+        `<span class="dim">0x${hex}</span>`,
+        `bypassing firewall layer ${n}… <span class="ok">done</span>`,
+        `injecting payload… <span class="warn">${rand(9, 99) | 0}%</span>`,
+        '<span class="dim">decrypting /etc/shadow…</span>',
+        `routing through <span class="o">${rand(3, 17) | 0} proxies</span>…`,
+      ];
+      print(pool[(Math.random() * pool.length) | 0]);
+      if (++n > 26) {
+        clearInterval(iv); busy = false;
+        print('<span class="ok big">ACCESS GRANTED</span> <span class="dim">— relax. nothing happened. it never does in the movies either.</span>');
+        window.__burst?.(innerWidth / 2, innerHeight / 3, 44, 1.7);
+      }
+    }, 55);
+  };
+
+  /* the forbidden command */
+  const meltdown = () => {
+    if (busy || document.documentElement.classList.contains('dying')) return;
+    busy = true;
+    const paths = ['/usr/bin', '/usr/lib', '/etc', '/var', '/boot',
+      '/home/hamza/.config/hypr', '/home/hamza/portfolio',
+      '/proc <span class="dim">(why)</span>', '/'];
+    paths.forEach((p, i) => setTimeout(() => print(`removed '<span class="err">${p}</span>'`), i * 120));
+    const t0 = paths.length * 120;
+    setTimeout(() => print('<span class="err">wait.</span>'), t0 + 300);
+    setTimeout(() => print('<span class="err big">WAIT—</span>'), t0 + 750);
+    setTimeout(die, t0 + 1150);
+  };
+  const die = () => {
+    document.documentElement.classList.add('dying');
+    if (!REDUCED) {
+      document.querySelectorAll('.window, .bar, footer, .sec-head').forEach((el) => {
+        el.animate(
+          [{ transform: 'none' },
+           { transform: `translate(${rand(-180, 180) | 0}px, 115vh) rotate(${rand(-150, 150) | 0}deg)` }],
+          { duration: rand(900, 1800), delay: rand(0, 700),
+            easing: 'cubic-bezier(.5, -0.1, 1, 1)', fill: 'forwards' });
+      });
+      window.__burst?.(innerWidth / 2, innerHeight / 2, 60, 2);
+    }
+    setTimeout(panic, REDUCED ? 600 : 2100);
+  };
+  const panic = () => {
+    const p = document.getElementById('panic');
+    p.style.display = 'block';
+    const rows = [
+      '<span class="r">Kernel panic — not syncing: Attempted to kill init! exitcode=0x0000000b</span>',
+      '',
+      'CPU: 0  PID: 1  Comm: visitor  Tainted: G   WC   6.21.0-arch1',
+      'Hardware name: CREPCO Portfolio v2 (BIOS 21.0)',
+      'Call Trace:',
+      ' &lt;TASK&gt;',
+      '   panic+0x10c/0x2b3',
+      '   do_exit.cold+0x15/0x15',
+      '   __curiosity_unchecked+0xff/0xff   <span class="r">&lt;— you are here</span>',
+      ' &lt;/TASK&gt;',
+      '',
+      'You ran it. You actually ran it.',
+      '',
+    ];
+    let i = 0;
+    const iv = setInterval(() => {
+      if (i >= rows.length) {
+        clearInterval(iv);
+        let n = 3;
+        const cd = setInterval(() => {
+          if (!n) { clearInterval(cd); location.reload(); return; }
+          p.innerHTML += `Rebooting in ${n}…\n`;
+          n--;
+        }, 750);
+        return;
+      }
+      p.innerHTML += rows[i] + '\n';
+      i++;
+    }, 85);
+  };
+
+  const exec = (line, asRoot = false) => {
+    const [cmd, ...rest] = line.split(/\s+/);
+    const arg = rest.join(' ');
+    const low = line.toLowerCase();
+
+    const nuke = /\brm\b/.test(low) && /-\w*r/.test(low) && /\s\/\*?\s*$/.test(low);
+    if (nuke) {
+      if (asRoot) return void meltdown();
+      return void print("rm: cannot remove '/': Permission denied\n<span class=\"dim\">…there is a way around that, you know.</span>", 'err');
+    }
+
+    switch (cmd) {
+      case 'sudo':
+        if (!arg) return void print('usage: sudo <command>');
+        print('<span class="dim">[sudo] password for hamza: ········</span>');
+        return void setTimeout(() => exec(arg, true), 380);
+      case 'help':
+        return void print(
+          '<span class="o">help</span>            you are here\n' +
+          '<span class="o">ls</span>              look around\n' +
+          '<span class="o">cat</span> <span class="dim">&lt;file&gt;</span>      read a file\n' +
+          '<span class="o">neofetch</span>        flex\n' +
+          '<span class="o">open</span> <span class="dim">&lt;ws&gt;</span>       jump: home projects about stack contact\n' +
+          '<span class="o">hack</span>            hollywood mode\n' +
+          '<span class="o">matrix</span>          crank the rain\n' +
+          '<span class="o">crt</span>             1998 mode\n' +
+          '<span class="o">clear exit</span>      housekeeping\n' +
+          '<span class="dim">sudo rm -rf /   do NOT run this</span>');
+      case 'ls':
+        return void print('<span class="ok">projects/</span>  <span class="ok">stack/</span>  <span class="ok">.config/</span>  about.md  creed.txt  flag.txt  .zshrc');
+      case 'cat': {
+        if (!arg) return void print('cat: missing operand');
+        if (arg === '.config' || arg.endsWith('/')) return void print(`cat: ${esc(arg)}: Is a directory`, 'err');
+        const f = FILES[arg];
+        return void print(f || `cat: ${esc(arg)}: No such file or directory`, f ? '' : 'err');
+      }
+      case 'neofetch': case 'fastfetch': return void print(NEOFETCH);
+      case 'open': case 'cd': case 'goto': {
+        const id = (arg || 'home').replace(/[/~]/g, '') || 'home';
+        const sec = document.getElementById(id);
+        if (!sec) return void print(`${cmd}: no such workspace: ${esc(arg)}`, 'err');
+        sec.scrollIntoView({ behavior: 'smooth' });
+        return void print(`<span class="dim">dispatch workspace</span> ${id}`);
+      }
+      case 'hack': return void hollywood();
+      case 'matrix': {
+        const on = document.documentElement.classList.toggle('rave');
+        return void print(on ? '<span class="ok">wake up, neo…</span>' : '<span class="dim">rain reduced to a drizzle.</span>');
+      }
+      case 'crt': {
+        const on = document.documentElement.classList.toggle('crt');
+        return void print(on ? '<span class="ok">CRT engaged.</span> welcome to 1998.' : 'CRT off. flat pixels restored.');
+      }
+      case 'whoami': return void print(asRoot ? 'root <span class="dim">(with great power…)</span>' : 'visitor <span class="dim">— hamza is the other guy</span>');
+      case 'pwd': return void print('/home/hamza/portfolio');
+      case 'uname': return void print('Linux arch 6.21.0-arch1 #1 SMP PREEMPT_DYNAMIC x86_64 GNU/Linux');
+      case 'date': return void print(new Date().toString());
+      case 'echo': return void print(esc(arg) || '&nbsp;');
+      case 'history': return void print(hist.map((h, i) => `  ${i + 1}  ${esc(h)}`).join('\n') || '<span class="dim">(empty)</span>');
+      case 'clear': out.innerHTML = ''; return;
+      case 'exit': case 'quit': case ':q': return void close();
+      case 'reboot': case 'shutdown':
+        print('<span class="warn">rebooting…</span>');
+        return void setTimeout(() => location.reload(), 700);
+      case 'vim': case 'nvim': case 'nano': case 'emacs':
+        return void print(`${esc(cmd)}: opening… jk. one terminal, one job.\n<span class="dim">(also you'd never escape vim and we both know it)</span>`);
+      case 'make':
+        return void print(/sandwich/.test(low)
+          ? (asRoot ? 'okay.' : 'what? make it yourself.')
+          : 'make: *** no targets specified. Stop.');
+      case 'btw': case 'arch': return void print('yes. arch. <span class="o">btw</span>.');
+      case 'konami': case 'secret': case 'hint':
+        return void print('try <span class="o">↑ ↑ ↓ ↓ ← → ← → b a</span> — outside this terminal.');
+      default:
+        return void print(`zsh: command not found: ${esc(cmd)} <span class="dim">— try</span> help`, 'err');
+    }
+  };
+
+  const run = (raw) => {
+    const line = raw.trim();
+    print(`<span class="ok">hamza@arch</span><span class="dim">:~$</span> ${esc(line)}`);
+    if (!line) return;
+    hist.push(line); hi = hist.length;
+    exec(line);
+  };
+
+  const NAMES = ['help', 'ls', 'cat', 'neofetch', 'open', 'hack', 'matrix', 'crt', 'clear', 'whoami', 'exit', 'sudo', 'reboot', 'history', 'echo', 'pwd', 'uname', 'date', 'konami'];
+  input.addEventListener('keydown', (e) => {
+    e.stopPropagation();
+    if (e.key === 'Enter') { const v = input.value; input.value = ''; run(v); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); if (hi > 0) input.value = hist[--hi] || ''; }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); input.value = hi < hist.length ? (hist[++hi] || '') : ''; }
+    else if (e.key === 'Tab') {
+      e.preventDefault();
+      const v = input.value.trimStart();
+      if (!v || v.includes(' ')) return;
+      const m = NAMES.filter((n) => n.startsWith(v));
+      if (m.length === 1) input.value = m[0] + ' ';
+      else if (m.length > 1) print(m.join('  '), 'dim');
+    }
+    else if (e.key === 'Escape') close();
+  });
+})();
+
+/* ── global keybinds + konami code ────────── */
+(() => {
+  const binds = document.getElementById('binds');
+  const WS = ['home', 'projects', 'about', 'stack', 'contact'];
+  const SEQ = ['arrowup', 'arrowup', 'arrowdown', 'arrowdown', 'arrowleft', 'arrowright', 'arrowleft', 'arrowright', 'b', 'a'];
+  let pos = 0;
+  addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (document.documentElement.classList.contains('booting')) return;
+    if (/^(input|textarea|select)$/i.test(e.target.tagName)) return;
+    const k = e.key.toLowerCase();
+
+    pos = (k === SEQ[pos]) ? pos + 1 : (k === SEQ[0] ? 1 : 0);
+    if (pos === SEQ.length) {
+      pos = 0;
+      const on = document.documentElement.classList.toggle('crt');
+      window.__burst?.(innerWidth / 2, innerHeight / 2, 56, 1.9);
+      toast(on
+        ? '<span class="ok">⊕ CHEAT ACCEPTED</span> — CRT mode engaged. welcome to 1998.'
+        : 'CRT mode off. back to the future.');
+    }
+
+    if (k >= '1' && k <= '5') document.getElementById(WS[+k - 1])?.scrollIntoView({ behavior: 'smooth' });
+    else if (k === 't' || k === '`') { e.preventDefault(); window.__term?.open(); }
+    else if (k === '?') binds.hidden = !binds.hidden;
+    else if (k === 'escape') { binds.hidden = true; window.__term?.close(); }
+  });
+  binds.addEventListener('click', (e) => { if (e.target === binds) binds.hidden = true; });
 })();
 </script>
 </body>
