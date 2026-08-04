@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hamza Jeelani — security &amp; systems</title>
-<meta name="description" content="Hamza Jeelani — security student and Python tinkerer from Hyderabad. CTF boxes, tools I actually needed, and a permanently unfinished Hyprland config.">
-<meta property="og:description" content="Security student and Python tinkerer.">
+<meta name="description" content="Hamza Jeelani — security student from Hyderabad. LLM agents against Active Directory attack paths, a vision-guided turret, EEG focus tracking, and a permanently unfinished Hyprland config.">
+<meta property="og:description" content="Security student. LLM agents vs Active Directory, computer vision, and hardware that occasionally works.">
 <meta name="theme-color" content="#282828">
 <link rel="icon" type="image/svg+xml" href="./favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1549,6 +1549,7 @@ const toast = (() => {
     '<span class="fail">[FAILED]</span> Started <span class="svc">sleep-schedule.service</span> — see journalctl',
     ok + 'Started <span class="svc">caffeine.daemon</span> instead',
     ok + 'Mounted <span class="svc">~/ctf-boxes</span>',
+    ok + 'Started <span class="svc">neo4j.service</span> — 412 nodes, 1180 edges loaded',
     ok + 'Attached <span class="svc">ch341-uart</span> on <span class="svc">ttyUSB0</span> — turret online',
     ok + 'Reached target <span class="svc">Graphical Interface</span>',
     '',
@@ -1886,6 +1887,7 @@ addEventListener('booted', () => {
 
   const FILES = {
     'about.md': 'security student in hyderabad. python first, exploits second,\nsleep a distant third. breaking things politely since the start.',
+    'research.md': 'ariadne — can an llm agent trace an AD attack path to domain\nadmin on its own? benchmarked against bloodhound on synthetic\ndomains. <span class="ok">83.8% correct, zero hallucinated edges.</span>\n<span class="dim">run</span> ariadne <span class="dim">to watch one reason through a path.</span>',
     'creed.txt': '"Read the source. Understand the system. Own your stack."',
     'flag.txt': '<span class="ok">flag{cur10s1ty_p4ys_0ff}</span>\n<span class="dim">nice. mail it to me for bragging rights.</span>',
     '.zshrc': 'alias please="sudo"\nalias yolo="git push --force"\n<span class="dim"># 412 more lines i forgot exist</span>',
@@ -2076,7 +2078,7 @@ addEventListener('booted', () => {
           '<span class="o">clear exit</span>      housekeeping\n' +
           '<span class="dim">sudo rm -rf /   do NOT run this</span>');
       case 'ls':
-        return void print('<span class="ok">projects/</span>  <span class="ok">stack/</span>  <span class="ok">lab/</span>  <span class="ok">.config/</span>  about.md  creed.txt  flag.txt  .zshrc');
+        return void print('<span class="ok">projects/</span>  <span class="ok">stack/</span>  <span class="ok">lab/</span>  <span class="ok">.config/</span>  about.md  research.md  creed.txt  flag.txt  .zshrc');
       case 'cat': {
         if (!arg) return void print('cat: missing operand');
         if (arg === '.config' || arg.endsWith('/')) return void print(`cat: ${esc(arg)}: Is a directory`, 'err');
