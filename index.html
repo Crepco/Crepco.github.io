@@ -29,6 +29,8 @@
   --aqua:    #8ec07c;
   --yellow:  #fabd2f;
   --red:     #fb4934;
+  --purple:  #d3869b;
+  --blue:    #83a598;
 
   --mono: 'IBM Plex Mono', ui-monospace, monospace;
   --sans: 'IBM Plex Sans', system-ui, sans-serif;
@@ -316,6 +318,44 @@ section:nth-of-type(even) .ws-num { right: auto; left: -3vw; }
 }
 .src { color: var(--faint); white-space: nowrap; }
 .src:hover { color: var(--orange); text-decoration: none; }
+
+/* flagship: the master window above the stack */
+.feature { grid-column: 1 / -1; }
+.feature .pad {
+  display: grid; grid-template-columns: 1.35fr 1fr; gap: 26px;
+  padding: clamp(22px, 3.5vw, 34px);
+}
+.feature-copy { display: flex; flex-direction: column; gap: 14px; }
+.feature-copy .kicker {
+  font-family: var(--mono); font-size: 11.5px; color: var(--purple);
+  letter-spacing: .04em;
+}
+.feature-copy h3 {
+  font-family: var(--disp); font-size: clamp(24px, 3.2vw, 32px);
+  font-weight: 800; letter-spacing: -.015em;
+}
+.feature-copy h3 a { color: var(--fg); }
+.feature-copy h3 a:hover { color: var(--orange); text-decoration: none; }
+.feature-copy p { color: var(--dim); font-size: 14px; max-width: 56ch; }
+.feature-copy p em { color: var(--fg); font-style: normal; }
+.feature-stats { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 2px; }
+.feature-stats .stat {
+  font-family: var(--mono); font-size: 11px; color: var(--dim);
+  border: 1px solid var(--line-2); border-radius: 6px;
+  padding: 5px 10px; background: rgba(50,48,47,.5);
+}
+.feature-stats .stat b { color: var(--aqua); font-weight: 600; }
+.feature-viz {
+  position: relative; min-height: 220px;
+  background: #141617; border: 1px solid var(--line); border-radius: 8px;
+  overflow: hidden;
+}
+.feature-viz svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.feature-viz .viz-cap {
+  position: absolute; left: 10px; bottom: 8px;
+  font-family: var(--mono); font-size: 10px; color: var(--faint);
+}
+.feature:hover { transform: translateY(-3px); }
 
 /* ───────────────────────────────────────────────
    about — workspace 3
@@ -768,6 +808,8 @@ section .pcb { position: absolute; inset: 0; z-index: 0; pointer-events: none; o
   .proj-grid, .stack-grid { grid-template-columns: repeat(2, 1fr); }
   .hero { grid-template-columns: 1fr; }
   .bar-mid .host { display: none; }
+  .feature .pad { grid-template-columns: 1fr; }
+  .feature-viz { min-height: 190px; }
 }
 @media (max-width: 620px) {
   .proj-grid, .stack-grid, .about-grid { grid-template-columns: 1fr; }
