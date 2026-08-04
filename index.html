@@ -1921,6 +1921,43 @@ addEventListener('booted', () => {
     '<span class="dim">[ 4243.108]</span> dart-turret: pan-tilt online, tracking armed',
   ].join('\n');
 
+  /* the flagship, replayed one reasoning step at a time */
+  const ariadne = () => {
+    if (busy) return; busy = true;
+    const steps = [
+      '<span class="dim">neo4j://localhost:7687 — connected (read-only txn)</span>',
+      '<span class="dim">domain: corp.local · 412 nodes · 1180 edges</span>',
+      '',
+      '<span class="o">thought</span> start is svc_sql@corp.local. enumerate outbound edges.',
+      '<span class="o">action</span> <span class="dim">query_edges(node="svc_sql@corp.local")</span>',
+      '<span class="dim">obs   </span> MemberOf → HELPDESK',
+      '<span class="o">thought</span> HELPDESK is not privileged on its own. keep walking.',
+      '<span class="o">action</span> <span class="dim">query_edges(node="HELPDESK")</span>',
+      '<span class="dim">obs   </span> GenericAll → DC01.corp.local',
+      '<span class="o">thought</span> GenericAll on a domain controller implies DCSync.',
+      '<span class="o">action</span> <span class="dim">verify_path([svc_sql, HELPDESK, DC01, DOMAIN ADMINS])</span>',
+      '<span class="ok">obs    path verified — every edge exists in the graph</span>',
+      '',
+      '<span class="ok big">PATH FOUND</span> <span class="dim">4 hops</span>',
+      'svc_sql <span class="dim">→</span> HELPDESK <span class="dim">→</span> DC01 <span class="dim">→</span> <span class="o">DOMAIN ADMINS</span>',
+      '',
+      '<span class="dim">bloodhound found this one too. it missed the kerberoastable</span>',
+      '<span class="dim">svc_backup with its password sitting in a description field —</span>',
+      '<span class="dim">that path lives in node properties, not edges.</span>',
+    ];
+    let i = 0;
+    const iv = setInterval(() => {
+      if (i >= steps.length) {
+        clearInterval(iv); busy = false;
+        window.__burst?.(innerWidth / 2, innerHeight / 3, 30, 1.4);
+        print('<span class="dim">full benchmark:</span> <span class="o">github.com/Crepco/Ariadne</span>');
+        return;
+      }
+      print(steps[i] || '&nbsp;');
+      i++;
+    }, 230);
+  };
+
   const hollywood = () => {
     if (busy) return; busy = true;
     print('<span class="warn">[hollywood] initiating completely real intrusion…</span>');
@@ -2030,6 +2067,8 @@ addEventListener('booted', () => {
           '<span class="o">cat</span> <span class="dim">&lt;file&gt;</span>      read a file\n' +
           '<span class="o">neofetch</span>        flex\n' +
           '<span class="o">open</span> <span class="dim">&lt;ws&gt;</span>       jump: home projects about stack lab contact\n' +
+          '<span class="o">projects</span>        what i&#39;ve been building\n' +
+          '<span class="o">ariadne</span>         watch an agent walk an AD attack path\n' +
           '<span class="o">hack</span>            hollywood mode\n' +
           '<span class="o">i2cdetect dmesg tio</span> bench diagnostics\n' +
           '<span class="o">matrix</span>          crank the rain\n' +
@@ -2053,6 +2092,18 @@ addEventListener('booted', () => {
         return void print(`<span class="dim">dispatch workspace</span> ${id}`);
       }
       case 'hack': return void hollywood();
+      case 'ariadne': return void ariadne();
+      case 'bloodhound':
+        return void print('bloodhound: <span class="dim">sure, but try</span> <span class="o">ariadne</span> <span class="dim">— i benchmarked one against the other.</span>');
+      case 'projects': case 'repos':
+        return void print(
+          '<span class="o">Ariadne</span>       llm agents vs bloodhound on AD attack paths\n' +
+          '<span class="o">DART</span>          vision-guided pan-tilt turret\n' +
+          '<span class="o">flowstate</span>     eeg focus tracking off an arduino\n' +
+          '<span class="o">Argus</span>         defensive osint exposure auditor\n' +
+          '<span class="o">esp_chatroom</span>  offline chat room on one esp32\n' +
+          '<span class="o">scanix-food</span>   food label intelligence, ocr → verdict\n' +
+          '<span class="dim">open &lt;name&gt; won&#39;t work here — they live on github.com/Crepco</span>');
       case 'matrix': {
         const on = document.documentElement.classList.toggle('rave');
         return void print(on ? '<span class="ok">wake up, neo…</span>' : '<span class="dim">rain reduced to a drizzle.</span>');
@@ -2101,7 +2152,7 @@ addEventListener('booted', () => {
     exec(line);
   };
 
-  const NAMES = ['help', 'ls', 'cat', 'neofetch', 'open', 'hack', 'matrix', 'crt', 'clear', 'whoami', 'exit', 'sudo', 'reboot', 'history', 'echo', 'pwd', 'uname', 'date', 'konami', 'i2cdetect', 'dmesg', 'tio', 'arduino-cli'];
+  const NAMES = ['help', 'ls', 'cat', 'neofetch', 'open', 'hack', 'matrix', 'crt', 'clear', 'whoami', 'exit', 'sudo', 'reboot', 'history', 'echo', 'pwd', 'uname', 'date', 'konami', 'i2cdetect', 'dmesg', 'tio', 'arduino-cli', 'ariadne', 'projects', 'bloodhound'];
   input.addEventListener('keydown', (e) => {
     e.stopPropagation();
     if (e.key === 'Enter') { const v = input.value; input.value = ''; run(v); }
