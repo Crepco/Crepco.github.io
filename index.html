@@ -797,7 +797,7 @@ section .pcb { position: absolute; inset: 0; z-index: 0; pointer-events: none; o
   .blinky { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .pcb .pulse { display: none; }
+  .pcb .pulse, .feature-viz .pulse { display: none; }
   .blinky i, .scope-read .trig { animation: none; }
 }
 
@@ -968,28 +968,28 @@ section .pcb { position: absolute; inset: 0; z-index: 0; pointer-events: none; o
             </div>
           </div>
           <div class="feature-viz" aria-hidden="true">
-            <svg viewBox="0 0 380 230" fill="none" preserveAspectRatio="xMidYMid meet">
+            <svg viewBox="0 0 380 254" fill="none" preserveAspectRatio="xMidYMid meet">
               <g stroke="#504945" stroke-width="1.5">
-                <path id="ap1" d="M 66 44 V 60 H 138 V 76"/>
-                <path id="ap2" d="M 138 102 V 118 H 210 V 134"/>
-                <path id="ap3" d="M 210 160 V 176 H 288 V 192"/>
+                <path id="ap1" d="M 66 38 V 59 H 138 V 80"/>
+                <path id="ap2" d="M 138 106 V 127 H 210 V 148"/>
+                <path id="ap3" d="M 210 174 V 195 H 288 V 216"/>
               </g>
               <g font-family="IBM Plex Mono, monospace" font-size="8" fill="#7c6f64">
-                <text x="102" y="57">MemberOf</text>
-                <text x="174" y="115">GenericAll</text>
-                <text x="249" y="173">DCSync</text>
+                <text x="102" y="56">MemberOf</text>
+                <text x="174" y="124">GenericAll</text>
+                <text x="249" y="192">DCSync</text>
               </g>
               <g stroke-width="1.5">
-                <rect x="14"  y="18"  width="104" height="26" rx="5" fill="#1d2021" stroke="#83a598"/>
-                <rect x="86"  y="76"  width="104" height="26" rx="5" fill="#1d2021" stroke="#8ec07c"/>
-                <rect x="158" y="134" width="104" height="26" rx="5" fill="#1d2021" stroke="#fabd2f"/>
-                <rect x="230" y="192" width="116" height="26" rx="5" fill="rgba(254,128,25,.12)" stroke="#fe8019"/>
+                <rect x="14"  y="12"  width="104" height="26" rx="5" fill="#1d2021" stroke="#83a598"/>
+                <rect x="86"  y="80"  width="104" height="26" rx="5" fill="#1d2021" stroke="#8ec07c"/>
+                <rect x="158" y="148" width="104" height="26" rx="5" fill="#1d2021" stroke="#fabd2f"/>
+                <rect x="230" y="216" width="116" height="26" rx="5" fill="rgba(254,128,25,.12)" stroke="#fe8019"/>
               </g>
               <g font-family="IBM Plex Mono, monospace" font-size="9.5" fill="#ebdbb2">
-                <text x="26"  y="35">svc_sql@corp</text>
-                <text x="98"  y="93">HELPDESK</text>
-                <text x="170" y="151">DC01.corp</text>
-                <text x="242" y="209" fill="#fe8019">DOMAIN ADMINS</text>
+                <text x="26"  y="29">svc_sql@corp</text>
+                <text x="98"  y="97">HELPDESK</text>
+                <text x="170" y="165">DC01.corp</text>
+                <text x="242" y="233" fill="#fe8019">DOMAIN ADMINS</text>
               </g>
               <circle class="pulse" r="3" fill="#8ec07c">
                 <animateMotion dur="4s" repeatCount="indefinite" keyPoints="0;1;1" keyTimes="0;0.34;1" calcMode="linear"><mpath href="#ap1"/></animateMotion>
