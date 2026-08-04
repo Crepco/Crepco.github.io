@@ -931,9 +931,78 @@ section .pcb { position: absolute; inset: 0; z-index: 0; pointer-events: none; o
     <span class="ws-num" aria-hidden="true">2</span>
     <div class="sec-head tile">
       <span class="tag">[2]</span>
-      <h2>Built because I needed them</h2>
+      <h2>Things I built to answer a question</h2>
     </div>
     <div class="proj-grid">
+
+      <article class="window tile project feature">
+        <div class="titlebar"><span class="wdot"></span>Ariadne
+          <span class="meta stars" data-repo="Ariadne">★ 9</span>
+        </div>
+        <div class="pad">
+          <div class="feature-copy">
+            <span class="kicker">// flagship — research</span>
+            <h3><a href="https://github.com/Crepco/Ariadne" target="_blank" rel="noopener noreferrer">Ariadne</a></h3>
+            <p>
+              Can an LLM agent trace an Active Directory attack path to Domain Admin
+              on its own — and how does it compare to BloodHound? I built the benchmark
+              to find out. Synthetic domains generated straight into the BloodHound Neo4j
+              schema, a ReAct agent hunting paths, and a scorer that checks every claim
+              against ground truth.
+            </p>
+            <p>
+              It finds paths BloodHound structurally <em>can't</em> — kerberoasting,
+              delegation flaws, credentials sitting in a description field — because
+              those live in node properties, not graph edges.
+            </p>
+            <div class="feature-stats">
+              <span class="stat"><b>83.8%</b> correctness</span>
+              <span class="stat"><b>0</b> hallucinated edges</span>
+              <span class="stat"><b>1/17th</b> cost on mini</span>
+            </div>
+            <div class="proj-foot" style="margin-top:auto">
+              <div class="tags"><span>python</span><span>neo4j</span><span>llm agents</span><span>bloodhound</span></div>
+              <a class="src" href="https://github.com/Crepco/Ariadne" target="_blank" rel="noopener noreferrer">source &nearr;</a>
+            </div>
+          </div>
+          <div class="feature-viz" aria-hidden="true">
+            <svg viewBox="0 0 380 230" fill="none" preserveAspectRatio="xMidYMid meet">
+              <g stroke="#504945" stroke-width="1.5">
+                <path id="ap1" d="M 66 44 V 60 H 138 V 76"/>
+                <path id="ap2" d="M 138 102 V 118 H 210 V 134"/>
+                <path id="ap3" d="M 210 160 V 176 H 288 V 192"/>
+              </g>
+              <g font-family="IBM Plex Mono, monospace" font-size="8" fill="#7c6f64">
+                <text x="102" y="57">MemberOf</text>
+                <text x="174" y="115">GenericAll</text>
+                <text x="249" y="173">DCSync</text>
+              </g>
+              <g stroke-width="1.5">
+                <rect x="14"  y="18"  width="104" height="26" rx="5" fill="#1d2021" stroke="#83a598"/>
+                <rect x="86"  y="76"  width="104" height="26" rx="5" fill="#1d2021" stroke="#8ec07c"/>
+                <rect x="158" y="134" width="104" height="26" rx="5" fill="#1d2021" stroke="#fabd2f"/>
+                <rect x="230" y="192" width="116" height="26" rx="5" fill="rgba(254,128,25,.12)" stroke="#fe8019"/>
+              </g>
+              <g font-family="IBM Plex Mono, monospace" font-size="9.5" fill="#ebdbb2">
+                <text x="26"  y="35">svc_sql@corp</text>
+                <text x="98"  y="93">HELPDESK</text>
+                <text x="170" y="151">DC01.corp</text>
+                <text x="242" y="209" fill="#fe8019">DOMAIN ADMINS</text>
+              </g>
+              <circle class="pulse" r="3" fill="#8ec07c">
+                <animateMotion dur="4s" repeatCount="indefinite" keyPoints="0;1;1" keyTimes="0;0.34;1" calcMode="linear"><mpath href="#ap1"/></animateMotion>
+              </circle>
+              <circle class="pulse" r="3" fill="#fabd2f">
+                <animateMotion dur="4s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;0.34;0.67;1" calcMode="linear"><mpath href="#ap2"/></animateMotion>
+              </circle>
+              <circle class="pulse" r="3" fill="#fe8019">
+                <animateMotion dur="4s" repeatCount="indefinite" keyPoints="0;0;1" keyTimes="0;0.67;1" calcMode="linear"><mpath href="#ap3"/></animateMotion>
+              </circle>
+            </svg>
+            <span class="viz-cap">shortest path → DA · 4 hops</span>
+          </div>
+        </div>
+      </article>
 
       <article class="window tile project">
         <div class="titlebar"><span class="wdot"></span>DART
@@ -941,12 +1010,76 @@ section .pcb { position: absolute; inset: 0; z-index: 0; pointer-events: none; o
         </div>
         <div class="pad">
           <h3><a href="https://github.com/Crepco/DART" target="_blank" rel="noopener noreferrer">DART</a></h3>
-          <p>An autonomous vision-guided turret. OpenCV detects and tracks moving
-             targets, an Arduino over serial drives the pan-tilt servos that follow
-             them. Phase two gives it a real mount.</p>
+          <p>An autonomous pan-tilt turret. YOLOv8 finds people, ByteTrack keeps their
+             identity, InsightFace decides who's authorised — and only unauthorised
+             targets get a lock. PID servo control streams to an Arduino at 30 Hz.</p>
           <div class="proj-foot">
-            <div class="tags"><span>python</span><span>opencv</span><span>arduino</span></div>
+            <div class="tags"><span>opencv</span><span>yolov8</span><span>arduino</span></div>
             <a class="src" href="https://github.com/Crepco/DART" target="_blank" rel="noopener noreferrer">source &nearr;</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="window tile project">
+        <div class="titlebar"><span class="wdot"></span>flowstate
+          <span class="meta stars" data-repo="flowstate">★ 3</span>
+        </div>
+        <div class="pad">
+          <h3><a href="https://github.com/Crepco/flowstate" target="_blank" rel="noopener noreferrer">FlowState</a></h3>
+          <p>Real-time focus tracking off an EEG sensor on your forehead. A BioAmp pill
+             into an Arduino at 500 Hz, my own NumPy logistic regression trained on
+             <em>my</em> brain, and a buzzer that catches me zoning out.</p>
+          <div class="proj-foot">
+            <div class="tags"><span>eeg</span><span>numpy</span><span>flask</span></div>
+            <a class="src" href="https://github.com/Crepco/flowstate" target="_blank" rel="noopener noreferrer">source &nearr;</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="window tile project">
+        <div class="titlebar"><span class="wdot"></span>Argus
+          <span class="meta stars" data-repo="Argus">★ 1</span>
+        </div>
+        <div class="pad">
+          <h3><a href="https://github.com/Crepco/Argus" target="_blank" rel="noopener noreferrer">Argus</a></h3>
+          <p>A defensive OSINT auditor: it shows you exactly what an attacker could find
+             about an identity you can <em>prove</em> you own. GitHub OAuth and DNS
+             challenges gate every scan; nothing is ever persisted.</p>
+          <div class="proj-foot">
+            <div class="tags"><span>fastapi</span><span>react</span><span>osint</span></div>
+            <a class="src" href="https://github.com/Crepco/Argus" target="_blank" rel="noopener noreferrer">source &nearr;</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="window tile project">
+        <div class="titlebar"><span class="wdot"></span>esp_chatroom
+          <span class="meta stars" data-repo="esp_chatroom">★ 5</span>
+        </div>
+        <div class="pad">
+          <h3><a href="https://github.com/Crepco/esp_chatroom" target="_blank" rel="noopener noreferrer">ESP32 Chatroom</a></h3>
+          <p>An entire offline chat room living on one ESP32 — access point, DNS,
+             web server and ring-buffer storage in a single sketch. Connect and the
+             captive portal drops you straight into the room. No internet involved.</p>
+          <div class="proj-foot">
+            <div class="tags"><span>esp32</span><span>c++</span><span>captive portal</span></div>
+            <a class="src" href="https://github.com/Crepco/esp_chatroom" target="_blank" rel="noopener noreferrer">source &nearr;</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="window tile project">
+        <div class="titlebar"><span class="wdot"></span>scanix-food
+          <span class="meta stars" data-repo="scanix-food">★ 2</span>
+        </div>
+        <div class="pad">
+          <h3><a href="https://github.com/Crepco/scanix-food" target="_blank" rel="noopener noreferrer">Scanix</a></h3>
+          <p>Point a camera at a packaged-food label and it reads it the way an
+             inspector, a lab and a nutritionist would — OCR, ingredient risk
+             profiling, FSSAI compliance and counterfeit checks into one verdict.</p>
+          <div class="proj-foot">
+            <div class="tags"><span>fastapi</span><span>ocr</span><span>next.js</span></div>
+            <a class="src" href="https://github.com/Crepco/scanix-food" target="_blank" rel="noopener noreferrer">source &nearr;</a>
           </div>
         </div>
       </article>
@@ -956,10 +1089,10 @@ section .pcb { position: absolute; inset: 0; z-index: 0; pointer-events: none; o
           <span class="meta stars" data-repo="spotify-playlist-downlaod">★ 12</span>
         </div>
         <div class="pad">
-          <h3><a href="https://github.com/Crepco/spotify-playlist-downlaod" target="_blank" rel="noopener noreferrer">Spotify Playlist Downloader</a></h3>
-          <p>I wanted my playlists offline, so I built it. Pulls entire playlists
-             with proper metadata and survives Spotify's rate limiting with retry
-             and backoff logic.</p>
+          <h3><a href="https://github.com/Crepco/spotify-playlist-downlaod" target="_blank" rel="noopener noreferrer">Playlist Downloader</a></h3>
+          <p>My most-starred repo, and it started as pure selfishness: I wanted my
+             playlists offline. Pulls whole playlists with metadata intact and
+             survives rate limiting with retry and backoff.</p>
           <div class="proj-foot">
             <div class="tags"><span>python</span><span>web apis</span></div>
             <a class="src" href="https://github.com/Crepco/spotify-playlist-downlaod" target="_blank" rel="noopener noreferrer">source &nearr;</a>
@@ -967,70 +1100,8 @@ section .pcb { position: absolute; inset: 0; z-index: 0; pointer-events: none; o
         </div>
       </article>
 
-      <article class="window tile project">
-        <div class="titlebar"><span class="wdot"></span>steganography
-          <span class="meta stars" data-repo="Steganography-">★ 6</span>
-        </div>
-        <div class="pad">
-          <h3><a href="https://github.com/Crepco/Steganography-" target="_blank" rel="noopener noreferrer">Steganography Tool</a></h3>
-          <p>Hides messages inside images with LSB encoding, with optional AES-256
-             on top — so even if someone detects the carrier, the payload tells
-             them nothing.</p>
-          <div class="proj-foot">
-            <div class="tags"><span>python</span><span>crypto</span></div>
-            <a class="src" href="https://github.com/Crepco/Steganography-" target="_blank" rel="noopener noreferrer">source &nearr;</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="window tile project">
-        <div class="titlebar"><span class="wdot"></span>music_remover
-          <span class="meta stars" data-repo="music_remover">★ 3</span>
-        </div>
-        <div class="pad">
-          <h3><a href="https://github.com/Crepco/music_remover" target="_blank" rel="noopener noreferrer">Music Remover</a></h3>
-          <p>Strips the instrumental out of a track and keeps the vocals. Started
-             as a curiosity about audio signal processing, ended as a tool I keep
-             reaching for.</p>
-          <div class="proj-foot">
-            <div class="tags"><span>python</span><span>audio dsp</span></div>
-            <a class="src" href="https://github.com/Crepco/music_remover" target="_blank" rel="noopener noreferrer">source &nearr;</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="window tile project">
-        <div class="titlebar"><span class="wdot"></span>password_manager
-          <span class="meta stars" data-repo="Password_Manager">★ 2</span>
-        </div>
-        <div class="pad">
-          <h3><a href="https://github.com/Crepco/Password_Manager" target="_blank" rel="noopener noreferrer">Password Manager</a></h3>
-          <p>A local vault: AES-256 encryption, PBKDF2 key derivation, no cloud,
-             no subscription. Built after deciding my credentials shouldn't live
-             on someone else's server.</p>
-          <div class="proj-foot">
-            <div class="tags"><span>python</span><span>aes-256</span></div>
-            <a class="src" href="https://github.com/Crepco/Password_Manager" target="_blank" rel="noopener noreferrer">source &nearr;</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="window tile project">
-        <div class="titlebar"><span class="wdot"></span>linux-rice
-          <span class="meta stars" data-repo="linux-rice">★ 1</span>
-        </div>
-        <div class="pad">
-          <h3><a href="https://github.com/Crepco/linux-rice" target="_blank" rel="noopener noreferrer">linux-rice</a></h3>
-          <p>My Hyprland dotfiles — and the reason this site looks the way it does.
-             Tiled windows, gruvbox everywhere, permanently 90% finished.</p>
-          <div class="proj-foot">
-            <div class="tags"><span>hyprland</span><span>qml</span></div>
-            <a class="src" href="https://github.com/Crepco/linux-rice" target="_blank" rel="noopener noreferrer">source &nearr;</a>
-          </div>
-        </div>
-      </article>
-
     </div>
+    <p class="stack-note"># six more live at <a href="https://github.com/Crepco?tab=repositories" target="_blank" rel="noopener noreferrer">github.com/Crepco</a> — steganography, a local password vault, a vocal isolator.</p>
   </section>
 
   <!-- ── workspace 3: about ────────────────── -->
@@ -1618,7 +1689,7 @@ addEventListener('booted', () => {
 /* ── 3d tilt + glare on project windows ───── */
 (() => {
   if (!FINE || REDUCED) return;
-  document.querySelectorAll('.project').forEach((card) => {
+  document.querySelectorAll('.project:not(.feature)').forEach((card) => {
     let raf = 0;
     card.addEventListener('pointermove', (e) => {
       if (card.classList.contains('dragging')) return;
